@@ -6,6 +6,7 @@
             "email": "info@visionapps.cz"
         }
     ],
+    "license": "MIT",
     "minimum-stability": "stable",
     "autoload": {
         "psr-0": { "": "src/" }
