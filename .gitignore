@@ -1,0 +1,5 @@
+/docs/site/*
+!.gitkeep
+*.log
+tests/_output/*
+/vendor
