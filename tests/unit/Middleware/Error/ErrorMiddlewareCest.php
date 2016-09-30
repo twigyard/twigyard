@@ -13,7 +13,7 @@ use Zend\Diactoros\ServerRequest;
 
 class ErrorMiddlewareCest
 {
-    const TEST_DIR = '/tmp/mcs';
+    const TEST_DIR = '/tmp/twigyard';
 
     /**
      * @param \UnitTester $I

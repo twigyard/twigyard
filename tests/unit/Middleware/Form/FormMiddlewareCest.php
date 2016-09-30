@@ -182,7 +182,7 @@ class FormMiddlewareCest
             $handlerFactory->reveal(),
             $translatorFactory->reveal()
         );
-        $mw($this->getRequest()->withCookieParams(['mcs_csrf_token' => 'token']), new Response(), function () {
+        $mw($this->getRequest()->withCookieParams(['twigyard_csrf_token' => 'token']), new Response(), function () {
             return new Response();
         });
         $I->assertTrue(true);
@@ -202,13 +202,13 @@ class FormMiddlewareCest
         $fs = $this->getFs();
         $appState->getSiteDir()->willReturn($fs->path('/sites/www.example.com'));
         $mw = $this->getMw($appState, $prophet);
-        $request = (new ServerRequest())->withCookieParams(['mcs_flash_message' => 'Flash message']);
+        $request = (new ServerRequest())->withCookieParams(['twigyard_flash_message' => 'Flash message']);
         $response = $mw($request, new Response(), function () {
             return new Response();
         });
         $prophet->checkPredictions();
-        $flashMessage = SetCookies::fromResponse($response)->get('mcs_flash_message')->getValue();
-        $csrfToken = SetCookies::fromResponse($response)->get('mcs_csrf_token')->getValue();
+        $flashMessage = SetCookies::fromResponse($response)->get('twigyard_flash_message')->getValue();
+        $csrfToken = SetCookies::fromResponse($response)->get('twigyard_csrf_token')->getValue();
         $I->assertEquals('token', $csrfToken);
         $I->assertEquals(null, $flashMessage);
     }
@@ -257,11 +257,11 @@ class FormMiddlewareCest
         $formValidator->getFlashMessage()->willReturn('Flash message');
 
         $mw = $this->getMw($appState, $prophet, $formValidator, $this->getHandlerFactory($prophet));
-        $request = $this->getRequest()->withCookieParams(['mcs_csrf_token' => 'invalid']);
+        $request = $this->getRequest()->withCookieParams(['twigyard_csrf_token' => 'invalid']);
         $response = $mw($request, new Response(), function () {
             return new Response();
         });
-        $csrfToken = SetCookies::fromResponse($response)->get('mcs_csrf_token')->getValue();
+        $csrfToken = SetCookies::fromResponse($response)->get('twigyard_csrf_token')->getValue();
         $I->assertEquals('token', $csrfToken);
     }
 
@@ -291,7 +291,7 @@ class FormMiddlewareCest
 
         $mw = $this->getMw($appState, $prophet, $formValidator, $this->getHandlerFactory($prophet, 'old_token'));
         $request = $this->getRequest()
-            ->withCookieParams(['mcs_csrf_token' => 'old_token'])
+            ->withCookieParams(['twigyard_csrf_token' => 'old_token'])
             ->withMethod('post')
             ->withParsedBody(['form1' => ['csrf_token' => 'old_token', 'field1' => 'value1']]);
         $response = $mw($request, new Response(), function () {
@@ -428,14 +428,14 @@ class FormMiddlewareCest
         }
 
         $mw = $this->getMw($appState, $prophet, $formValidator, $this->getHandlerFactory($prophet), $config);
-        $request = $this->getRequest()->withCookieParams(['mcs_csrf_token' => 'token']);
+        $request = $this->getRequest()->withCookieParams(['twigyard_csrf_token' => 'token']);
 
         $response = $mw($request, new Response(), function () {
             return new Response();
         });
 
         $prophet->checkPredictions();
-        $flashMessage = SetCookies::fromResponse($response)->get('mcs_flash_message')->getValue();
+        $flashMessage = SetCookies::fromResponse($response)->get('twigyard_flash_message')->getValue();
         $I->assertEquals(
             $successFlashMessage ? $successFlashMessage : 'The form was successfully sent, thank you!',
             $flashMessage

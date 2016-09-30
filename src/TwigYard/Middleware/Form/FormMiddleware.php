@@ -17,10 +17,10 @@ use Zend\Diactoros\Response;
 
 class FormMiddleware
 {
-    const CSRF_COOKIE_NAME = 'mcs_csrf_token';
+    const CSRF_COOKIE_NAME = 'twigyard_csrf_token';
     const CSRF_COOKIE_TTL = 10 * 60;    // in seconds
     const CSRF_FIELD_NAME = 'csrf_token';
-    const FLASH_MESSAGE_COOKIE_NAME = 'mcs_flash_message';
+    const FLASH_MESSAGE_COOKIE_NAME = 'twigyard_flash_message';
     const FLASH_MESSAGE_COOKIE_TTL = 10;    // in seconds
     const FLASH_MESSAGE_DEFAULT_SUCCESS = 'The form was successfully sent, thank you!';
 
