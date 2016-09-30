@@ -17,15 +17,15 @@ imports:
     - { resource: 'router.yml' }
     - { resource: 'renderer.yml' }
 ```
-Second, it makes it possible to have the site behave differently on different instances. If, for example, we would like to have a staging instance where the site must be protected by httpauth header, we would have the following in `site_staging.yml` and set the instance to use this is the main config file. 
- ```
+Second, it makes it possible to have the site behave differently on different instances. If, for example, we would like to have a staging instance where the site must be protected by httpauth header, we would have the following in `site_staging.yml` and set the instance to use this is the main config file.
+```
 httpauth:
     username: user
     password: pass
 
 imports:
     - { resource: 'site.yml' }
- ```
+```
 
 ### Example 
 ```
