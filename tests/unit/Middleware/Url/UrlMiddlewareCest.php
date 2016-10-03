@@ -25,7 +25,7 @@ class UrlMiddlewareCest
     {
         $prophet = new Prophet();
         $fs = $this->getFs();
-        $mw = $this->getMw($fs, null, $prophet);
+        $mw = $this->getMw($fs, null, $prophet, null);
         $callBackCalled = $mw($this->getRequest('www.example.com'), new Response(), function () use ($prophet) {
             $prophet->checkPredictions();
             return true;
@@ -44,7 +44,7 @@ class UrlMiddlewareCest
         $request = $this->getRequest('www.example.com');
         $request = $request->withUri($request->getUri()->withPath('/images'));
 
-        $mw = $this->getMw($fs, null, $prophet);
+        $mw = $this->getMw($fs, null, $prophet, null);
         $callBackCalled = $mw($request, new Response(), function (ServerRequestInterface $request) use ($I, $prophet) {
             $I->assertEquals($request->getUri()->getPath(), '/images');
             $prophet->checkPredictions();
@@ -59,7 +59,7 @@ class UrlMiddlewareCest
     public function redirectOnNonCanonicalUrl(\UnitTester $I)
     {
         $fs = $this->getFs();
-        $mw = $this->getMw($fs);
+        $mw = $this->getMw($fs, null, null, null);
         $response = $mw($this->getRequest('example.com'), new Response(), function () {
         });
         $I->assertEquals($response->getHeaderLine('location'), 'http://www.example.com');
@@ -113,7 +113,7 @@ class UrlMiddlewareCest
         file_put_contents($fs->path('/sites/www.example.com/site.yml'), 'Invalid yml content');
         $prophet = new Prophet();
 
-        $mw = $this->getMw($fs, null, $prophet);
+        $mw = $this->getMw($fs, null, $prophet, null);
         $mw($this->getRequest('www.example.com'), new Response(), function () {
         });
         $prophet->checkPredictions();
@@ -122,12 +122,12 @@ class UrlMiddlewareCest
     /**
      * @param \UnitTester $I
      */
-    public function allowLocalAccessIfAllowed(\UnitTester $I)
+    public function allowSubdomainAccessIfDefined(\UnitTester $I)
     {
         $fs = $this->getFs();
         $prophet = new Prophet();
-        $mw = $this->getMw($fs, null, $prophet, true, 'example');
-        $request = $this->getRequest('www.example.com.example'); // parentDomain purposely substring od site host
+        $mw = $this->getMw($fs, null, $prophet, 'example');
+        $request = $this->getRequest('www.example.com.example');
         $callBackCalled = $mw($request, new Response(), function () use ($prophet) {
             $prophet->checkPredictions();
             return true;
@@ -135,17 +135,20 @@ class UrlMiddlewareCest
         $I->assertTrue($callBackCalled);
     }
 
-    /**
-     * @param \UnitTester $I
-     */
-    public function disallowLocalAccessIfNotAllowed(\UnitTester $I)
+    public function disallowSubdomainAccessIfNotDefined(\UnitTester $I)
     {
         $fs = $this->getFs();
-        $mw = $this->getMw($fs);
-        $request = $this->getRequest('www.example.com.dev.domain');
-        $response = $mw($request, new Response(), function () {
+        $prophet = new Prophet();
+        $mw = $this->getMw($fs, null, $prophet, '');
+        $request = $this->getRequest('www.example.com.example');
+        $response = $mw($request, new Response(), function () use ($prophet) {
         });
-        $I->assertEquals(404, $response->getStatusCode());
+        $I->assertEquals($response->getStatusCode(), 404);
+
+        $mw = $this->getMw($fs, null, $prophet, null);
+        $response = $mw($request, new Response(), function () use ($prophet) {
+        });
+        $I->assertEquals($response->getStatusCode(), 404);
     }
 
     public function setSiteSpecificParameters()
@@ -180,7 +183,7 @@ EOT;
             ->willReturn($appStateProph)
             ->shouldBeCalled();
 
-        $mw = $this->getMw($fs, null, $prophet, false, 'dev.domain', $appStateProph);
+        $mw = $this->getMw($fs, null, $prophet, null, $appStateProph);
         $mw($this->getRequest('www.example.com'), new Response(), function () {
         });
         $prophet->checkPredictions();
@@ -212,7 +215,6 @@ EOT;
      * @param \VirtualFileSystem\FileSystem $fs
      * @param \TwigYard\Component\ConfigCacheInterface $configCache
      * @param \Prophecy\Prophet|null $prophet
-     * @param bool $allowLocalAccess
      * @param string $devDomain
      * @param ObjectProphecy|null $appStateProph
      * @return \TwigYard\Middleware\Url\UrlMiddleware
@@ -221,7 +223,6 @@ EOT;
         FileSystem $fs,
         ConfigCacheInterface $configCache = null,
         $prophet = null,
-        $allowLocalAccess = false,
         $devDomain = 'dev.domain',
         ObjectProphecy $appStateProph = null
     ) {
@@ -272,7 +273,6 @@ EOT;
             $fs->path('/sites'),
             'site.yml',
             'parameters.yml',
-            $allowLocalAccess,
             $devDomain
         );
     }

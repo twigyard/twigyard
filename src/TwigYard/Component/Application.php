@@ -74,11 +74,6 @@ class Application
     /**
      * @var bool
      */
-    private $localAccessAllowed;
-
-    /**
-     * @var bool
-     */
     private $cacheEnabled;
 
     /**
@@ -103,7 +98,6 @@ class Application
 
     /**
      * @param string $appRoot
-     * @param bool $localAccessAllowed
      * @param bool $cacheEnabled
      * @param bool $showErrors
      * @param bool $enableTracking
@@ -112,7 +106,6 @@ class Application
      */
     public function __construct(
         $appRoot,
-        $localAccessAllowed,
         $cacheEnabled,
         $showErrors,
         $enableTracking,
@@ -120,7 +113,6 @@ class Application
         $debugEmailEnabled
     ) {
         $this->appRoot = $appRoot;
-        $this->localAccessAllowed = $localAccessAllowed;
         $this->cacheEnabled = $cacheEnabled;
         $this->showErrors = $showErrors;
         $this->enableTracking = $enableTracking;
@@ -174,7 +166,6 @@ class Application
             $this->appRoot . '/' . self::SITES_DIR,
             $globalParameters['site_config'],
             self::SITE_PARAMETERS,
-            $this->localAccessAllowed,
             $globalParameters['parent_domain']
         );
         $queue[] = new RedirectMiddleware($appState);
