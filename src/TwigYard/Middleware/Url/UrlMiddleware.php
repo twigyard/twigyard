@@ -38,11 +38,6 @@ class UrlMiddleware implements MiddlewareInterface
     private $siteParameters;
 
     /**
-     * @var bool
-     */
-    private $isAllowLocalAccess;
-
-    /**
      * @var string
      */
     private $parentDomain;
@@ -53,7 +48,6 @@ class UrlMiddleware implements MiddlewareInterface
      * @param string $sitesDir
      * @param string $siteConfig
      * @param string $siteParameters
-     * @param bool $isAllowLocalAccess
      * @param string $parentDomain
      */
     public function __construct(
@@ -62,7 +56,6 @@ class UrlMiddleware implements MiddlewareInterface
         $sitesDir,
         $siteConfig,
         $siteParameters,
-        $isAllowLocalAccess,
         $parentDomain
     ) {
         $this->appState = $appState;
@@ -70,7 +63,6 @@ class UrlMiddleware implements MiddlewareInterface
         $this->sitesDir = $sitesDir;
         $this->siteConfig = $siteConfig;
         $this->siteParameters = $siteParameters;
-        $this->isAllowLocalAccess = $isAllowLocalAccess;
         $this->parentDomain = $parentDomain;
     }
 
@@ -85,7 +77,7 @@ class UrlMiddleware implements MiddlewareInterface
         $configs = $this->configCache->getConfig($this->sitesDir, $this->siteConfig);
         $host = $request->getUri()->getHost();
 
-        if ($this->isAllowLocalAccess) {
+        if ($this->parentDomain) {
             $host = substr($host, 0, - strlen($this->parentDomain) - 1);
         }
 
