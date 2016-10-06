@@ -1,0 +1,4 @@
+node:
+    build: docker/mkdocs
+    volumes:
+            - .:/workspace
