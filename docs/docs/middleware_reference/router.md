@@ -1,14 +1,8 @@
 # Router
 Parses the request URI. The routes are processed sequentially and the first match is used.
 
-## Provides
-name           | type   | description
----------------|--------|------------
-page           | string | The name of the page to be rendered.
-url_params     | map    | A map of parameters parsed from URI if any are present.
-
 ## Options
-Page and param names should allways use undescore_notation.
+Page and param names should always use undescore_notation.
 
 Params can be part of the path and are written in curly brackets (i.e. `{param_name}`). If the param name is to be matched against data attribute the format is `{param_name | data_attribute_name:element_name.subelement_name}`. The matching  only works against list data attributes. If the param is to be matched, but a match can not be found a response with 404 HTTP status code is returned.
 
@@ -34,3 +28,8 @@ router:
         en_US: /products/{product_id | products:manufacturer.id}
 ```
  
+## Provides
+name           | type   | description
+---------------|--------|------------
+page           | string | The name of the page to be rendered.
+url_params     | map    | A map of parameters parsed from URI if any are present.

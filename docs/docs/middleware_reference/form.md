@@ -5,17 +5,6 @@ In order to provide some CSRF protection and to prevent spam this middleware set
 
 To allow tracking of submitted forms through Google Analytics or similar services special query parameter `formSent` is added to the page url after a successful form submission. Its values is the name of the form. For example, successfully submitting form named `constact` on page `www.example.com/contact` will redirect to page `www.example.com/contactformSent=contact`.
 
-## Provides
-Provides a map named `form` where each key is the name of the form and the value is a map with the following values.
-
-name           | type   | description
----------------|--------|-------------
-anchor         | string | Name of anchor to which the form should scroll after submit. Must be used in <form> tag action attribute to enable scroll after submitting invalid data.
-csrf_token     | string | The csrf token to be used in validation.
-data           | map    | The user submitted data. Must be manually rendered in template to persist invalid data.
-errors         | map    | A map of lists where each map key is a field name and each element in the list as one error message. There is one error message for each failed validator constraint.
-flash_message  | string | The message informing the user of the result of the action he or she took. For example it informs the user weather the form was submitted successfully or if there are any invalid fields.
-
 ## Options
 Options is a map where the key is the name of the form and the value is the map of options for the given form.
 
@@ -104,3 +93,14 @@ form:
      
     </div>
 ```
+
+## Provides
+Provides a map named `form` where each key is the name of the form and the value is a map with the following values.
+
+name           | type   | description
+---------------|--------|-------------
+anchor         | string | Name of anchor to which the form should scroll after submit. Must be used in <form> tag action attribute to enable scroll after submitting invalid data.
+csrf_token     | string | The csrf token to be used in validation.
+data           | map    | The user submitted data. Must be manually rendered in template to persist invalid data.
+errors         | map    | A map of lists where each map key is a field name and each element in the list as one error message. There is one error message for each failed validator constraint.
+flash_message  | string | The message informing the user of the result of the action he or she took. For example it informs the user weather the form was submitted successfully or if there are any invalid fields.

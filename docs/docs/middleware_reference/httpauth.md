@@ -1,9 +1,6 @@
 # Httpauth
 Prompts the user for credentials and prevents access for unauthorized users.
 
-## Provides
-N/A
-
 ## Options
 option      | type   | required | description
 ------------|--------|----------|------------
@@ -15,3 +12,6 @@ httpauth:
     username: user
     password: pass
 ```
+
+## Provides
+N/A
