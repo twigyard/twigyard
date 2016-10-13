@@ -11,7 +11,7 @@ class TranslatorFactory
 {
     const RESOURCES_TRANSLATIONS_PATHS = [
         '/vendor/symfony/validator/Resources/translations/validators.%s.xlf' => 'xliff',
-        '/vendor/twigyard/twigyard/src/languages/messages.%s.yml' => 'yaml',
+        '/vendor/twigyard/twigyard/src/TwigYard/languages/messages.%s.yml' => 'yaml',
     ];
     
     const TRANSLATIONS_CACHE_DIR = '_translator';
