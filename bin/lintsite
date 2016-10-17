@@ -1,8 +1,22 @@
 #!/usr/bin/env php
 <?php
 
+use Symfony\Bridge\Twig\Extension\TranslationExtension;
+use Symfony\Bridge\Twig\Command\LintCommand as TwigLintCommand;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Translation\Translator;
+use Symfony\Component\Yaml\Command\LintCommand as YamlLintCommand;
+
+const SITES_DIR = 'sites';
+const TEMPLATES_DIR = 'src/templates';
+const DATA_DIR = 'src/data';
+const LANGUAGES_DIR = 'src/languages';
+
+const CMD_LINT_YAML = 'lint:yaml';
+const CMD_LINT_TWIG = 'lint:twig';
 
 date_default_timezone_set('UTC');
 set_time_limit(0);
@@ -10,20 +24,18 @@ set_time_limit(0);
 (@include_once __DIR__ . '/../vendor/autoload.php') || @include_once __DIR__ . '/../../../autoload.php';
 
 function initYamlLinter(Application $application) {
-    $application->add(new Symfony\Component\Yaml\Command\LintCommand());
+    $application->add(new YamlLintCommand());
 }
 
 function initTwigLinter(Application $application) {
-    $twigLintCommand = new Symfony\Bridge\Twig\Command\LintCommand();
-
+    $twigLintCommand = new TwigLintCommand();
     $twigEnvironment = new \Twig_Environment(new \Twig_Loader_Filesystem());
 
     $twigEnvironment->addExtension(new Twig_Extensions_Extension_Text());
     $twigEnvironment->addExtension(new Twig_Extensions_Extension_I18n());
     $twigEnvironment->addExtension(new Twig_Extensions_Extension_Intl());
     $twigEnvironment->addExtension(new Twig_Extensions_Extension_Date());
-    $translator = new Symfony\Component\Translation\Translator('en_US');
-    $twigEnvironment->addExtension(new Symfony\Bridge\Twig\Extension\TranslationExtension($translator));
+    $twigEnvironment->addExtension(new TranslationExtension(new Translator('en_US')));
 
     $twigEnvironment->addFunction(new Twig_SimpleFunction('asset', function () {}));
     $twigEnvironment->addFunction(new Twig_SimpleFunction('image', function () {}));
@@ -33,7 +45,51 @@ function initTwigLinter(Application $application) {
     $application->add($twigLintCommand);
 }
 
-$application = new Application('TwigYard', '0.1.0');
+function getSitesDirs()
+{
+    $finder = Finder::create()->directories()->in(SITES_DIR)->depth('== 0');
+    return $finder->getIterator();
+}
+
+function buildSiteYmlFileList($siteDir)
+{
+    $list = [];
+    $finder = Finder::create()->files()->in(SITES_DIR . '/' . $siteDir)->name('/.y[a]?ml$/')->depth('== 0');
+    foreach ($finder as $file) {
+        $list[] = $file->getPathname();
+    }
+
+    $dirs = [
+        SITES_DIR . '/' . $siteDir . '/' . DATA_DIR,
+        SITES_DIR . '/' . $siteDir . '/' . LANGUAGES_DIR,
+    ];
+
+    foreach ($dirs as $dir) {
+        if (file_exists($dir)) {
+            $list[] = $dir;
+        }
+    }
+
+    return $list;
+}
+
+function lintSiteFiles(Application $application, $siteDir)
+{
+    $output = new ConsoleOutput();
+    $output->writeln(sprintf('<comment>Now checking site %s...</comment>', $siteDir));
+    foreach (buildSiteYmlFileList($siteDir) as $node) {
+        $exitCode = $application->run(new ArgvInput(['', 'lint:yaml', $node]));
+        if ($exitCode !== 0) {
+            exit($exitCode);
+        }
+    }
+    $exitCode = $application->run(new ArgvInput(['', 'lint:twig', SITES_DIR . '/' . $siteDir . '/' . TEMPLATES_DIR]));
+    if ($exitCode !== 0) {
+        exit($exitCode);
+    }
+}
+
+$application = new Application('TwigYard');
 initYamlLinter($application);
 initTwigLinter($application);
 $application->setAutoExit(false);
@@ -42,24 +98,32 @@ $argv = $_SERVER['argv'];
 $argc = $_SERVER['argc'];
 
 if ($argc === 2) {
-    $application->run(new ArgvInput(['', 'lint:yaml', 'sites/' . $argv[1]]));
-    $application->run(new ArgvInput(['', 'lint:twig', 'sites/' . $argv[1]]));
-} elseif ($argc === 1) {
-    $application->run(new ArgvInput(['', 'lint:yaml', 'sites']));
-    $application->run(new ArgvInput(['', 'lint:twig', 'sites']));
-} else {
-    $output = new \Symfony\Component\Console\Output\ConsoleOutput();
-    $output->write(<<<EOF
+    $output = new ConsoleOutput();
+    if ($argv[1] === '--all') {
+        $output->writeln('<info>Checking all sites...</info>');
+        foreach (getSitesDirs() as $siteDir) {
+            lintSiteFiles($application, $siteDir->getFilename());
+        }
+        $output->writeln('<info>Done.</info>');
+        exit(0);
+    }
+    if (file_exists(SITES_DIR . '/' . $argv[1])) {
+        lintSiteFiles($application, $argv[1]);
+        $output->writeln('<info>Done.</info>');
+        exit(0);
+    }
+}
+
+
+$output = new ConsoleOutput();
+$output->write(<<<EOF
 The <info>lintsite</info> command lints a twig templates and yaml configuration files.
-
-You can validate the syntax of contents of the site
-
+You can lint single site:
   <info>lintsite sitename</info>
-
-Or the syntax of the whole site's directory:
-
-  <info>lintsite</info>
+Or the syntax of all sites in the site's directory:
+  <info>lintsite --all</info>
 
 EOF
-    );
-}
+);
+
+exit(1);
