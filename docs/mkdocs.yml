@@ -1,2 +1,3 @@
 site_name: TwigYard documentation
 theme: readthedocs
+google_analytics: ['UA-85289576-2', 'docs.twigyard.com']
