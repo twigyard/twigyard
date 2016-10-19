@@ -32,4 +32,7 @@ before_script:
   - vendor/bin/codecept build --no-interaction
 
 script:
+  - find src tests %s -name "*.php" -print0 | xargs -0 -n1 -P8 php -l
+  - vendor/bin/phpcs --standard=.php_cs_ruleset.xml --encoding=utf-8 --ignore=tests/**/_bootstrap.php --ignore=tests/_support/*Tester.php src tests
+  - vendor/bin/phpcs --standard=PSR2 --encoding=utf-8 --ignore=tests/**/_bootstrap.php --ignore=tests/_support/*Tester.php src tests
   - vendor/bin/codecept run --no-interaction
