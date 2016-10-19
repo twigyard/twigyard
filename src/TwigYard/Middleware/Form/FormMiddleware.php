@@ -50,25 +50,33 @@ class FormMiddleware
     private $translatorFactory;
 
     /**
+     * @var string
+     */
+    private $logDir;
+    
+    /**
      * FormMiddleware constructor.
      * @param AppState $appState
      * @param CsrfTokenGenerator $csrfTokenGenerator
      * @param FormValidator $formValidator
      * @param FormHandlerFactory $formHandlerFactory
      * @param TranslatorFactory $translatorFactory
+     * @param string $logDir
      */
     public function __construct(
         AppState $appState,
         CsrfTokenGenerator $csrfTokenGenerator,
         FormValidator $formValidator,
         FormHandlerFactory $formHandlerFactory,
-        TranslatorFactory $translatorFactory
+        TranslatorFactory $translatorFactory,
+        $logDir
     ) {
         $this->appState = $appState;
         $this->csrfTokenGenerator = $csrfTokenGenerator;
         $this->formValidator = $formValidator;
         $this->formHandlerFactory = $formHandlerFactory;
         $this->translatorFactory = $translatorFactory;
+        $this->logDir = $logDir;
     }
 
     /**
@@ -90,7 +98,7 @@ class FormMiddleware
         foreach ($this->appState->getConfig()['form'] as $formName => $formConf) {
             foreach ($formConf['handlers'] as $handler) {
                 if ($handler['type'] === FormHandlerFactory::TYPE_LOG
-                    && !is_writable($this->appState->getSiteDir() . '/' . Application::LOG_DIR)) {
+                    && !is_writable($this->appState->getSiteDir() . '/' . $this->logDir)) {
                     throw new LogDirectoryNotWritableException();
                 }
             }
