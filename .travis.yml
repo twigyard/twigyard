@@ -1,0 +1,35 @@
+language: php
+
+os:
+  - linux
+
+git:
+  depth: 1
+
+php:
+    - 5.6
+    - 7.0
+    - 7.1
+    - nightly
+
+matrix:
+  fast_finish: true
+  allow_failures:
+    - php: nightly
+
+
+sudo: false
+
+before_install: "phpenv config-rm xdebug.ini 2>/dev/null || :"
+
+install:
+  - composer install --no-interaction
+  - vendor/bin/codecept --version
+
+before_script:
+  - vendor/bin/codecept bootstrap --no-interaction
+  - vendor/bin/codecept clean --no-interaction
+  - vendor/bin/codecept build --no-interaction
+
+script:
+  - vendor/bin/codecept run --no-interaction
