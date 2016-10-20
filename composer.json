@@ -12,6 +12,7 @@
         "psr-0": { "": "src/" }
     },
     "require": {
+        "php": ">=5.6",
         "gregwar/image": "~2.0.20",
         "relay/relay": "1.*@dev",
         "symfony/twig-bridge": "^2.7",
