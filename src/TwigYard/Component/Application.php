@@ -29,7 +29,7 @@ class Application
     const VALID_LOCALES = ['cs_CZ', 'en_US'];
 
     /**
-     * @var
+     * @var ApplicationConfig
      */
     private $config;
 
@@ -70,7 +70,7 @@ class Application
      * @param bool $enableTracking
      * @param string $logOnLevel
      * @param bool $debugEmailEnabled
-     * @param array $config
+     * @param ApplicationConfig $config
      */
     public function __construct(
         $appRoot,
@@ -79,7 +79,7 @@ class Application
         $enableTracking,
         $logOnLevel,
         $debugEmailEnabled,
-        $config
+        ApplicationConfig $config
     ) {
         $this->appRoot = $appRoot;
         $this->cacheEnabled = $cacheEnabled;
@@ -126,22 +126,22 @@ class Application
             $appState,
             $this->showErrors,
             $globalLoggerFactory,
-            $this->config['template_dir'],
-            $this->config['error_404_page_name'],
-            $this->config['error_500_page_name']
+            $this->config->getTemplateDir(),
+            $this->config->getError404PageName(),
+            $this->config->getError500PageName()
         );
         $queue[] = new UrlMiddleware(
             $appState,
             $this->getConfigCache($this->cacheEnabled, $globalParameters),
-            $this->appRoot . '/' . $this->config['sites_dir'],
+            $this->appRoot . '/' . $this->config->getSitesDir(),
             $globalParameters['site_config'],
-            $this->config['site_parameters'],
+            $this->config->getSiteParameters(),
             $globalParameters['parent_domain']
         );
         $queue[] = new RedirectMiddleware($appState);
         $queue[] = new HttpauthMiddleware($appState);
         $queue[] = new LocaleMiddleware($appState, self::VALID_LOCALES);
-        $queue[] = new DataMiddleware($appState, $this->config['data_dir']);
+        $queue[] = new DataMiddleware($appState, $this->config->getDataDir());
         $queue[] = new RouterMiddleware($appState);
         $queue[] = new FormMiddleware(
             $appState,
@@ -149,7 +149,7 @@ class Application
             $formValidator,
             $formHandlerFactory,
             $this->getTranslatorFactory($appState, $this->appRoot),
-            $this->config['log_dir']
+            $this->config->getLogDir()
         );
         $queue[] = new TrackingMiddleware($appState, $this->enableTracking);
         $queue[] = new RendererMiddleware($appState, $tplFactory);
@@ -162,23 +162,23 @@ class Application
      */
     private function getTplFactory()
     {
-        $imageFactory = new ImageFactory($this->config['base_path'], $this->config['image_cache_dir']);
+        $imageFactory = new ImageFactory($this->config->getBasePath(), $this->config->getImageCacheDir());
         $assetCacheManagerFactory = new AssetCacheManagerFactory(
-            $this->config['base_path'],
-            $this->config['cache_namespace_assets']
+            $this->config->getBasePath(),
+            $this->config->getCacheNamespaceAssets()
         );
         $tplClosureFactory = new TemplatingClosureFactory(
-            $this->config['base_path'],
+            $this->config->getBasePath(),
             $imageFactory,
             $assetCacheManagerFactory
         );
 
         return new TwigTemplatingFactory(
-            $this->config['template_dir'],
-            $this->config['language_dir'],
-            $this->config['asset_dir'],
+            $this->config->getTemplateDir(),
+            $this->config->getLanguageDir(),
+            $this->config->getAssetDir(),
             $tplClosureFactory,
-            $this->cacheEnabled ? $this->config['site_cache_dir'] : null
+            $this->cacheEnabled ? $this->config->getSiteCacheDir() : null
         );
     }
 
@@ -189,7 +189,7 @@ class Application
     {
         return Yaml::parse(
             file_get_contents(
-                $this->appRoot . '/' . $this->config['config_dir'] . '/' . $this->config['global_parameters']
+                $this->appRoot . '/' . $this->config->getConfigDir() . '/' . $this->config->getGlobalParameters()
             )
         )['parameters'];
     }
@@ -201,7 +201,7 @@ class Application
     {
         return Yaml::parse(
             file_get_contents(
-                $this->appRoot . '/' . $this->config['config_dir'] . '/' . $this->config['default_site_parameters']
+                $this->appRoot . '/' . $this->config->getConfigDir() . '/' . $this->config->getDefaultSiteParameters()
             )
         )['parameters'];
     }
@@ -214,9 +214,9 @@ class Application
     private function getConfigCache($cacheEnabled, array $parameters)
     {
         $cacheStorage = $cacheEnabled
-            ? new FileStorage($this->appRoot . '/' . $this->config['config_cache_dir'])
+            ? new FileStorage($this->appRoot . '/' . $this->config->getConfigCacheDir())
             : new DevNullStorage();
-        $cache = new Cache($cacheStorage, $this->config['cache_namespace_config']);
+        $cache = new Cache($cacheStorage, $this->config->getCacheNamespaceConfig());
 
         return new ConfigCache($cache, $this->getGlobalLoggerFactory($parameters));
     }
@@ -228,7 +228,7 @@ class Application
     private function getGlobalLoggerFactory(array $globalParameters)
     {
         return new LoggerFactory(
-            $this->appRoot . '/' . $this->config['log_dir'],
+            $this->appRoot . '/' . $this->config->getLogDir(),
             $this->logOnLevel,
             $globalParameters['log_rotation_enabled'],
             (isset($globalParameters['log_max_files']) ? $globalParameters['log_max_files'] : null),
@@ -242,7 +242,7 @@ class Application
      */
     private function getSiteLoggerFactory()
     {
-        return new SiteLoggerFactory($this->config['log_dir'], $this->logOnLevel);
+        return new SiteLoggerFactory($this->config->getLogDir(), $this->logOnLevel);
     }
 
     /**
@@ -270,6 +270,6 @@ class Application
      */
     private function getTranslatorFactory(AppState $appState, $appRoot)
     {
-        return new TranslatorFactory($appState, $appRoot, $this->config['site_cache_dir']);
+        return new TranslatorFactory($appState, $appRoot, $this->config->getSiteCacheDir());
     }
 }
