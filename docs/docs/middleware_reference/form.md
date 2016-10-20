@@ -70,27 +70,36 @@ form:
                 file: form.log
 ```
 ```html
-    <div class="column-first" style="margin-bottom:-25px; margin-top:0;">
-         
+    <div>
+
         {% if form.flash_message %}
-            <div class="message">
-                <div>{{ form.flash_message }}</div>
-            </div>
+            <div>{{ form.flash_message }}</div>
         {%  endif %}
-     
+
         <form method="post" action="#{{ form.contact.anchor }}">
             <input type="hidden" name="contact[csrf_token]" value="{{ form.contact.data.csrf_token }}" />
-            <ul class="form">
-                <li>
-                    <input type="text" name="contact[name]" value="{{ form.contact.data.name }}" />
-                </li>
-                <li>
-                    <textarea rows="5" cols="1" name="contact[message]">{{ form.contact.data.message }}</textarea>
-                </li>
-                <li><input type="submit" value="Submit" /></li>
-            </ul>
+
+            <input type="text" name="contact[name]" value="{{ form.contact.data.name }}" />
+            {% if form.contact.errors.name|length > 0 %}
+                <ul>
+                    {% for error in form.contact.errors.name %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <textarea rows="5" cols="1" name="contact[message]">{{ form.contact.data.message }}</textarea>
+            {% if form.contact.errors.message|length > 0 %}
+                <ul>
+                    {% for error in form.contact.errors.message %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <input type="submit" value="Submit" />
         </form>
-     
+
     </div>
 ```
 
@@ -102,5 +111,5 @@ name           | type   | description
 anchor         | string | Name of anchor to which the form should scroll after submit. Must be used in <form> tag action attribute to enable scroll after submitting invalid data.
 csrf_token     | string | The csrf token to be used in validation.
 data           | map    | The user submitted data. Must be manually rendered in template to persist invalid data.
-errors         | map    | A map of lists where each map key is a field name and each element in the list as one error message. There is one error message for each failed validator constraint.
+errors         | map    | A map of lists where each map key is a field name and each element in the list is one error message. There is one error message for each failed validator constraint.
 flash_message  | string | The message informing the user of the result of the action he or she took. For example it informs the user weather the form was submitted successfully or if there are any invalid fields.
