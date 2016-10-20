@@ -99,6 +99,11 @@ class ApplicationConfig
      */
     private $cacheNamespaceAssets;
 
+    /**
+     * ApplicationConfig constructor.
+     * @param array $config
+     * @throws InvalidApplicationConfigException
+     */
     public function __construct(array $config)
     {
         $mandatoryConfigKeys = [
@@ -283,16 +288,28 @@ class ApplicationConfig
         return $this->cacheNamespaceAssets;
     }
 
+    /**
+     * @param string $index
+     * @return string
+     */
     private function convertIndexToProperty($index)
     {
         return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $index))));
     }
-    
+
+    /**
+     * @param string $index
+     * @param array $value
+     */
     private function setArray($index, array $value)
     {
         $this->{$this->convertIndexToProperty($index)} = $value;
     }
 
+    /**
+     * @param string $index
+     * @param string $value
+     */
     private function setString($index, $value)
     {
         $this->{$this->convertIndexToProperty($index)} = (string) $value;
