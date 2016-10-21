@@ -28,43 +28,10 @@ class Application
     // Sites can not implement any other locales
     const VALID_LOCALES = ['cs_CZ', 'en_US'];
 
-    // Must not end with /
-    const BASE_PATH = '';
-
-    // path relative to application root
-    const CONFIG_DIR = 'app/config';
-    const GLOBAL_PARAMETERS = 'parameters.yml';
-    const DEFAULT_SITE_PARAMETERS = 'default_site_parameters.yml';
-
-    // path relative to application root
-    const SITES_DIR = 'sites';
-
-    // path relative to config cache directory
-    const CONFIG_CACHE_DIR = 'var/cache';
-
-    const LOG_DIR = 'var/log';
-
-
-    // path relative to the site directory
-    const ASSET_DIR = 'web';
-    const DATA_DIR = 'src/data';
-    const LANGUAGE_DIR = 'src/languages';
-    const SITE_CACHE_DIR = 'var/cache';
-
-    const SITE_PARAMETERS = 'parameters.yml';
-
-    const TEMPLATE_DIR = 'src/templates';
-
-    // can be located either in templates/ or templates/<locale> dirs
-    const ERROR_404_PAGE_NAME = '404.html';
-    const ERROR_500_PAGE_NAME = '500.html';
-
-    // path relative to the ASSET_DIR
-    const IMAGE_CACHE_DIR = 'image_cache';
-
-    const CACHE_NAMESPACE_CONFIG = 'config';
-    const CACHE_NAMESPACE_ASSETS = 'assets';
-
+    /**
+     * @var ApplicationConfig
+     */
+    private $config;
 
     /**
      * @var string
@@ -103,6 +70,7 @@ class Application
      * @param bool $enableTracking
      * @param string $logOnLevel
      * @param bool $debugEmailEnabled
+     * @param ApplicationConfig $config
      */
     public function __construct(
         $appRoot,
@@ -110,7 +78,8 @@ class Application
         $showErrors,
         $enableTracking,
         $logOnLevel,
-        $debugEmailEnabled
+        $debugEmailEnabled,
+        ApplicationConfig $config
     ) {
         $this->appRoot = $appRoot;
         $this->cacheEnabled = $cacheEnabled;
@@ -118,6 +87,7 @@ class Application
         $this->enableTracking = $enableTracking;
         $this->logOnLevel = $logOnLevel;
         $this->debugEmailEnabled = $debugEmailEnabled;
+        $this->config = $config;
     }
 
     public function run()
@@ -156,29 +126,30 @@ class Application
             $appState,
             $this->showErrors,
             $globalLoggerFactory,
-            self::TEMPLATE_DIR,
-            self::ERROR_404_PAGE_NAME,
-            self::ERROR_500_PAGE_NAME
+            $this->config->getTemplateDir(),
+            $this->config->getError404PageName(),
+            $this->config->getError500PageName()
         );
         $queue[] = new UrlMiddleware(
             $appState,
             $this->getConfigCache($this->cacheEnabled, $globalParameters),
-            $this->appRoot . '/' . self::SITES_DIR,
+            $this->appRoot . '/' . $this->config->getSitesDir(),
             $globalParameters['site_config'],
-            self::SITE_PARAMETERS,
+            $this->config->getSiteParameters(),
             $globalParameters['parent_domain']
         );
         $queue[] = new RedirectMiddleware($appState);
         $queue[] = new HttpauthMiddleware($appState);
         $queue[] = new LocaleMiddleware($appState, self::VALID_LOCALES);
-        $queue[] = new DataMiddleware($appState, self::DATA_DIR);
+        $queue[] = new DataMiddleware($appState, $this->config->getDataDir());
         $queue[] = new RouterMiddleware($appState);
         $queue[] = new FormMiddleware(
             $appState,
             $csrfTokenGenerator,
             $formValidator,
             $formHandlerFactory,
-            $this->getTranslatorFactory($appState, $this->appRoot)
+            $this->getTranslatorFactory($appState, $this->appRoot),
+            $this->config->getLogDir()
         );
         $queue[] = new TrackingMiddleware($appState, $this->enableTracking);
         $queue[] = new RendererMiddleware($appState, $tplFactory);
@@ -191,16 +162,23 @@ class Application
      */
     private function getTplFactory()
     {
-        $imageFactory = new ImageFactory(self::BASE_PATH, self::IMAGE_CACHE_DIR);
-        $assetCacheManagerFactory = new AssetCacheManagerFactory(self::BASE_PATH, self::CACHE_NAMESPACE_ASSETS);
-        $tplClosureFactory = new TemplatingClosureFactory(self::BASE_PATH, $imageFactory, $assetCacheManagerFactory);
+        $imageFactory = new ImageFactory($this->config->getBasePath(), $this->config->getImageCacheDir());
+        $assetCacheManagerFactory = new AssetCacheManagerFactory(
+            $this->config->getBasePath(),
+            $this->config->getCacheNamespaceAssets()
+        );
+        $tplClosureFactory = new TemplatingClosureFactory(
+            $this->config->getBasePath(),
+            $imageFactory,
+            $assetCacheManagerFactory
+        );
 
         return new TwigTemplatingFactory(
-            self::TEMPLATE_DIR,
-            self::LANGUAGE_DIR,
-            self::ASSET_DIR,
+            $this->config->getTemplateDir(),
+            $this->config->getLanguageDir(),
+            $this->config->getAssetDir(),
             $tplClosureFactory,
-            $this->cacheEnabled ? self::SITE_CACHE_DIR : null
+            $this->cacheEnabled ? $this->config->getSiteCacheDir() : null
         );
     }
 
@@ -210,7 +188,9 @@ class Application
     private function getGlobalParameters()
     {
         return Yaml::parse(
-            file_get_contents($this->appRoot . '/' . self::CONFIG_DIR . '/' . self::GLOBAL_PARAMETERS)
+            file_get_contents(
+                $this->appRoot . '/' . $this->config->getConfigDir() . '/' . $this->config->getGlobalParameters()
+            )
         )['parameters'];
     }
 
@@ -220,7 +200,9 @@ class Application
     private function getDefaultSiteParameters()
     {
         return Yaml::parse(
-            file_get_contents($this->appRoot . '/' . self::CONFIG_DIR . '/' . self::DEFAULT_SITE_PARAMETERS)
+            file_get_contents(
+                $this->appRoot . '/' . $this->config->getConfigDir() . '/' . $this->config->getDefaultSiteParameters()
+            )
         )['parameters'];
     }
 
@@ -232,9 +214,9 @@ class Application
     private function getConfigCache($cacheEnabled, array $parameters)
     {
         $cacheStorage = $cacheEnabled
-            ? new FileStorage($this->appRoot . '/' . self::CONFIG_CACHE_DIR)
+            ? new FileStorage($this->appRoot . '/' . $this->config->getConfigCacheDir())
             : new DevNullStorage();
-        $cache = new Cache($cacheStorage, self::CACHE_NAMESPACE_CONFIG);
+        $cache = new Cache($cacheStorage, $this->config->getCacheNamespaceConfig());
 
         return new ConfigCache($cache, $this->getGlobalLoggerFactory($parameters));
     }
@@ -246,7 +228,7 @@ class Application
     private function getGlobalLoggerFactory(array $globalParameters)
     {
         return new LoggerFactory(
-            $this->appRoot . '/' . self::LOG_DIR,
+            $this->appRoot . '/' . $this->config->getLogDir(),
             $this->logOnLevel,
             $globalParameters['log_rotation_enabled'],
             (isset($globalParameters['log_max_files']) ? $globalParameters['log_max_files'] : null),
@@ -260,7 +242,7 @@ class Application
      */
     private function getSiteLoggerFactory()
     {
-        return new SiteLoggerFactory(self::LOG_DIR, $this->logOnLevel);
+        return new SiteLoggerFactory($this->config->getLogDir(), $this->logOnLevel);
     }
 
     /**
@@ -288,6 +270,6 @@ class Application
      */
     private function getTranslatorFactory(AppState $appState, $appRoot)
     {
-        return new TranslatorFactory($appState, $appRoot, self::SITE_CACHE_DIR);
+        return new TranslatorFactory($appState, $appRoot, $this->config->getSiteCacheDir());
     }
 }

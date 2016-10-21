@@ -69,7 +69,8 @@ class FormMiddlewareCest
             $csrfTokenGenerator->reveal(),
             $formValidator->reveal(),
             $handlerFactory->reveal(),
-            $translatorFactory->reveal()
+            $translatorFactory->reveal(),
+            'var/log'
         );
 
         $I->expectException(InvalidFormNameException::class, function () use ($mw) {
@@ -106,7 +107,8 @@ class FormMiddlewareCest
             $csrfTokenGenerator->reveal(),
             $formValidator->reveal(),
             $handlerFactory->reveal(),
-            $translatorFactory->reveal()
+            $translatorFactory->reveal(),
+            'var/log'
         );
 
         try {
@@ -137,7 +139,8 @@ class FormMiddlewareCest
             $csrfTokenGenerator->reveal(),
             $formValidator->reveal(),
             $handlerFactory->reveal(),
-            $translatorFactory->reveal()
+            $translatorFactory->reveal(),
+            'var/log'
         );
         $mw(new ServerRequest(), new Response(), function () {
             return new Response();
@@ -180,7 +183,8 @@ class FormMiddlewareCest
             $csrfTokenGenerator->reveal(),
             $formValidator->reveal(),
             $handlerFactory->reveal(),
-            $translatorFactory->reveal()
+            $translatorFactory->reveal(),
+            'var/log'
         );
         $mw($this->getRequest()->withCookieParams(['twigyard_csrf_token' => 'token']), new Response(), function () {
             return new Response();
@@ -342,7 +346,8 @@ class FormMiddlewareCest
             $csrfTokenGenerator->reveal(),
             $formValidator->reveal(),
             $handlerFactory->reveal(),
-            $translatorFactory->reveal()
+            $translatorFactory->reveal(),
+            'var/log'
         );
     }
 
