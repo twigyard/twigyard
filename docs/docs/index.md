@@ -6,13 +6,3 @@ One instance of TwigYard can serve many websites and creating a new site is as e
 There is no administration and there never will be. TwigYard is thus best suited for mostly static websites or websites maintained by tech-savvy users. The tool is also very good for prototyping and for building websites where future development will utilize the existing twig templates.
 
 In the TwigYard tool itself we used existing components whenever it was possible. We chose the best tools for the job borrowing from projects like [Symfony](https://symfony.com), [Zend](https://framework.zend.com) or [Nette](https://nette.org), so if you have experience with these, you'll feel right at home and you can start contributing. Pull requests are welcome.
-
- 
-## Features
- * responsive images
- * support for multi language sites
- * forms with email and log handlers (more coming)
- * Twig templating
- * support for 301 redirects
- * scalable
- * low overhead costs (deploys, updates, backups etc.)
