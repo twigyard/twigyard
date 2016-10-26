@@ -6,22 +6,15 @@ class MailerFactory
 {
 
     /**
-     * @var bool
-     */
-    private $debugEmailEnabled;
-
-    /**
      * @var array
      */
     private $defaultSiteParameters;
 
     /**
      * @param array $defaultSiteParameters
-     * @param bool $debugEmailEnabled
      */
-    public function __construct(array $defaultSiteParameters, $debugEmailEnabled)
+    public function __construct(array $defaultSiteParameters)
     {
-        $this->debugEmailEnabled = $debugEmailEnabled;
         $this->defaultSiteParameters = $defaultSiteParameters;
     }
 
@@ -46,7 +39,7 @@ class MailerFactory
         }
 
         $mailer = new Mailer(new \Swift_Mailer(isset($transport) ? $transport : \Swift_MailTransport::newInstance()));
-        if ($this->debugEmailEnabled) {
+        if (array_key_exists('debug_email', $parameters)) {
             $mailer->setDebugRecipient($parameters['debug_email']);
         }
 

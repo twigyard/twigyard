@@ -57,19 +57,13 @@ class Application
      * @var string
      */
     private $logOnLevel;
-
-    /**
-     * @var bool
-     */
-    private $debugEmailEnabled;
-
+    
     /**
      * @param string $appRoot
      * @param bool $cacheEnabled
      * @param bool $showErrors
      * @param bool $enableTracking
      * @param string $logOnLevel
-     * @param bool $debugEmailEnabled
      * @param ApplicationConfig $config
      */
     public function __construct(
@@ -78,7 +72,6 @@ class Application
         $showErrors,
         $enableTracking,
         $logOnLevel,
-        $debugEmailEnabled,
         ApplicationConfig $config
     ) {
         $this->appRoot = $appRoot;
@@ -86,7 +79,6 @@ class Application
         $this->showErrors = $showErrors;
         $this->enableTracking = $enableTracking;
         $this->logOnLevel = $logOnLevel;
-        $this->debugEmailEnabled = $debugEmailEnabled;
         $this->config = $config;
     }
 
@@ -251,7 +243,7 @@ class Application
      */
     private function getMailerFactory(array $defaultSiteParameters)
     {
-        return new MailerFactory($defaultSiteParameters, $this->debugEmailEnabled);
+        return new MailerFactory($defaultSiteParameters);
     }
 
     /**
