@@ -39,46 +39,12 @@ class Application
     private $appRoot;
 
     /**
-     * @var bool
-     */
-    private $cacheEnabled;
-
-    /**
-     * @var bool
-     */
-    private $showErrors;
-
-    /**
-     * @var bool
-     */
-    private $enableTracking;
-
-    /**
-     * @var string
-     */
-    private $logOnLevel;
-    
-    /**
      * @param string $appRoot
-     * @param bool $cacheEnabled
-     * @param bool $showErrors
-     * @param bool $enableTracking
-     * @param string $logOnLevel
      * @param ApplicationConfig $config
      */
-    public function __construct(
-        $appRoot,
-        $cacheEnabled,
-        $showErrors,
-        $enableTracking,
-        $logOnLevel,
-        ApplicationConfig $config
-    ) {
+    public function __construct($appRoot, ApplicationConfig $config)
+    {
         $this->appRoot = $appRoot;
-        $this->cacheEnabled = $cacheEnabled;
-        $this->showErrors = $showErrors;
-        $this->enableTracking = $enableTracking;
-        $this->logOnLevel = $logOnLevel;
         $this->config = $config;
     }
 
@@ -100,7 +66,7 @@ class Application
         $appState = new AppState();
         $globalParameters = $this->getGlobalParameters();
         $defaultSiteParameters = $this->getDefaultSiteParameters();
-        $tplFactory = $this->getTplFactory();
+        $tplFactory = $this->getTplFactory($globalParameters);
         $mailerFactory = $this->getMailerFactory($defaultSiteParameters);
         $csrfTokenGenerator = new CsrfTokenGenerator();
         $formValidator = new FormValidator($this->getValidatorBuilderFactory($appState));
@@ -109,14 +75,14 @@ class Application
             $appState,
             $mailerFactory,
             $tplFactory,
-            $this->getSiteLoggerFactory()
+            $this->getSiteLoggerFactory($globalParameters)
         );
 
         $globalLoggerFactory = $this->getGlobalLoggerFactory($globalParameters);
 
         $queue[] = new ErrorMiddleware(
             $appState,
-            $this->showErrors,
+            $globalParameters['show_errors'],
             $globalLoggerFactory,
             $this->config->getTemplateDir(),
             $this->config->getError404PageName(),
@@ -124,7 +90,7 @@ class Application
         );
         $queue[] = new UrlMiddleware(
             $appState,
-            $this->getConfigCache($this->cacheEnabled, $globalParameters),
+            $this->getConfigCache($globalParameters['cache_enabled'], $globalParameters),
             $this->appRoot . '/' . $this->config->getSitesDir(),
             $globalParameters['site_config'],
             $this->config->getSiteParameters(),
@@ -143,16 +109,17 @@ class Application
             $this->getTranslatorFactory($appState, $this->appRoot),
             $this->config->getLogDir()
         );
-        $queue[] = new TrackingMiddleware($appState, $this->enableTracking);
+        $queue[] = new TrackingMiddleware($appState, $globalParameters['tracking_enabled']);
         $queue[] = new RendererMiddleware($appState, $tplFactory);
 
         return $queue;
     }
 
     /**
+     * @param array $globalParameters
      * @return TwigTemplatingFactory
      */
-    private function getTplFactory()
+    private function getTplFactory(array $globalParameters)
     {
         $imageFactory = new ImageFactory($this->config->getBasePath(), $this->config->getImageCacheDir());
         $assetCacheManagerFactory = new AssetCacheManagerFactory(
@@ -170,7 +137,7 @@ class Application
             $this->config->getLanguageDir(),
             $this->config->getAssetDir(),
             $tplClosureFactory,
-            $this->cacheEnabled ? $this->config->getSiteCacheDir() : null
+            $globalParameters['cache_enabled'] ? $this->config->getSiteCacheDir() : null
         );
     }
 
@@ -221,7 +188,7 @@ class Application
     {
         return new LoggerFactory(
             $this->appRoot . '/' . $this->config->getLogDir(),
-            $this->logOnLevel,
+            constant('Monolog\Logger::' . strtoupper($globalParameters['log_on_level'])),
             $globalParameters['log_rotation_enabled'],
             (isset($globalParameters['log_max_files']) ? $globalParameters['log_max_files'] : null),
             $globalParameters['loggly_token'],
@@ -230,11 +197,12 @@ class Application
     }
 
     /**
+     * @param array $globalParameters
      * @return \TwigYard\Component\SiteLoggerFactory
      */
-    private function getSiteLoggerFactory()
+    private function getSiteLoggerFactory(array $globalParameters)
     {
-        return new SiteLoggerFactory($this->config->getLogDir(), $this->logOnLevel);
+        return new SiteLoggerFactory($this->config->getLogDir(), $globalParameters['log_on_level']);
     }
 
     /**
