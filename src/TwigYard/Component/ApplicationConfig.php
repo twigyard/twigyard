@@ -2,6 +2,7 @@
 
 namespace TwigYard\Component;
 
+use Monolog\Logger;
 use TwigYard\Exception\InvalidApplicationConfigException;
 
 class ApplicationConfig
@@ -136,6 +137,7 @@ class ApplicationConfig
                 case self::TYPE_ARRAY:
                     $this->setArray($configKey, $config[$configKey]);
                     break;
+                
                 case self::TYPE_STRING:
                 default:
                     $this->setString($configKey, $config[$configKey]);
