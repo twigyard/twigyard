@@ -99,7 +99,7 @@ class ApplicationConfig
      * @var string
      */
     private $cacheNamespaceAssets;
-    
+
     /**
      * ApplicationConfig constructor.
      * @param array $config
@@ -289,7 +289,7 @@ class ApplicationConfig
     {
         return $this->cacheNamespaceAssets;
     }
-    
+
     /**
      * @param string $index
      * @return string

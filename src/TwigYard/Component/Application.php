@@ -90,7 +90,7 @@ class Application
         );
         $queue[] = new UrlMiddleware(
             $appState,
-            $this->getConfigCache($globalParameters['cache_enabled'], $globalParameters),
+            $this->getConfigCache($globalParameters),
             $this->appRoot . '/' . $this->config->getSitesDir(),
             $globalParameters['site_config'],
             $this->config->getSiteParameters(),
@@ -166,13 +166,12 @@ class Application
     }
 
     /**
-     * @param bool $cacheEnabled
      * @param array $parameters
      * @return \TwigYard\Component\ConfigCache
      */
-    private function getConfigCache($cacheEnabled, array $parameters)
+    private function getConfigCache(array $parameters)
     {
-        $cacheStorage = $cacheEnabled
+        $cacheStorage = $parameters['cache_enabled']
             ? new FileStorage($this->appRoot . '/' . $this->config->getConfigCacheDir())
             : new DevNullStorage();
         $cache = new Cache($cacheStorage, $this->config->getCacheNamespaceConfig());
