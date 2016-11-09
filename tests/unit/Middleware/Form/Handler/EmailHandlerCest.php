@@ -141,6 +141,40 @@ class EmailHandlerCest
         $prophet->checkPredictions();
     }
 
+    public function testMultiLanguageSiteGeneralTemplate()
+    {
+        $prophet = new Prophet();
+        $messageBuilder = $this->getMessageBuilder($prophet);
+
+        $localeSubDir = 'cs_CZ/';
+        $templating = $prophet->prophesize()->willImplement(TemplatingInterface::class);
+        $templating->render($localeSubDir . 'subject.tpl')->willThrow(
+            new \Twig_Error_Loader(sprintf('Template "%s" is not defined.', $localeSubDir . 'subject.tpl'))
+        );
+        $templating->render($localeSubDir . 'body.tpl')->willThrow(
+            new \Twig_Error_Loader(sprintf('Template "%s" is not defined.', $localeSubDir . 'body.tpl'))
+        );
+        $templating->render('subject.tpl')->willReturn('subject text');
+        $templating->render('body.tpl')->willReturn('body text');
+
+        $templatingFactory = $prophet->prophesize()->willImplement(TemplatingFactoryInterface::class);
+        $templatingFactory->createTemplating(Argument::type(AppState::class))->willReturn($templating->reveal());
+
+
+        $handler = new EmailHandler(
+            [
+                'from' => ['name' => 'from name', 'address' => 'from@address'],
+                'recipients' => [],
+                'templates' => ['subject' => 'subject.tpl', 'body' => 'body.tpl'],
+            ],
+            $this->getMailer($prophet, $messageBuilder)->reveal(),
+            $templatingFactory->reveal(),
+            $this->getAppState($prophet, true)->reveal()
+        );
+        $handler->handle([]);
+        $prophet->checkPredictions();
+    }
+
     /**
      * @param Prophet $prophet
      * @return \Prophecy\Prophecy\ObjectProphecy

@@ -5,6 +5,7 @@ namespace TwigYard\Middleware\Form\Handler;
 use TwigYard\Component\AppState;
 use TwigYard\Component\Mailer;
 use TwigYard\Component\TemplatingFactoryInterface;
+use TwigYard\Component\TemplatingInterface;
 
 class EmailHandler implements HandlerInterface
 {
@@ -22,6 +23,16 @@ class EmailHandler implements HandlerInterface
      * @var TemplatingFactoryInterface
      */
     private $templatingFactory;
+
+    /**
+     * @var TemplatingInterface
+     */
+    private $templating;
+
+    /**
+     * @var string
+     */
+    private $localeSubDir;
 
     /**
      * @var AppState
@@ -45,6 +56,8 @@ class EmailHandler implements HandlerInterface
         $this->mailer = $mailer;
         $this->templatingFactory = $templatingFactory;
         $this->appState = $appState;
+        $this->templating = null;
+        $this->localeSubDir = null;
     }
 
     /**
@@ -52,14 +65,14 @@ class EmailHandler implements HandlerInterface
      */
     public function handle(array $formData)
     {
-        $templating = $this->templatingFactory->createTemplating($this->appState);
-        $localeSubDir = $this->appState->isSingleLanguage() ? '' : $this->appState->getLocale() . '/';
+        $subjectContent = $this->renderTemplate($this->config['templates']['subject']);
+        $bodyContent = $this->renderTemplate($this->config['templates']['body']);
 
         $messageBuilder = $this->mailer->getMessageBuilder();
         $messageBuilder
             ->setFrom([$this->config['from']['address'] => $this->config['from']['name']])
-            ->setSubject($templating->render($localeSubDir . $this->config['templates']['subject']))
-            ->setBody($templating->render($localeSubDir . $this->config['templates']['body']));
+            ->setSubject($subjectContent)
+            ->setBody($bodyContent);
         if (isset($this->config['recipients']['to'])) {
             $addressArr = $this->replacePlaceholders($this->config['recipients']['to'], $formData);
             $messageBuilder->setTo($addressArr);
@@ -90,5 +103,26 @@ class EmailHandler implements HandlerInterface
         }
 
         return $valueArr;
+    }
+
+    /**
+     * @param string $name
+     * @return string
+     */
+    private function renderTemplate($name)
+    {
+        if (!$this->templating) {
+            $this->templating = $this->templatingFactory->createTemplating($this->appState);
+        }
+
+        if (!$this->localeSubDir) {
+            $this->localeSubDir = $this->appState->isSingleLanguage() ? '' : $this->appState->getLocale() . '/';
+        }
+
+        try {
+            return $this->templating->render($this->localeSubDir . $name);
+        } catch (\Twig_Error_Loader $e) {
+            return $this->templating->render($name);
+        }
     }
 }
