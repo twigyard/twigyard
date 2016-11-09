@@ -55,11 +55,25 @@ class EmailHandler implements HandlerInterface
         $templating = $this->templatingFactory->createTemplating($this->appState);
         $localeSubDir = $this->appState->isSingleLanguage() ? '' : $this->appState->getLocale() . '/';
 
+        try {
+            $subjectContent = $templating->render($localeSubDir . $this->config['templates']['subject']);
+        } catch (\Twig_Error_Loader $e) {
+            $subjectContent = $templating->render($this->config['templates']['subject']);
+        }
+
+        try {
+            $bodyContent = $templating->render($localeSubDir . $this->config['templates']['body']);
+        } catch (\Twig_Error_Loader $e) {
+            $bodyContent = $templating->render($this->config['templates']['body']);
+        }
+
+
+
         $messageBuilder = $this->mailer->getMessageBuilder();
         $messageBuilder
             ->setFrom([$this->config['from']['address'] => $this->config['from']['name']])
-            ->setSubject($templating->render($localeSubDir . $this->config['templates']['subject']))
-            ->setBody($templating->render($localeSubDir . $this->config['templates']['body']));
+            ->setSubject($subjectContent)
+            ->setBody($bodyContent);
         if (isset($this->config['recipients']['to'])) {
             $addressArr = $this->replacePlaceholders($this->config['recipients']['to'], $formData);
             $messageBuilder->setTo($addressArr);
