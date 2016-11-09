@@ -95,6 +95,12 @@ class EmailHandler implements HandlerInterface
         return $valueArr;
     }
 
+    /**
+     * @param \TwigYard\Component\TemplatingInterface $templating
+     * @param string $name
+     * @param string $localeSubDir
+     * @return string
+     */
     private function renderTemplate(TemplatingInterface $templating, $name, $localeSubDir)
     {
         try {
