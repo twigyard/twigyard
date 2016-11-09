@@ -5,6 +5,7 @@ namespace TwigYard\Middleware\Form\Handler;
 use TwigYard\Component\AppState;
 use TwigYard\Component\Mailer;
 use TwigYard\Component\TemplatingFactoryInterface;
+use TwigYard\Component\TemplatingInterface;
 
 class EmailHandler implements HandlerInterface
 {
@@ -54,20 +55,8 @@ class EmailHandler implements HandlerInterface
     {
         $templating = $this->templatingFactory->createTemplating($this->appState);
         $localeSubDir = $this->appState->isSingleLanguage() ? '' : $this->appState->getLocale() . '/';
-
-        try {
-            $subjectContent = $templating->render($localeSubDir . $this->config['templates']['subject']);
-        } catch (\Twig_Error_Loader $e) {
-            $subjectContent = $templating->render($this->config['templates']['subject']);
-        }
-
-        try {
-            $bodyContent = $templating->render($localeSubDir . $this->config['templates']['body']);
-        } catch (\Twig_Error_Loader $e) {
-            $bodyContent = $templating->render($this->config['templates']['body']);
-        }
-
-
+        $subjectContent = $this->renderTemplate($templating, $this->config['templates']['subject'], $localeSubDir);
+        $bodyContent = $this->renderTemplate($templating, $this->config['templates']['body'], $localeSubDir);
 
         $messageBuilder = $this->mailer->getMessageBuilder();
         $messageBuilder
@@ -104,5 +93,14 @@ class EmailHandler implements HandlerInterface
         }
 
         return $valueArr;
+    }
+
+    private function renderTemplate(TemplatingInterface $templating, $name, $localeSubDir)
+    {
+        try {
+            return $templating->render($localeSubDir . $name);
+        } catch (\Twig_Error_Loader $e) {
+            return $templating->render($name);
+        }
     }
 }
