@@ -25,6 +25,16 @@ class EmailHandler implements HandlerInterface
     private $templatingFactory;
 
     /**
+     * @var TemplatingInterface
+     */
+    private $templating;
+
+    /**
+     * @var string
+     */
+    private $localeSubDir;
+
+    /**
      * @var AppState
      */
     private $appState;
@@ -46,6 +56,8 @@ class EmailHandler implements HandlerInterface
         $this->mailer = $mailer;
         $this->templatingFactory = $templatingFactory;
         $this->appState = $appState;
+        $this->templating = null;
+        $this->localeSubDir = null;
     }
 
     /**
@@ -53,10 +65,8 @@ class EmailHandler implements HandlerInterface
      */
     public function handle(array $formData)
     {
-        $templating = $this->templatingFactory->createTemplating($this->appState);
-        $localeSubDir = $this->appState->isSingleLanguage() ? '' : $this->appState->getLocale() . '/';
-        $subjectContent = $this->renderTemplate($templating, $this->config['templates']['subject'], $localeSubDir);
-        $bodyContent = $this->renderTemplate($templating, $this->config['templates']['body'], $localeSubDir);
+        $subjectContent = $this->renderTemplate($this->config['templates']['subject']);
+        $bodyContent = $this->renderTemplate($this->config['templates']['body']);
 
         $messageBuilder = $this->mailer->getMessageBuilder();
         $messageBuilder
@@ -96,17 +106,23 @@ class EmailHandler implements HandlerInterface
     }
 
     /**
-     * @param \TwigYard\Component\TemplatingInterface $templating
      * @param string $name
-     * @param string $localeSubDir
      * @return string
      */
-    private function renderTemplate(TemplatingInterface $templating, $name, $localeSubDir)
+    private function renderTemplate($name)
     {
+        if (!$this->templating) {
+            $this->templating = $this->templatingFactory->createTemplating($this->appState);
+        }
+
+        if (!$this->localeSubDir) {
+            $this->localeSubDir = $this->appState->isSingleLanguage() ? '' : $this->appState->getLocale() . '/';
+        }
+
         try {
-            return $templating->render($localeSubDir . $name);
+            return $this->templating->render($this->localeSubDir . $name);
         } catch (\Twig_Error_Loader $e) {
-            return $templating->render($name);
+            return $this->templating->render($name);
         }
     }
 }
