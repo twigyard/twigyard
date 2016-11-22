@@ -42,7 +42,7 @@ option      | type      | required   | description
 ------------|-----------|------------|------------    
 recipients  | map       | ✓          | A map with keys `to` and `bcc`. Each key holds a list of zero or more email addresses. Value submitted by user can be used by using the placeholder {{form_filed_name}}. It is useful, for example, to send an email to the user who submitted the form. All placeholders must be quoted.
 from        | map       | ✓          | The sender as it should appear in the from email header. It must have the following keys: `name`, `address`
-templates   | map       | ✓          | A map with exactly two keys: `subject`, `body`. Each holds a string with a path to the template for the respective part of the email message relative to the `src/templates` folder. All user submitted values are made available in each of the two templates.
+templates   | map       | ✓          | A map with exactly two keys: `subject`, `body`. Each holds a string with a path to the template for the respective part of the email message. The path is first checked relative to `<site_root>src/templates/<locale>` folder. If no match is found, the path is checked relative to `<site_root>src/templates` folder. Within both templates are available the same variables as in non-email templates including `form.<form_name>.data` populated with user submitted form data. 
 
 #### Log
 Logs the form data to the specified log file.
