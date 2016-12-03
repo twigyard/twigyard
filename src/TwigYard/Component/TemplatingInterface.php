@@ -2,6 +2,8 @@
 
 namespace TwigYard\Component;
 
+use Symfony\Component\Translation\Translator;
+
 interface TemplatingInterface
 {
     /**
@@ -10,6 +12,7 @@ interface TemplatingInterface
      * @param string $languageDir
      * @param string $assetDir
      * @param \TwigYard\Component\TemplatingClosureFactory $tplClosureFactory
+     * @param \TwigYard\Component\SiteTranslatorFactory $siteTranslatorFactory
      * @param array $options
      */
     public function __construct(
@@ -18,6 +21,7 @@ interface TemplatingInterface
         $languageDir,
         $assetDir,
         TemplatingClosureFactory $tplClosureFactory,
+        SiteTranslatorFactory $siteTranslatorFactory,
         array $options
     );
 

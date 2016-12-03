@@ -4,6 +4,7 @@ namespace Unit\Middleware\Form;
 
 use TwigYard\Component\AppState;
 use TwigYard\Component\CsrfTokenGenerator;
+use TwigYard\Component\SiteTranslatorFactory;
 use TwigYard\Component\TranslatorFactory;
 use Dflydev\FigCookies\SetCookies;
 use TwigYard\Middleware\Form\Exception\LogDirectoryNotWritableException;
@@ -60,6 +61,7 @@ class FormMiddlewareCest
         $formValidator = $prophet->prophesize(FormValidator::class);
         $handlerFactory =$prophet->prophesize(FormHandlerFactory::class);
         $translatorFactory = $prophet->prophesize(TranslatorFactory::class);
+        $siteTranslatorFactory = $prophet->prophesize(SiteTranslatorFactory::class);
         $fs = new FileSystem();
         $fs->createDirectory('/sites/www.example.com/var/log', true);
         $appState->getSiteDir()->willReturn($fs->path('/sites/www.example.com'));
@@ -70,6 +72,7 @@ class FormMiddlewareCest
             $formValidator->reveal(),
             $handlerFactory->reveal(),
             $translatorFactory->reveal(),
+            $siteTranslatorFactory->reveal(),
             'var/log'
         );
 
@@ -101,6 +104,7 @@ class FormMiddlewareCest
         $formValidator = $prophet->prophesize(FormValidator::class);
         $handlerFactory =$prophet->prophesize(FormHandlerFactory::class);
         $translatorFactory = $prophet->prophesize(TranslatorFactory::class);
+        $siteTranslatorFactory = $prophet->prophesize(SiteTranslatorFactory::class);
 
         $mw = new FormMiddleware(
             $appState->reveal(),
@@ -108,6 +112,7 @@ class FormMiddlewareCest
             $formValidator->reveal(),
             $handlerFactory->reveal(),
             $translatorFactory->reveal(),
+            $siteTranslatorFactory->reveal(),
             'var/log'
         );
 
@@ -134,12 +139,16 @@ class FormMiddlewareCest
         $translatorFactory = $prophet->prophesize(TranslatorFactory::class);
         $translatorFactory->getTranslator()->willReturn(new Translator('en'));
 
+        $siteTranslatorFactory = $prophet->prophesize(SiteTranslatorFactory::class);
+        $siteTranslatorFactory->getTranslator()->willReturn(new Translator('en'));
+
         $mw = new FormMiddleware(
             $appState->reveal(),
             $csrfTokenGenerator->reveal(),
             $formValidator->reveal(),
             $handlerFactory->reveal(),
             $translatorFactory->reveal(),
+            $siteTranslatorFactory->reveal(),
             'var/log'
         );
         $mw(new ServerRequest(), new Response(), function () {
@@ -178,12 +187,16 @@ class FormMiddlewareCest
         $translatorFactory = $prophet->prophesize(TranslatorFactory::class);
         $translatorFactory->getTranslator()->willReturn(new Translator('en'));
 
+        $siteTranslatorFactory = $prophet->prophesize(SiteTranslatorFactory::class);
+        $siteTranslatorFactory->getTranslator()->willReturn(new Translator('en'));
+
         $mw = new FormMiddleware(
             $appState->reveal(),
             $csrfTokenGenerator->reveal(),
             $formValidator->reveal(),
             $handlerFactory->reveal(),
             $translatorFactory->reveal(),
+            $siteTranslatorFactory->reveal(),
             'var/log'
         );
         $mw($this->getRequest()->withCookieParams(['twigyard_csrf_token' => 'token']), new Response(), function () {
@@ -341,12 +354,16 @@ class FormMiddlewareCest
         $translatorFactory = $prophet->prophesize(TranslatorFactory::class);
         $translatorFactory->getTranslator()->willReturn(new Translator('en'));
 
+        $siteTranslatorFactory = $prophet->prophesize(SiteTranslatorFactory::class);
+        $siteTranslatorFactory->getTranslator(new TypeToken('string'))->willReturn(new Translator('en'));
+
         return new FormMiddleware(
             $appState->reveal(),
             $csrfTokenGenerator->reveal(),
             $formValidator->reveal(),
             $handlerFactory->reveal(),
             $translatorFactory->reveal(),
+            $siteTranslatorFactory->reveal(),
             'var/log'
         );
     }

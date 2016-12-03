@@ -5,6 +5,7 @@ namespace TwigYard\Middleware\Form;
 use TwigYard\Component\Application;
 use TwigYard\Component\AppState;
 use TwigYard\Component\CsrfTokenGenerator;
+use TwigYard\Component\SiteTranslatorFactory;
 use TwigYard\Component\TranslatorFactory;
 use Dflydev\FigCookies\FigResponseCookies;
 use Dflydev\FigCookies\SetCookie;
@@ -50,10 +51,25 @@ class FormMiddleware
     private $translatorFactory;
 
     /**
+     * @var SiteTranslatorFactory
+     */
+    private $siteTranslatorFactory;
+
+    /**
      * @var string
      */
     private $logDir;
     
+    /**
+     * @var string
+     */
+    private $siteCacheDir;
+
+    /**
+     * @var string
+     */
+    private $languageResourcesDir;
+
     /**
      * FormMiddleware constructor.
      * @param AppState $appState
@@ -61,6 +77,7 @@ class FormMiddleware
      * @param FormValidator $formValidator
      * @param FormHandlerFactory $formHandlerFactory
      * @param TranslatorFactory $translatorFactory
+     * @param SiteTranslatorFactory $siteTranslatorFactory
      * @param string $logDir
      */
     public function __construct(
@@ -69,6 +86,7 @@ class FormMiddleware
         FormValidator $formValidator,
         FormHandlerFactory $formHandlerFactory,
         TranslatorFactory $translatorFactory,
+        SiteTranslatorFactory $siteTranslatorFactory,
         $logDir
     ) {
         $this->appState = $appState;
@@ -76,6 +94,7 @@ class FormMiddleware
         $this->formValidator = $formValidator;
         $this->formHandlerFactory = $formHandlerFactory;
         $this->translatorFactory = $translatorFactory;
+        $this->siteTranslatorFactory = $siteTranslatorFactory;
         $this->logDir = $logDir;
     }
 
@@ -178,9 +197,13 @@ class FormMiddleware
                 'Location',
                 $path . '?formSent=' . $formName . (!empty($formConf['anchor']) ? '#' . $formConf['anchor'] : '')
             );
-        $message = !empty($formConf['success_flash_message'])
-            ? $formConf['success_flash_message']
-            : $translator->trans(self::FLASH_MESSAGE_DEFAULT_SUCCESS);
+
+        if (!empty($formConf['success_flash_message'])) {
+            $siteTranslator = $this->siteTranslatorFactory->getTranslator($this->appState->getSiteDir());
+            $message = $siteTranslator->trans($formConf['success_flash_message']);
+        } else {
+            $message = $translator->trans(self::FLASH_MESSAGE_DEFAULT_SUCCESS);
+        }
 
         return $this->setFlashMessageCookie($response, $message);
     }
