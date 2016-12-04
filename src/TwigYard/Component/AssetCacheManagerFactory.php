@@ -22,21 +22,14 @@ class AssetCacheManagerFactory
     /**
      * @var string
      */
-    private $basePath;
-
-    /**
-     * @var string
-     */
     private $cacheNamespace;
 
     /**
      * AssetManagerFactory constructor.
-     * @param $basePath
      * @param $cacheNamespace
      */
-    public function __construct($basePath, $cacheNamespace)
+    public function __construct($cacheNamespace)
     {
-        $this->basePath = $basePath;
         $this->cacheNamespace = $cacheNamespace;
     }
 

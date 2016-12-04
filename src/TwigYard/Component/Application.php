@@ -75,7 +75,7 @@ class Application
             $appState,
             $mailerFactory,
             $tplFactory,
-            $this->getSiteLoggerFactory($globalParameters)
+            $this->getSiteLoggerFactory()
         );
 
         $globalLoggerFactory = $this->getGlobalLoggerFactory($globalParameters);
@@ -122,10 +122,7 @@ class Application
     private function getTplFactory(array $globalParameters)
     {
         $imageFactory = new ImageFactory($this->config->getBasePath(), $this->config->getImageCacheDir());
-        $assetCacheManagerFactory = new AssetCacheManagerFactory(
-            $this->config->getBasePath(),
-            $this->config->getCacheNamespaceAssets()
-        );
+        $assetCacheManagerFactory = new AssetCacheManagerFactory($this->config->getCacheNamespaceAssets());
         $tplClosureFactory = new TemplatingClosureFactory(
             $this->config->getBasePath(),
             $imageFactory,
@@ -196,12 +193,11 @@ class Application
     }
 
     /**
-     * @param array $globalParameters
      * @return \TwigYard\Component\SiteLoggerFactory
      */
-    private function getSiteLoggerFactory(array $globalParameters)
+    private function getSiteLoggerFactory()
     {
-        return new SiteLoggerFactory($this->config->getLogDir(), $globalParameters['log_on_level']);
+        return new SiteLoggerFactory($this->config->getLogDir());
     }
 
     /**

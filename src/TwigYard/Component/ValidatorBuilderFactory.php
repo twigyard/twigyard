@@ -8,20 +8,6 @@ use Symfony\Component\Validator\Validation;
 class ValidatorBuilderFactory
 {
     /**
-     * @var AppState
-     */
-    private $appState;
-
-    /**
-     * ValidatorFactory constructor.
-     * @param \TwigYard\Component\AppState $appState
-     */
-    public function __construct(AppState $appState)
-    {
-        $this->appState = $appState;
-    }
-
-    /**
      * @param Translator $translator
      * @return \Symfony\Component\Validator\Validator\ValidatorInterface
      */

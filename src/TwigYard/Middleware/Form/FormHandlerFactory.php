@@ -70,7 +70,6 @@ class FormHandlerFactory
             );
         } elseif ($config['type'] === self::TYPE_LOG) {
             return new LogHandler(
-                $config,
                 $this->siteLoggerFactory->getFormLogger($this->appState->getSiteDir(), $config['file']),
                 $this->appState
             );

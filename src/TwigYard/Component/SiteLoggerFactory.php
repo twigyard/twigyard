@@ -16,19 +16,12 @@ class SiteLoggerFactory
     private $logDir;
 
     /**
-     * @var string
-     */
-    private $logOnLevel;
-
-    /**
      * FormLoggerFactory constructor.
      * @param string $logDir
-     * @param string $logOnLevel
      */
-    public function __construct($logDir, $logOnLevel)
+    public function __construct($logDir)
     {
         $this->logDir = $logDir;
-        $this->logOnLevel = $logOnLevel;
     }
 
     /**
