@@ -2,7 +2,6 @@
 
 namespace TwigYard\Middleware\Form;
 
-use TwigYard\Component\Application;
 use TwigYard\Component\AppState;
 use TwigYard\Component\CsrfTokenGenerator;
 use TwigYard\Component\TranslatorFactory;

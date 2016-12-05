@@ -1,4 +1,5 @@
 {
+    "description": "Twigyard library",
     "name": "twigyard/twigyard",
     "authors": [
         {
@@ -9,7 +10,7 @@
     "license": "MIT",
     "minimum-stability": "stable",
     "autoload": {
-        "psr-0": { "": "src/" }
+        "psr-0": { "TwigYard\\": "src/" }
     },
     "require": {
         "php": ">=5.6",

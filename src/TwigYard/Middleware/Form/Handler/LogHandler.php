@@ -8,11 +8,6 @@ use Monolog\Logger;
 class LogHandler implements HandlerInterface
 {
     /**
-     * @var array
-     */
-    private $config;
-
-    /**
      * @var AppState
      */
     private $appState;
@@ -24,16 +19,13 @@ class LogHandler implements HandlerInterface
 
     /**
      * EmailHandler constructor.
-     * @param array $config
      * @param \Monolog\Logger $logger
      * @param AppState $appState
      */
     public function __construct(
-        array $config,
         Logger $logger,
         AppState $appState
     ) {
-        $this->config = $config;
         $this->logger = $logger;
         $this->appState = $appState;
     }
