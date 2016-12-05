@@ -108,7 +108,7 @@ class ErrorMiddleware implements MiddlewareInterface
 
         if ($response->getStatusCode() === 404) {
             $this->loggerFactory->getLogger($this->appState->getUrl())
-                ->error('[' . $request->getUri() . '] > 404', $this->appState->dumpContext());
+                ->info('[' . $request->getUri() . '] > 404', $this->appState->dumpContext());
             $errStream = $this->getErrorPageStream($this->page404);
             $response = $response->withBody($errStream);
         }
