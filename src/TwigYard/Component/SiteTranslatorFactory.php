@@ -2,7 +2,6 @@
 
 namespace TwigYard\Component;
 
-use Symfony\Component\Translation\Loader\XliffFileLoader;
 use Symfony\Component\Translation\Loader\YamlFileLoader;
 use Symfony\Component\Translation\MessageSelector;
 use Symfony\Component\Translation\Translator;
@@ -51,7 +50,7 @@ class SiteTranslatorFactory
         $translator = new Translator(
             $locale,
             new MessageSelector(),
-            $siteDir . '/' . $this->cacheDir . '/' . self::TRANSLATIONS_CACHE_DIR
+            $this->cacheDir ? $siteDir . '/' . $this->cacheDir . '/' . self::TRANSLATIONS_CACHE_DIR : null
         );
 
         $translator->addLoader('yaml', new YamlFileLoader());
