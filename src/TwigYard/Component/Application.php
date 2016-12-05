@@ -66,7 +66,8 @@ class Application
         $appState = new AppState();
         $globalParameters = $this->getGlobalParameters();
         $defaultSiteParameters = $this->getDefaultSiteParameters();
-        $tplFactory = $this->getTplFactory($globalParameters);
+        $siteTranslatorFactory = $this->getSiteTranslatorFactory($appState, $globalParameters);
+        $tplFactory = $this->getTplFactory($siteTranslatorFactory, $globalParameters);
         $mailerFactory = $this->getMailerFactory($defaultSiteParameters);
         $csrfTokenGenerator = new CsrfTokenGenerator();
         $formValidator = new FormValidator($this->getValidatorBuilderFactory($appState));
@@ -107,6 +108,7 @@ class Application
             $formValidator,
             $formHandlerFactory,
             $this->getTranslatorFactory($appState, $this->appRoot),
+            $siteTranslatorFactory,
             $this->config->getLogDir()
         );
         $queue[] = new TrackingMiddleware($appState, $globalParameters['tracking_enabled']);
@@ -117,9 +119,10 @@ class Application
 
     /**
      * @param array $globalParameters
+     * @param SiteTranslatorFactory $siteTranslatorFactory
      * @return TwigTemplatingFactory
      */
-    private function getTplFactory(array $globalParameters)
+    private function getTplFactory(SiteTranslatorFactory $siteTranslatorFactory, array $globalParameters)
     {
         $imageFactory = new ImageFactory($this->config->getBasePath(), $this->config->getImageCacheDir());
         $assetCacheManagerFactory = new AssetCacheManagerFactory($this->config->getCacheNamespaceAssets());
@@ -134,6 +137,7 @@ class Application
             $this->config->getLanguageDir(),
             $this->config->getAssetDir(),
             $tplClosureFactory,
+            $siteTranslatorFactory,
             $globalParameters['cache_enabled'] ? $this->config->getSiteCacheDir() : null
         );
     }
@@ -226,5 +230,19 @@ class Application
     private function getTranslatorFactory(AppState $appState, $appRoot)
     {
         return new TranslatorFactory($appState, $appRoot, $this->config->getSiteCacheDir());
+    }
+
+    /**
+     * @param \TwigYard\Component\AppState $appState
+     * @param array $globalParameters
+     * @return \TwigYard\Component\SiteTranslatorFactory
+     */
+    private function getSiteTranslatorFactory(AppState $appState, array $globalParameters)
+    {
+        return new SiteTranslatorFactory(
+            $appState,
+            $this->config->getLanguageDir(),
+            $globalParameters['cache_enabled'] ? $this->config->getSiteCacheDir() : null
+        );
     }
 }

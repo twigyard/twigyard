@@ -32,6 +32,7 @@ class TwigTemplating implements TemplatingInterface
      * @param string $languageDir
      * @param string $assetDir
      * @param \TwigYard\Component\TemplatingClosureFactory $tplClosureFactory
+     * @param \TwigYard\Component\SiteTranslatorFactory $siteTranslatorFactory
      * @param array $options
      */
     public function __construct(
@@ -40,6 +41,7 @@ class TwigTemplating implements TemplatingInterface
         $languageDir,
         $assetDir,
         TemplatingClosureFactory $tplClosureFactory,
+        SiteTranslatorFactory $siteTranslatorFactory,
         array $options
     ) {
         $this->appState = $appState;
@@ -49,7 +51,9 @@ class TwigTemplating implements TemplatingInterface
         $this->twigEnv->addExtension(new Twig_Extensions_Extension_I18n());
         $this->twigEnv->addExtension(new Twig_Extensions_Extension_Intl());
         $this->twigEnv->addExtension(new Twig_Extensions_Extension_Date());
-        $this->twigEnv->addExtension(new TranslationExtension($this->getTranslator($languageDir)));
+        $this->twigEnv->addExtension(
+            new TranslationExtension($siteTranslatorFactory->getTranslator($this->appState->getSiteDir()))
+        );
 
         $this->twigEnv->addFunction(
             new Twig_SimpleFunction('asset', $tplClosureFactory->getAssetClosure(
@@ -86,22 +90,5 @@ class TwigTemplating implements TemplatingInterface
             'url_params' => $this->appState->getUrlParams() ? $this->appState->getUrlParams() : [],
             'tracking' => $this->appState->getTrackingIds(),
         ]);
-    }
-
-    /**
-     * @param string $languageDir
-     * @return \Symfony\Component\Translation\Translator
-     */
-    private function getTranslator($languageDir)
-    {
-        $translator = new Translator($this->appState->getLocale());
-        $translator->addLoader('yaml', new YamlFileLoader());
-        $translator->addResource(
-            'yaml',
-            $languageDir . '/' . $this->appState->getLocale() . '.yml',
-            $this->appState->getLocale()
-        );
-
-        return $translator;
     }
 }

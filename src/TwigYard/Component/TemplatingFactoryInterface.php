@@ -9,6 +9,7 @@ interface TemplatingFactoryInterface
      * @param string $languageDir
      * @param string $assetDir
      * @param \TwigYard\Component\TemplatingClosureFactory $tplClosureFactory
+     * @param \TwigYard\Component\SiteTranslatorFactory $siteTranslatorFactory
      * @param string $siteCacheDir
      */
     public function __construct(
@@ -16,6 +17,7 @@ interface TemplatingFactoryInterface
         $languageDir,
         $assetDir,
         TemplatingClosureFactory $tplClosureFactory,
+        SiteTranslatorFactory $siteTranslatorFactory,
         $siteCacheDir
     );
 
