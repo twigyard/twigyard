@@ -24,6 +24,11 @@ class AppState
     /**
      * @var string
      */
+    private $languageCode;
+
+    /**
+     * @var string
+     */
     private $locale;
 
     /**
@@ -311,6 +316,24 @@ class AppState
     public function setRemoteIp($remoteIp)
     {
         $this->remoteIp = $remoteIp;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLanguageCode()
+    {
+        return $this->languageCode;
+    }
+
+    /**
+     * @param string $languageCode
+     * @return AppState
+     */
+    public function setLanguageCode($languageCode)
+    {
+        $this->languageCode = $languageCode;
         return $this;
     }
     

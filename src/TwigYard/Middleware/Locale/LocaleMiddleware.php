@@ -63,6 +63,9 @@ class LocaleMiddleware implements MiddlewareInterface
                 }
                 $this->appState->setLocale(array_flip($localeMap)[$langCode]);
                 $this->appState->setLocaleMap($localeMap);
+                if (!$this->appState->isSingleLanguage()) {
+                    $this->appState->setLanguageCode($langCode);
+                }
                 $request = $request->withUri($request->getUri()->withPath($newPath));
             } else {
                 if (!in_array($conf, $this->validLocales)) {

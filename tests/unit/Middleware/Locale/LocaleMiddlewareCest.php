@@ -47,7 +47,7 @@ class LocaleMiddlewareCest
     {
         $prophet = new Prophet();
         $request = $this->getRequest('/cs/some-page/param');
-        $mw = $this->getMw($this->getMultiLangLocale(), $prophet, ['cs_CZ' => 'cs', 'en_US' => 'en']);
+        $mw = $this->getMw($this->getMultiLangLocale(), $prophet, ['cs_CZ' => 'cs', 'en_US' => 'en'], true);
         $callBackCalled = $mw($request, new Response(), function (ServerRequestInterface $request) use ($I, $prophet) {
             $prophet->checkPredictions();
             $I->assertEquals($request->getUri()->getPath(), '/some-page/param');
@@ -128,13 +128,18 @@ class LocaleMiddlewareCest
      * @param \Prophecy\Prophet|null $prophet
      * @return \TwigYard\Middleware\Locale\LocaleMiddleware
      */
-    private function getMw($config, Prophet $prophet = null, $localeMap = [])
+    private function getMw($config, Prophet $prophet = null, $localeMap = null, $isMultiLang = null)
     {
         $prophet = $prophet ? $prophet : new Prophet();
         $appStateProph = $prophet->prophesize(AppState::class);
         $appStateProph->getConfig()->willReturn($config);
         $appStateProph->setLocale('cs_CZ')->shouldBeCalled();
-        $appStateProph->setLocaleMap($localeMap)->shouldBeCalled();
+        $appStateProph->isSingleLanguage()->willReturn(false);
+        if ($isMultiLang) {
+            $appStateProph->setLanguageCode('cs')->shouldBeCalled();
+            $appStateProph->isSingleLanguage()->willReturn(false);
+        }
+        $appStateProph->setLocaleMap($localeMap ? $localeMap : [])->shouldBeCalled();
 
         return new LocaleMiddleware($appStateProph->reveal(), ['cs' => 'cs_CZ', 'en' => 'en_US']);
     }

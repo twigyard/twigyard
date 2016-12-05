@@ -145,7 +145,7 @@ class FormMiddleware
                     }
                     
                     $translator = $this->translatorFactory->getTranslator();
-                    
+
                     if ($this->formValidator->validate(
                         isset($formConf['fields']) && is_array($formConf['fields']) ? $formConf['fields'] : [],
                         $formData,
@@ -192,10 +192,13 @@ class FormMiddleware
     {
         $response = (new Response())
             ->withStatus(302)
-            ->withHeader(
-                'Location',
-                $path . '?formSent=' . $formName . (!empty($formConf['anchor']) ? '#' . $formConf['anchor'] : '')
-            );
+            ->withHeader('Location', sprintf(
+                '%s%s?formSent=%s%s',
+                $this->appState->isSingleLanguage() ? '' : '/' . $this->appState->getLanguageCode(),
+                $path,
+                $formName,
+                !empty($formConf['anchor']) ? '#' . $formConf['anchor'] : ''
+            ));
 
         if (!empty($formConf['success_flash_message'])) {
             $siteTranslator = $this->siteTranslatorFactory->getTranslator($this->appState->getSiteDir());

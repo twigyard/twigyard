@@ -233,7 +233,7 @@ class FormMiddlewareCest
     /**
      * @param \UnitTester $I
      */
-    public function validatePostRequestValidDataNoAnchorNoSuccessFlash(\UnitTester $I)
+    public function validatePostRequestValidData(\UnitTester $I)
     {
         $this->validateWithValidData($I);
     }
@@ -241,9 +241,9 @@ class FormMiddlewareCest
     /**
      * @param \UnitTester $I
      */
-    public function validatePostRequestValidDataAnchorAndFlashSuccess(\UnitTester $I)
+    public function validatePostRequestValidDataAnchorAndFlashSuccessMultilang(\UnitTester $I)
     {
-        $this->validateWithValidData($I, 'anchor-name', 'custom success flash message');
+        $this->validateWithValidData($I, 'anchor-name', 'custom success flash message', true);
     }
 
     /**
@@ -295,6 +295,7 @@ class FormMiddlewareCest
 
         $fs = $this->getFs();
         $appState->getSiteDir()->willReturn($fs->path('/sites/www.example.com'));
+        $appState->isSingleLanguage()->willReturn(true);
 
         $formValidator = $prophet->prophesize(FormValidator::class);
         $formValidator
@@ -390,7 +391,7 @@ class FormMiddlewareCest
 
     /**
      * @param \Prophecy\Prophet $prophet
-     * @return \Component\AppState
+     * @return \Prophecy\Prophecy\ObjectProphecy
      */
     private function getAppState(Prophet $prophet)
     {
@@ -416,9 +417,14 @@ class FormMiddlewareCest
      * @param \UnitTester $I
      * @param string $anchor
      * @param string $successFlashMessage
+     * @param null $isMultiLang
      */
-    private function validateWithValidData(\UnitTester $I, $anchor = null, $successFlashMessage = null)
-    {
+    private function validateWithValidData(
+        \UnitTester $I,
+        $anchor = null,
+        $successFlashMessage = null,
+        $isMultiLang = null
+    ) {
         $prophet = new Prophet();
         $appState = $this->getAppState($prophet);
 
@@ -430,15 +436,15 @@ class FormMiddlewareCest
 
         $fs = $this->getFs();
         $appState->getSiteDir()->willReturn($fs->path('/sites/www.example.com'));
+        $appState->isSingleLanguage()->willReturn(true);
+        if ($isMultiLang) {
+            $appState->getLanguageCode()->willReturn('cs');
+            $appState->isSingleLanguage()->willReturn(false);
+        }
 
         $formValidator = $prophet->prophesize(FormValidator::class);
         $formValidator
-            ->validate(
-                [],
-                ['csrf_token' => 'token', 'field1' => 'value1'],
-                'token',
-                Argument::type(Translator::class)
-            )
+            ->validate([], ['csrf_token' => 'token', 'field1' => 'value1'], 'token', Argument::type(Translator::class))
             ->willReturn(true);
 
         $config = [];
@@ -464,7 +470,7 @@ class FormMiddlewareCest
         );
         $I->assertEquals(302, $response->getStatusCode());
         $I->assertEquals(
-            '/form/page?formSent=form1' . ($anchor ? '#' . $anchor : ''),
+            ($isMultiLang ? '/cs' : '') . '/form/page?formSent=form1' . ($anchor ? '#' . $anchor : ''),
             $response->getHeaderLine('Location')
         );
     }
