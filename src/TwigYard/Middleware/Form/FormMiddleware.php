@@ -18,7 +18,7 @@ use Zend\Diactoros\Response;
 class FormMiddleware
 {
     const CSRF_COOKIE_NAME = 'twigyard_csrf_token';
-    const CSRF_COOKIE_TTL = 10 * 60;    // in seconds
+    const CSRF_COOKIE_TTL = 2 * 60 * 60;    // in seconds
     const CSRF_FIELD_NAME = 'csrf_token';
     const FLASH_MESSAGE_COOKIE_NAME = 'twigyard_flash_message';
     const FLASH_MESSAGE_COOKIE_TTL = 10;    // in seconds
@@ -43,7 +43,7 @@ class FormMiddleware
      * @var FormHandlerFactory
      */
     private $formHandlerFactory;
-    
+
     /**
      * @var TranslatorFactory
      */
@@ -58,7 +58,7 @@ class FormMiddleware
      * @var string
      */
     private $logDir;
-    
+
     /**
      * @var string
      */
@@ -143,7 +143,7 @@ class FormMiddleware
                     if (isset($request->getCookieParams()[self::CSRF_COOKIE_NAME])) {
                         $csrfCookieValue = $request->getCookieParams()[self::CSRF_COOKIE_NAME];
                     }
-                    
+
                     $translator = $this->translatorFactory->getTranslator();
 
                     if ($this->formValidator->validate(
