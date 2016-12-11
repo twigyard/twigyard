@@ -4,6 +4,7 @@ namespace Unit\Middleware\Data;
 
 use TwigYard\Component\AppState;
 use TwigYard\Component\ConfigCacheInterface;
+use TwigYard\Exception\InvalidSiteConfigException;
 use TwigYard\Middleware\Url\UrlMiddleware;
 use Prophecy\Argument;
 use Prophecy\Argument\Token\AnyValueToken;
@@ -106,17 +107,41 @@ class UrlMiddlewareCest
         $prophet->checkPredictions();
     }
 
-    public function ignoreInvalidSiteYml()
+    public function ignoreOtherInvalidSiteYml()
     {
         $fs = new FileSystem();
         $fs->createDirectory('/sites/www.example.com', true);
-        file_put_contents($fs->path('/sites/www.example.com/site.yml'), 'Invalid yml content');
-        $prophet = new Prophet();
+        $fs->createFile('/sites/www.example.com/site.yml');
 
-        $mw = $this->getMw($fs, null, $prophet, null);
-        $mw($this->getRequest('www.example.com'), new Response(), function () {
+        $prophet = new Prophet();
+        $appStateProph = $prophet->prophesize(AppState::class);
+        $configCacheProph = $prophet->prophesize(ConfigCacheInterface::class);
+        $configCacheProph->getConfig(new AnyValueToken(), new AnyValueToken())->willReturn([]);
+        $configCache = $configCacheProph->reveal();
+
+        $mw = $this->getMw($fs, $configCache, $prophet, null, $appStateProph);
+        $mw($this->getRequest('www.example2.com'), new Response(), function () {
         });
         $prophet->checkPredictions();
+    }
+
+    public function errorIfInvalidSiteYml(\UnitTester $I)
+    {
+        $fs = new FileSystem();
+        $fs->createDirectory('/sites/www.example.com', true);
+        $fs->createFile('/sites/www.example.com/site.yml');
+
+        $prophet = new Prophet();
+        $appStateProph = $prophet->prophesize(AppState::class);
+        $configCacheProph = $prophet->prophesize(ConfigCacheInterface::class);
+        $configCacheProph->getConfig(new AnyValueToken(), new AnyValueToken())->willReturn([]);
+        $configCache = $configCacheProph->reveal();
+
+        $mw = $this->getMw($fs, $configCache, $prophet, null, $appStateProph);
+        $I->expectException(InvalidSiteConfigException::class, function () use ($mw) {
+            $mw($this->getRequest('www.example.com'), new Response(), function () {
+            });
+        });
     }
 
     /**
