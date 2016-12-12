@@ -4,6 +4,7 @@ namespace TwigYard\Middleware\Url;
 
 use TwigYard\Component\AppState;
 use TwigYard\Component\ConfigCacheInterface;
+use TwigYard\Exception\InvalidSiteConfigException;
 use TwigYard\Middleware\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -71,6 +72,7 @@ class UrlMiddleware implements MiddlewareInterface
      * @param \Psr\Http\Message\ResponseInterface $response
      * @param callable|\TwigYard\Middleware\MiddlewareInterface $next
      * @return \Psr\Http\Message\ResponseInterface $response
+     * @throws \TwigYard\Exception\InvalidSiteConfigException
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
@@ -82,7 +84,11 @@ class UrlMiddleware implements MiddlewareInterface
         }
 
         if (!isset($configs[$host])) {
-            return $response->withStatus(404);
+            if (file_exists($this->sitesDir . '/' . $host . '/' . $this->siteConfig)) {
+                throw new InvalidSiteConfigException(sprintf('Config for %s site is invalid.', $host));
+            } else {
+                return $response->withStatus(404);
+            }
         }
 
         $canonicalUrl = $configs[$host]['url']['canonical'];
