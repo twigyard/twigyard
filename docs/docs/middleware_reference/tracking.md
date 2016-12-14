@@ -6,7 +6,10 @@ option           | type   | required | description
 -----------------|--------|----------|------------
 google_analytics | string | ❌       | The Account id string
 
+#####Example
 ```yaml
+# site.yml
+
 tracking:
     google_analytics: UA-000000-01
 ```

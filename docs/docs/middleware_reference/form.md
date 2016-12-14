@@ -18,7 +18,11 @@ success_flash_message   | string       | ❌        | The message that is displa
 ### Fields
 Validation rules are defined as a list of constraints. [See the documentation](http://symfony.com/doc/current/validation.html#properties "Validating properties") for validation of properties in Symfony.
 This validator does not support any data classes, it supports only validation of single properties (see an example below).
+
+#####Example
 ```yaml
+# site.yml
+
 form:
     contact:
         anchor: contact-form
@@ -51,7 +55,10 @@ option      | type      | required   | description
 ------------|-----------|------------|------------
 file        | string    | ✓          | Name of the file to which the data is written. The log file is located in <site_root>/var/log
 
+#####Example
 ```yaml
+# site.yml
+
 form:
     contact:
         anchor: contact-form
@@ -70,10 +77,14 @@ form:
                 file: form.log
 ```
 ```html
+    {# index.html.twig #}
+    
     <div>
 
-        {% if form.flash_message %}
-            <div>{{ form.flash_message }}</div>
+        {% if form.contact.flash_message %}
+            <div class="{{ form.contact.errors|length > 0 ? 'alert--error' : 'alert--success' }}">
+                {{ form.contact.flash_message }}
+            </div>
         {%  endif %}
 
         <form method="post" action="#{{ form.contact.anchor }}">
