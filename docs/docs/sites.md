@@ -31,7 +31,7 @@ imports:
     - { resource: 'site.yml' }
 ```
 
-### Example 
+**Example** 
 ```
 # site.yml
 

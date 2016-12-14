@@ -9,7 +9,7 @@ Sets the locale. For multilingual sites it parses the url and sets the locale ac
 ###Single Language Sites
 For single language sites it accepts the locale string.
 
-#####Example
+**Example**
 ```yaml
 # site.yml 
 
@@ -24,7 +24,7 @@ option      | type   | required | description
 default     | map    | ✓        | A map that defines the default locale. It must provide two keys: `name` which identifies the default locale for application and `key` which identifies the locale in the url.
 extra       | map    |✓         | A map of additional locales where the key is the url identifier of the locale and the value is the locale name.
 
-#####Example
+**Example**
 ```yaml
 # site.yml 
 

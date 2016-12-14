@@ -6,7 +6,7 @@ option           | type   | required | description
 -----------------|--------|----------|------------
 google_analytics | string | ❌       | The Account id string
 
-#####Example
+**Example**
 ```yaml
 # site.yml
 

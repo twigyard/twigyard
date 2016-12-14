@@ -4,7 +4,7 @@ This middleware checks the configuration map and it performs 301 redirect upon t
 ## Options
 The configuration is a map where each key is the path to be redirected and each value is the path to be redirected to.
 
-#####Example
+**Example**
 ```yaml
 # site.yml
 
