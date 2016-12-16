@@ -9,7 +9,10 @@ Params can be part of the path and are written in curly brackets (i.e. `{param_n
 ###Single Language Sites
 A map of pages where the key is the page name and the value is the route definition.
 
+**Example**
 ```yaml
+# site.yml
+
 router:
     index: /
     product: /products/{product_id | products:manufacturer.id}
@@ -18,7 +21,10 @@ router:
 ### Multi Language Sites
 A map of pages where the key is the page name and the value is a map defining the page routes for the individual locales. Each page routes map has locale as a key (i.e. en_US) and the value is the path to be matched without the language key.
 
+**Example**
 ```yaml
+# site.yml
+
 router:
     index:
         cs_CZ: /

@@ -4,7 +4,10 @@ This middleware parses the specified yaml files and makes their content availabl
 ## Options
 Options are a map where the key is the name of the attribute and the value is the path to the data file relative to the `src/data` folder.
 
+**Example**
 ```yaml
+# site.yml
+
 data:
     references: references.yml
 ```

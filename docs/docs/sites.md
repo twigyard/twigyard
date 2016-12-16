@@ -31,8 +31,10 @@ imports:
     - { resource: 'site.yml' }
 ```
 
-### Example 
+**Example** 
 ```
+# site.yml
+
 url:
     canonical: www.example.com
     extra: [ example.com, web.example.com ]

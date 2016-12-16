@@ -7,7 +7,10 @@ option           | type   | required | description
 canonical        | string | ✓        | The main URL of the site.
 extra            | list   | ❌       | An array of additional URLs.
 
+**Example**
 ```yaml
+# site.yml
+
 url:
     canonical: www.example.com
     extra:
