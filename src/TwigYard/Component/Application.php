@@ -26,7 +26,7 @@ use Zend\Diactoros\ServerRequestFactory;
 class Application
 {
     // Sites can not implement any other locales
-    const VALID_LOCALES = ['cs_CZ', 'en_US'];
+    const VALID_LOCALES = ['cs_CZ', 'en_US', 'de_DE'];
 
     /**
      * @var ApplicationConfig
