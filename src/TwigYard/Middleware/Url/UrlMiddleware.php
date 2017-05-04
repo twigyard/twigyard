@@ -98,7 +98,7 @@ class UrlMiddleware implements MiddlewareInterface
 
         $ssl = isset($configs[$host]['url']['ssl']) && $configs[$host]['url']['ssl'];
         if ($ssl && $request->getUri()->getScheme() != 'https') {
-            return new RedirectResponse( 'https://' . $host, 301);
+            return new RedirectResponse('https://' . $host, 301);
         }
 
         $this->appState

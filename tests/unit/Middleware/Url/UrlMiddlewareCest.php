@@ -74,7 +74,8 @@ class UrlMiddlewareCest
     {
         $fs = $this->getFs();
         $mw = $this->getMw($fs, null, null, null, null, true);
-        $response = $mw($this->getRequest('www.example.com'), new Response(), function () {});
+        $response = $mw($this->getRequest('www.example.com'), new Response(), function () {
+        });
         $I->assertEquals($response->getHeaderLine('location'), 'https://www.example.com');
         $I->assertEquals($response->getStatusCode(), 301);
     }
