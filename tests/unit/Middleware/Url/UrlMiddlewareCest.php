@@ -70,6 +70,18 @@ class UrlMiddlewareCest
     /**
      * @param \UnitTester $I
      */
+    public function redirectToSslUrl(\UnitTester $I)
+    {
+        $fs = $this->getFs();
+        $mw = $this->getMw($fs, null, null, null, null, true);
+        $response = $mw($this->getRequest('www.example.com'), new Response(), function () {});
+        $I->assertEquals($response->getHeaderLine('location'), 'https://www.example.com');
+        $I->assertEquals($response->getStatusCode(), 301);
+    }
+
+    /**
+     * @param \UnitTester $I
+     */
     public function return404OnNoSiteDir(\UnitTester $I)
     {
         $fs = new FileSystem();
@@ -249,7 +261,8 @@ EOT;
         ConfigCacheInterface $configCache = null,
         $prophet = null,
         $devDomain = 'dev.domain',
-        ObjectProphecy $appStateProph = null
+        ObjectProphecy $appStateProph = null,
+        $devDomainSsl = false
     ) {
         $prophet = $prophet ? $prophet : new Prophet();
 
@@ -283,6 +296,13 @@ url:
     canonical: www.example.com
     extra: [ example.com ]
 EOT;
+            if ($devDomainSsl) {
+                $config .= <<<EOT
+                
+    ssl: true
+EOT;
+            }
+
             $parsedConfig = Yaml::parse($config);
             $configCacheProph = $prophet->prophesize(ConfigCacheInterface::class);
             $configCacheProph->getConfig(new AnyValueToken(), new AnyValueToken())->willReturn([
