@@ -167,6 +167,7 @@ class FormMiddleware
                     }
 
                     $appFormData[$formName]['flash_message'] = $this->formValidator->getFlashMessage();
+                    $appFormData[$formName]['flash_message_type'] = $this->formValidator->getFlashMessageType();
                     $appFormData[$formName]['errors'] = $this->formValidator->getErrors();
                     break;
                 }

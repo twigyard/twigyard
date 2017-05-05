@@ -13,6 +13,9 @@ class FormValidator
     const FLASH_MESSAGE_CSRF_ERROR = 'The form validity has expired. Give it one more try.';
     const FLASH_MESSAGE_VALIDATION_ERROR = 'The form cannot be saved, please check marked values.';
 
+    const FLASH_MESSAGE_TYPE_ERROR = 'error';
+    const FLASH_MESSAGE_TYPE_EXPIRED_TOKEN = 'expired-token';
+
     const CONSTRAINTS_NAMESPACES = [AbstractLoader::DEFAULT_NAMESPACE];
 
     /**
@@ -24,6 +27,11 @@ class FormValidator
      * @var string
      */
     private $flashMessage;
+
+    /**
+     * @var string
+     */
+    private $flashMessageType;
 
     /**
      * @var ValidatorBuilderFactory
@@ -51,11 +59,11 @@ class FormValidator
     {
         if ($formData[FormMiddleware::CSRF_FIELD_NAME] !== $csrfValue) {
             $this->flashMessage = $translator->trans(self::FLASH_MESSAGE_CSRF_ERROR);
+            $this->flashMessageType = self::FLASH_MESSAGE_TYPE_EXPIRED_TOKEN;
             return false;
         }
-        
-        $validator = $this->validatorFactory->createValidator($translator);
 
+        $validator = $this->validatorFactory->createValidator($translator);
         foreach ($formFields as $fieldName => $constraints) {
             $newErrors = $validator->validate(
                 !empty($formData[$fieldName]) ? $formData[$fieldName] : null,
@@ -73,6 +81,7 @@ class FormValidator
 
         if (count($this->errors) > 0) {
             $this->flashMessage = $translator->trans(self::FLASH_MESSAGE_VALIDATION_ERROR);
+            $this->flashMessageType = self::FLASH_MESSAGE_TYPE_ERROR;
             return false;
         }
 
@@ -93,6 +102,14 @@ class FormValidator
     public function getFlashMessage()
     {
         return $this->flashMessage;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFlashMessageType()
+    {
+        return $this->flashMessageType;
     }
 
     /**
@@ -138,7 +155,7 @@ class FormValidator
                 return new $className($options);
             }
         }
-        
+
         throw new ConstraintNotFoundException(
             printf('The constraint %s was not found at any defined namespace.', $name)
         );
