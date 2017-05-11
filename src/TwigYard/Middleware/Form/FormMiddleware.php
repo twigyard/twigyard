@@ -21,6 +21,7 @@ class FormMiddleware
     const CSRF_COOKIE_TTL = 2 * 60 * 60;    // in seconds
     const CSRF_FIELD_NAME = 'csrf_token';
     const FLASH_MESSAGE_COOKIE_NAME = 'twigyard_flash_message';
+    const FLASH_MESSAGE_TYPE_COOKIE_NAME = 'twigyard_flash_message_type';
     const FLASH_MESSAGE_COOKIE_TTL = 10;    // in seconds
     const FLASH_MESSAGE_DEFAULT_SUCCESS = 'The form was successfully sent, thank you!';
 
@@ -127,8 +128,13 @@ class FormMiddleware
             if (isset($formConf['anchor'])) {
                 $appFormData[$formName]['anchor'] = $formConf['anchor'];
             }
-            if (isset($request->getCookieParams()[self::FLASH_MESSAGE_COOKIE_NAME])) {
-                $appFormData[$formName]['flash_message'] = $request->getCookieParams()[self::FLASH_MESSAGE_COOKIE_NAME];
+            if (isset($request->getCookieParams()[self::FLASH_MESSAGE_COOKIE_NAME]) &&
+                isset($request->getCookieParams()[self::FLASH_MESSAGE_TYPE_COOKIE_NAME])
+            ) {
+                $appFormData[$formName]['flash_message'] =
+                    $request->getCookieParams()[self::FLASH_MESSAGE_COOKIE_NAME];
+                $appFormData[$formName]['flash_message_type'] =
+                    $request->getCookieParams()[self::FLASH_MESSAGE_TYPE_COOKIE_NAME];
             }
         }
 
@@ -177,7 +183,7 @@ class FormMiddleware
         $this->appState->setForm($appFormData);
         $response = $next($request, $response);
         $response = FigResponseCookies::set($response, $this->getCsrfCookie($csrfToken));
-        $response = $this->setFlashMessageCookie($response, null);
+        $response = $this->setFlashMessageCookie($response);
 
         return $response;
     }
@@ -187,7 +193,7 @@ class FormMiddleware
      * @param array $formConf
      * @param string $path
      * @param \Symfony\Component\Translation\Translator $translator
-     * @return \Dflydev\FigCookies\SetCookie
+     * @return ResponseInterface
      */
     private function getSubmitSuccessResponse($formName, array $formConf, $path, Translator $translator)
     {
@@ -208,7 +214,7 @@ class FormMiddleware
             $message = $translator->trans(self::FLASH_MESSAGE_DEFAULT_SUCCESS);
         }
 
-        return $this->setFlashMessageCookie($response, $message);
+        return $this->setFlashMessageCookie($response, $message, FormValidator::FLASH_MESSAGE_TYPE_SUCCESS);
     }
 
     /**
@@ -225,14 +231,22 @@ class FormMiddleware
     /**
      * @param \Psr\Http\Message\ResponseInterface $response
      * @param string $flashMessage
-     * @return \Dflydev\FigCookies\SetCookie
+     * @param string $flashMessageType
+     * @return ResponseInterface
      */
-    private function setFlashMessageCookie(ResponseInterface $response, $flashMessage)
+    private function setFlashMessageCookie(ResponseInterface $response, $flashMessage = null, $flashMessageType = null)
     {
         $cookie = SetCookie::create(self::FLASH_MESSAGE_COOKIE_NAME)
             ->withValue($flashMessage)
             ->withExpires((new \DateTime())->modify(sprintf('+%d seconds', self::FLASH_MESSAGE_COOKIE_TTL)));
 
-        return FigResponseCookies::set($response, $cookie);
+        $typeCookie = SetCookie::create(self::FLASH_MESSAGE_TYPE_COOKIE_NAME)
+            ->withValue($flashMessageType)
+            ->withExpires((new \DateTime())->modify(sprintf('+%d seconds', self::FLASH_MESSAGE_COOKIE_TTL)));
+
+        $modifiedResponse = FigResponseCookies::set($response, $cookie);
+        $modifiedResponse =  FigResponseCookies::set($modifiedResponse, $typeCookie);
+
+        return $modifiedResponse;
     }
 }

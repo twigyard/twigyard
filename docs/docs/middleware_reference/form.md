@@ -82,7 +82,7 @@ form:
     <div>
 
         {% if form.contact.flash_message %}
-            <div class="{{ form.contact.errors|length > 0 ? 'alert--error' : 'alert--success' }}">
+            <div class="alert--{{ form.contact.flash_message_type }}">
                 {{ form.contact.flash_message }}
             </div>
         {%  endif %}
@@ -117,10 +117,11 @@ form:
 ## Provides
 Provides a map named `form` where each key is the name of the form and the value is a map with the following values.
 
-name           | type   | description
----------------|--------|-------------
-anchor         | string | Name of anchor to which the form should scroll after submit. Must be used in <form> tag action attribute to enable scroll after submitting invalid data.
-csrf_token     | string | The csrf token to be used in validation.
-data           | map    | The user submitted data. Must be manually rendered in template to persist invalid data.
-errors         | map    | A map of lists where each map key is a field name and each element in the list is one error message. There is one error message for each failed validator constraint.
-flash_message  | string | The message informing the user of the result of the action he or she took. For example it informs the user weather the form was submitted successfully or if there are any invalid fields.
+name               | type   | description
+-------------------|--------|-------------
+anchor             | string | Name of anchor to which the form should scroll after submit. Must be used in <form> tag action attribute to enable scroll after submitting invalid data.
+csrf_token         | string | The csrf token to be used in validation.
+data               | map    | The user submitted data. Must be manually rendered in template to persist invalid data.
+errors             | map    | A map of lists where each map key is a field name and each element in the list is one error message. There is one error message for each failed validator constraint.
+flash_message      | string | The message informing the user of the result of the action he or she took. For example it informs the user weather the form was submitted successfully or if there are any invalid fields.
+flash_message_type | string | The type indicating whether a flash message is of type `success`, `error` or  `expired-token`.

@@ -13,6 +13,7 @@ class FormValidator
     const FLASH_MESSAGE_CSRF_ERROR = 'The form validity has expired. Give it one more try.';
     const FLASH_MESSAGE_VALIDATION_ERROR = 'The form cannot be saved, please check marked values.';
 
+    const FLASH_MESSAGE_TYPE_SUCCESS = 'success';
     const FLASH_MESSAGE_TYPE_ERROR = 'error';
     const FLASH_MESSAGE_TYPE_EXPIRED_TOKEN = 'expired-token';
 
