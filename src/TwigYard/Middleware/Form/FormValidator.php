@@ -14,8 +14,8 @@ class FormValidator
     const FLASH_MESSAGE_VALIDATION_ERROR = 'The form cannot be saved, please check marked values.';
 
     const FLASH_MESSAGE_TYPE_SUCCESS = 'success';
-    const FLASH_MESSAGE_TYPE_ERROR = 'error';
-    const FLASH_MESSAGE_TYPE_EXPIRED_TOKEN = 'expired-token';
+    const FLASH_MESSAGE_TYPE_ERROR_VALIDATION = 'error-validation';
+    const FLASH_MESSAGE_TYPE_ERROR_EXPIRED_TOKEN = 'error-expired-token';
 
     const CONSTRAINTS_NAMESPACES = [AbstractLoader::DEFAULT_NAMESPACE];
 
@@ -60,7 +60,7 @@ class FormValidator
     {
         if ($formData[FormMiddleware::CSRF_FIELD_NAME] !== $csrfValue) {
             $this->flashMessage = $translator->trans(self::FLASH_MESSAGE_CSRF_ERROR);
-            $this->flashMessageType = self::FLASH_MESSAGE_TYPE_EXPIRED_TOKEN;
+            $this->flashMessageType = self::FLASH_MESSAGE_TYPE_ERROR_EXPIRED_TOKEN;
             return false;
         }
 
@@ -82,7 +82,7 @@ class FormValidator
 
         if (count($this->errors) > 0) {
             $this->flashMessage = $translator->trans(self::FLASH_MESSAGE_VALIDATION_ERROR);
-            $this->flashMessageType = self::FLASH_MESSAGE_TYPE_ERROR;
+            $this->flashMessageType = self::FLASH_MESSAGE_TYPE_ERROR_VALIDATION;
             return false;
         }
 

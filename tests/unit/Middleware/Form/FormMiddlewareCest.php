@@ -263,7 +263,7 @@ class FormMiddlewareCest
         $appState->setForm(['form1' => [
             'data' => ['csrf_token' => 'token', 'field1' => 'value1'],
             'flash_message' => 'Flash message',
-            'flash_message_type' => 'error',
+            'flash_message_type' => 'error-validation',
             'errors' => [],
         ]])->shouldBeCalled();
         $fs = $this->getFs();
@@ -280,7 +280,7 @@ class FormMiddlewareCest
             ->willReturn(false);
         $formValidator->getErrors()->willReturn([]);
         $formValidator->getFlashMessage()->willReturn('Flash message');
-        $formValidator->getFlashMessageType()->willReturn('error')->shouldBeCalled();
+        $formValidator->getFlashMessageType()->willReturn('error-validation')->shouldBeCalled();
 
         $mw = $this->getMw($appState, $prophet, $formValidator, $this->getHandlerFactory($prophet));
         $request = $this->getRequest()->withCookieParams(['twigyard_csrf_token' => 'invalid']);
