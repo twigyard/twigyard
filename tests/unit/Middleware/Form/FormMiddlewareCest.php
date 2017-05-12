@@ -182,6 +182,7 @@ class FormMiddlewareCest
             ->validate([], new TypeToken('array'), new TypeToken('string'), new TypeToken(Translator::class))
             ->shouldBeCalled();
         $formValidator->getFlashMessage()->willReturn('flash_message')->shouldBeCalled();
+        $formValidator->getFlashMessageType()->willReturn('success')->shouldBeCalled();
         $formValidator->getErrors()->willReturn([])->shouldBeCalled();
         $handlerFactory = $prophet->prophesize(FormHandlerFactory::class);
         $translatorFactory = $prophet->prophesize(TranslatorFactory::class);
@@ -215,19 +216,25 @@ class FormMiddlewareCest
         $appState->setForm(['form1' => [
             'data' => ['csrf_token' => 'token'],
             'flash_message' => 'Flash message',
+            'flash_message_type' => 'success',
         ]])->shouldBeCalled();
         $fs = $this->getFs();
         $appState->getSiteDir()->willReturn($fs->path('/sites/www.example.com'));
         $mw = $this->getMw($appState, $prophet);
-        $request = (new ServerRequest())->withCookieParams(['twigyard_flash_message' => 'Flash message']);
+        $request = (new ServerRequest())->withCookieParams([
+            'twigyard_flash_message' => 'Flash message',
+            'twigyard_flash_message_type' => 'success'
+        ]);
         $response = $mw($request, new Response(), function () {
             return new Response();
         });
         $prophet->checkPredictions();
         $flashMessage = SetCookies::fromResponse($response)->get('twigyard_flash_message')->getValue();
+        $flashMessageType = SetCookies::fromResponse($response)->get('twigyard_flash_message_type')->getValue();
         $csrfToken = SetCookies::fromResponse($response)->get('twigyard_csrf_token')->getValue();
         $I->assertEquals('token', $csrfToken);
         $I->assertEquals(null, $flashMessage);
+        $I->assertEquals(null, $flashMessageType);
     }
 
     /**
@@ -256,6 +263,7 @@ class FormMiddlewareCest
         $appState->setForm(['form1' => [
             'data' => ['csrf_token' => 'token', 'field1' => 'value1'],
             'flash_message' => 'Flash message',
+            'flash_message_type' => 'error-validation',
             'errors' => [],
         ]])->shouldBeCalled();
         $fs = $this->getFs();
@@ -272,6 +280,7 @@ class FormMiddlewareCest
             ->willReturn(false);
         $formValidator->getErrors()->willReturn([]);
         $formValidator->getFlashMessage()->willReturn('Flash message');
+        $formValidator->getFlashMessageType()->willReturn('error-validation')->shouldBeCalled();
 
         $mw = $this->getMw($appState, $prophet, $formValidator, $this->getHandlerFactory($prophet));
         $request = $this->getRequest()->withCookieParams(['twigyard_csrf_token' => 'invalid']);
