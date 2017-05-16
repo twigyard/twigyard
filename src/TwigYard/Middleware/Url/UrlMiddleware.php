@@ -42,14 +42,20 @@ class UrlMiddleware implements MiddlewareInterface
      * @var string
      */
     private $parentDomain;
+    
+    /**
+     * @var bool
+     */
+    private $sslAllowed;
 
     /**
      * @param \TwigYard\Component\AppState $appState
-     * @param \TwigYard\Component\ConfigCacheInterface
+     * @param \TwigYard\Component\ConfigCacheInterface $configCache
      * @param string $sitesDir
      * @param string $siteConfig
      * @param string $siteParameters
      * @param string $parentDomain
+     * @param boolean $sslAllowed
      */
     public function __construct(
         AppState $appState,
@@ -57,7 +63,8 @@ class UrlMiddleware implements MiddlewareInterface
         $sitesDir,
         $siteConfig,
         $siteParameters,
-        $parentDomain
+        $parentDomain,
+        $sslAllowed
     ) {
         $this->appState = $appState;
         $this->configCache = $configCache;
@@ -65,6 +72,7 @@ class UrlMiddleware implements MiddlewareInterface
         $this->siteConfig = $siteConfig;
         $this->siteParameters = $siteParameters;
         $this->parentDomain = $parentDomain;
+        $this->sslAllowed = $sslAllowed;
     }
 
     /**
@@ -96,8 +104,10 @@ class UrlMiddleware implements MiddlewareInterface
             return new RedirectResponse($request->getUri()->getScheme() . '://' . $canonicalUrl, 301);
         }
 
-        $ssl = !empty($configs[$host]['url']['ssl']);
-        if ($ssl && $request->getUri()->getScheme() !== 'https') {
+        if ($this->sslAllowed
+            && !empty($configs[$host]['url']['ssl'])
+            && $request->getUri()->getScheme() !== 'https'
+        ) {
             return new RedirectResponse('https://' . $host, 301);
         }
 

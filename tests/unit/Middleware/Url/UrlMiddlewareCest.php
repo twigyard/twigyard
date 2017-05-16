@@ -70,14 +70,57 @@ class UrlMiddlewareCest
     /**
      * @param \UnitTester $I
      */
-    public function redirectToSslUrl(\UnitTester $I)
+    public function redirectToHttps(\UnitTester $I)
     {
         $fs = $this->getFs();
         $mw = $this->getMw($fs, null, null, null, null, true);
         $response = $mw($this->getRequest('www.example.com'), new Response(), function () {
         });
-        $I->assertEquals($response->getHeaderLine('location'), 'https://www.example.com');
+        $I->assertEquals('https://www.example.com', $response->getHeaderLine('location'));
         $I->assertEquals($response->getStatusCode(), 301);
+    }
+
+    /**
+     * @param \UnitTester $I
+     */
+    public function doNotRedirectToHttpsIfDisabledGlobally(\UnitTester $I)
+    {
+        $fs = $this->getFs();
+        $mw = $this->getMw($fs, null, null, null, null, true, false);
+        $response = $mw($this->getRequest('www.example.com'), new Response(), function () {
+            return true;
+        });
+        $I->assertTrue($response);
+    }
+
+    /**
+     * @param \UnitTester $I
+     */
+    public function doNotRedirectToHttpsIfDisabledInSite(\UnitTester $I)
+    {
+        $fs = $this->getFs();
+        $mw = $this->getMw($fs, null, null, null, null, false);
+        $response = $mw($this->getRequest('www.example.com'), new Response(), function () {
+            return true;
+        });
+        $I->assertTrue($response);
+    }
+
+    /**
+     * @param \UnitTester $I
+     */
+    public function doNotRedirectToHttpsIfAlreadyHttps(\UnitTester $I)
+    {
+        $fs = $this->getFs();
+        $mw = $this->getMw($fs, null, null, null, null, true);
+        $uri = (new \Zend\Diactoros\Uri())
+            ->withHost('www.example.com')
+            ->withScheme('https');
+        $request = (new ServerRequest(['SCRIPT_NAME' => '/app.php', 'REMOTE_ADDR' => '127.0.1.2']))->withUri($uri);
+        $response = $mw($request, new Response(), function () {
+            return true;
+        });
+        $I->assertTrue($response);
     }
 
     /**
@@ -179,7 +222,7 @@ class UrlMiddlewareCest
         $prophet = new Prophet();
         $mw = $this->getMw($fs, null, $prophet, '');
         $request = $this->getRequest('www.example.com.example');
-        $response = $mw($request, new Response(), function () use ($prophet) {
+        $response = $mw($request, new Response(), function () {
         });
         $I->assertEquals($response->getStatusCode(), 404);
 
@@ -255,6 +298,8 @@ EOT;
      * @param \Prophecy\Prophet|null $prophet
      * @param string $devDomain
      * @param ObjectProphecy|null $appStateProph
+     * @param bool $ssl
+     * @param bool $sslAllowed
      * @return \TwigYard\Middleware\Url\UrlMiddleware
      */
     private function getMw(
@@ -263,14 +308,19 @@ EOT;
         $prophet = null,
         $devDomain = 'dev.domain',
         ObjectProphecy $appStateProph = null,
-        $devDomainSsl = false
+        $ssl = false,
+        $sslAllowed = true
     ) {
         $prophet = $prophet ? $prophet : new Prophet();
 
         if ($appStateProph === null) {
             $appStateProph = $prophet->prophesize(AppState::class);
+            $config = ['canonical' => 'www.example.com', 'extra' => ['example.com']];
+            if ($ssl) {
+                $config['ssl'] = true;
+            }
             $appStateProph
-                ->setConfig(['url' => ['canonical' => 'www.example.com', 'extra' => ['example.com']]])
+                ->setConfig(['url' => $config])
                 ->willReturn($appStateProph)
                 ->shouldBeCalled();
             $appStateProph
@@ -297,7 +347,7 @@ url:
     canonical: www.example.com
     extra: [ example.com ]
 EOT;
-            if ($devDomainSsl) {
+            if ($ssl) {
                 $config .= <<<EOT
                 
     ssl: true
@@ -319,7 +369,8 @@ EOT;
             $fs->path('/sites'),
             'site.yml',
             'parameters.yml',
-            $devDomain
+            $devDomain,
+            $sslAllowed
         );
     }
 }
