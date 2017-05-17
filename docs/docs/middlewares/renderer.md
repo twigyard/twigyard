@@ -2,7 +2,7 @@
 Renders templates.
 
 ## Options
-The configuration is a map wher each key is the name of the page as it is defined in the configuration of the router middleware and the corresponding value is the path to the template to be used for that page. If the template can not be found an exception is thrown.
+The configuration is a map where each key is the name of the page as it is defined in the configuration of the router middleware and the corresponding value is the path to the template to be used for that page. If the template can not be found an exception is thrown.
 
 **Example**
 ```yaml
