@@ -32,20 +32,22 @@ class RoboFile extends Tasks
     {
         $this
             ->taskExec('vendor/bin/phpcs')
-            ->args('--standard=.php_cs_ruleset.xml')
-            ->args('--encoding=utf-8')
-            ->args(sprintf('--ignore=%s/**/_bootstrap.php', self::TESTS_DIR))
-            ->args(sprintf('--ignore=%s/_support/*Tester.php', self::TESTS_DIR))
-            ->args(implode(' ', [self::SRC_DIR, self::TESTS_DIR,]))
+            ->arg('--standard=.php_cs_ruleset.xml')
+            ->arg('--encoding=utf-8')
+            ->arg(sprintf('--ignore=%s/**/_bootstrap.php', self::TESTS_DIR))
+            ->arg(sprintf('--ignore=%s/_support/*Tester.php', self::TESTS_DIR))
+            ->arg(self::SRC_DIR)
+            ->arg(self::TESTS_DIR)
             ->run();
 
         $this
             ->taskExec('vendor/bin/phpcs')
-            ->args('--standard=PSR2')
-            ->args('--encoding=utf-8')
-            ->args(sprintf('--ignore=%s/**/_bootstrap.php', self::TESTS_DIR))
-            ->args(sprintf('--ignore=%s/_support/*Tester.php', self::TESTS_DIR))
-            ->args(implode(' ', [self::SRC_DIR, self::TESTS_DIR,]))
+            ->arg('--standard=PSR2')
+            ->arg('--encoding=utf-8')
+            ->arg(sprintf('--ignore=%s/**/_bootstrap.php', self::TESTS_DIR))
+            ->arg(sprintf('--ignore=%s/_support/*Tester.php', self::TESTS_DIR))
+            ->arg(self::SRC_DIR)
+            ->arg(self::TESTS_DIR)
             ->run();
     }
 
