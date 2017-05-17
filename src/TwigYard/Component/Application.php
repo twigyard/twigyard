@@ -95,7 +95,8 @@ class Application
             $this->appRoot . '/' . $this->config->getSitesDir(),
             $globalParameters['site_config'],
             $this->config->getSiteParameters(),
-            $globalParameters['parent_domain']
+            $globalParameters['parent_domain'],
+            !empty($globalParameters['ssl_allowed'])
         );
         $queue[] = new RedirectMiddleware($appState);
         $queue[] = new HttpauthMiddleware($appState);
