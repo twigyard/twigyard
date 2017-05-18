@@ -1,8 +1,6 @@
 # Sites
 Each site is represented by a folder in the sites directory. The name of the folder must be the canonical URL of the site. As the bare minimum TwigYard requires the `site.yml` file and the `src` folder to be present. 
 
-TwigYard comes bundled with a script to check the syntax of yaml and twig files in the site directory. It checks all twig files in the `src/templates` folder and all yaml files in the site root and in the `src/languages` and `src/data` folders. It can check either a single site or all sites in the sites directory. Run `$ php vendor/bin/lintsite --help` to see how it works.
- 
 On the frontend side of things TwigYard is pretty technology agnostic. Type raw css, use grunt, gulp or whatever you like. You do not need to modify your devstack in any way. Within the site folder you are free to use any tools you like to as long as they generate the required files.
 
 ## site.yml
