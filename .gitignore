@@ -3,3 +3,5 @@
 *.log
 tests/_output/*
 /vendor
+composer.lock
+
