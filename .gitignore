@@ -1,5 +1,7 @@
-/docs/site/*
 !.gitkeep
 *.log
-tests/_output/*
+composer.lock
+/docs/site/*
+/tests/_output/*
 /vendor
+
