@@ -3,5 +3,6 @@
 composer.lock
 /docs/site/*
 /tests/_output/*
+/tests/_support/_generated/*
 /vendor
 

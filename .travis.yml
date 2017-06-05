@@ -27,7 +27,6 @@ install:
   - vendor/bin/codecept --version
 
 before_script:
-  - vendor/bin/codecept bootstrap --no-interaction
   - vendor/bin/codecept clean --no-interaction
   - vendor/bin/codecept build --no-interaction
 
