@@ -48,7 +48,7 @@ class DataMiddlewareCest
         $I->seeExceptionThrown(InvalidSiteConfigException::class, function () {
             $fs = new FileSystem();
             $fs->createDirectory('/sites/www.example.com/data', true);
-            file_put_contents($fs->path('/sites/www.example.com/data/dataSet.yml'), '  Invalid yml content');
+            file_put_contents($fs->path('/sites/www.example.com/data/dataSet.yml'), '"Invalid yml content');
             $mw = $this->getMw($fs);
             $mw(new ServerRequest(), new Response(), function () {
             });
