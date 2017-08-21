@@ -5,6 +5,8 @@ In order to provide some CSRF protection and to prevent spam this middleware set
 
 To allow tracking of submitted forms through Google Analytics or similar services special query parameter `formSent` is added to the page url after a successful form submission. Its values is the name of the form. For example, successfully submitting form named `constact` on page `www.example.com/contact` will redirect to page `www.example.com/contactformSent=contact`.
 
+The localization of the form success flash message is done by setting the translation string in the language `*.yml` files same as any other translation. The validation error messages for the form fields and the error flash message for the form as a whole are always shown in the correct language without any further settings.
+
 ## Options
 Options is a map where the key is the name of the form and the value is the map of options for the given form.
 
@@ -13,7 +15,7 @@ option                  | type         | required | description
 fields                  | map          | ❌        | A map of the fields in the given form. Each field is a map where the validator options are defined. See Fields for details.
 handlers                | list of maps | ✓        | A list of maps where each map specifies a handler to process the submitted data. Every map must define the type option that specifies which handler to use. Other options depend on the given handler type. Handlers are processed sequentially in the order defined. See Handlers for details.
 anchor                  | string       | ❌        | Name of an anchor to which the form scrolls after submission.
-success_flash_message   | string       | ❌        | The message that is displayed after the form is successfully submitted.
+success_flash_message   | string       | ❌        | The message that is displayed after the form is successfully submitted. If the site is multi language and translation is set, it will be translated automatically.
 
 ### Fields
 Validation rules are defined as a list of constraints. [See the documentation](http://symfony.com/doc/current/validation.html#properties "Validating properties") for validation of properties in Symfony.
