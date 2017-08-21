@@ -34,8 +34,7 @@ class RoboFile extends Tasks
             ->taskExec('vendor/bin/phpcs')
             ->arg('--standard=.php_cs_ruleset.xml')
             ->arg('--encoding=utf-8')
-            ->arg(sprintf('--ignore=%s/**/_bootstrap.php', self::TESTS_DIR))
-            ->arg(sprintf('--ignore=%s/_support/*Tester.php', self::TESTS_DIR))
+            ->arg(sprintf('--ignore=%s/**/_bootstrap.php,%s/_support/*Tester.php', self::TESTS_DIR, self::TESTS_DIR))
             ->arg(self::SRC_DIR)
             ->arg(self::TESTS_DIR)
             ->run();
@@ -44,8 +43,7 @@ class RoboFile extends Tasks
             ->taskExec('vendor/bin/phpcs')
             ->arg('--standard=PSR2')
             ->arg('--encoding=utf-8')
-            ->arg(sprintf('--ignore=%s/**/_bootstrap.php', self::TESTS_DIR))
-            ->arg(sprintf('--ignore=%s/_support/*Tester.php', self::TESTS_DIR))
+            ->arg(sprintf('--ignore=%s/**/_bootstrap.php,%s/_support/*Tester.php', self::TESTS_DIR, self::TESTS_DIR))
             ->arg(self::SRC_DIR)
             ->arg(self::TESTS_DIR)
             ->run();
