@@ -2,6 +2,7 @@
 
 namespace TwigYard\Component;
 
+use TwigYard\Exception\InvalidApplicationConfigException;
 use TwigYard\Middleware\Data\DataMiddleware;
 use TwigYard\Middleware\Error\ErrorMiddleware;
 use TwigYard\Middleware\Form\FormHandlerFactory;
@@ -183,17 +184,42 @@ class Application
 
     /**
      * @param array $globalParameters
+     * @throws \TwigYard\Exception\InvalidApplicationConfigException
      * @return \TwigYard\Component\LoggerFactory
      */
     private function getGlobalLoggerFactory(array $globalParameters)
     {
+        if (isset($globalParameters['log_rotation_enabled']) && !isset($globalParameters['log_max_files'])) {
+            throw new InvalidApplicationConfigException(
+                'If there is log_rotation_enabled defined in the configuration, log_max_files has to be defined too.'
+            );
+        }
+
+        if (isset($globalParameters['log_max_files']) && !isset($globalParameters['log_rotation_enabled'])) {
+            throw new InvalidApplicationConfigException(
+                'If there is log_max_files defined in the configuration, log_rotation_enabled has to be defined too.'
+            );
+        }
+
+        if (isset($globalParameters['loggly_token']) && !isset($globalParameters['loggly_tags'])) {
+            throw new InvalidApplicationConfigException(
+                'If there is loggly_token defined in the configuration, loggly_tags has to be defined too.'
+            );
+        }
+
+        if (isset($globalParameters['loggly_tags']) && !isset($globalParameters['loggly_token'])) {
+            throw new InvalidApplicationConfigException(
+                'If there is loggly_tags defined in the configuration, loggly_token has to be defined too.'
+            );
+        }
+
         return new LoggerFactory(
             $this->appRoot . '/' . $this->config->getLogDir(),
             constant('Monolog\Logger::' . strtoupper($globalParameters['log_on_level'])),
-            $globalParameters['log_rotation_enabled'],
+            (isset($globalParameters['log_rotation_enabled']) ? $globalParameters['log_rotation_enabled'] : false),
             (isset($globalParameters['log_max_files']) ? $globalParameters['log_max_files'] : null),
-            $globalParameters['loggly_token'],
-            $globalParameters['loggly_tags']
+            (isset($globalParameters['loggly_token']) ? $globalParameters['loggly_token'] : null),
+            (isset($globalParameters['loggly_tags']) ? $globalParameters['loggly_tags'] : [])
         );
     }
 
