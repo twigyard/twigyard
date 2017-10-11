@@ -41,6 +41,7 @@ class ImageFactory
         $image = new Image($this->assetDir . '/' . $image);
         $image->setCacheDir($this->basePath . '/' . $this->cacheDir);
         $image->setActualCacheDir($this->assetDir . '/' . $this->cacheDir);
+        $image->enableProgressive();
 
         return $image;
     }
