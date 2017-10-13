@@ -102,7 +102,7 @@ class Application
         $queue[] = new RedirectMiddleware($appState);
         $queue[] = new HttpauthMiddleware($appState);
         $queue[] = new LocaleMiddleware($appState, self::VALID_LOCALES);
-        $queue[] = new DataMiddleware($appState, $this->config->getDataDir());
+        $queue[] = new DataMiddleware($appState, $this->config->getDataDir(), new CurlDownloader());
         $queue[] = new RouterMiddleware($appState);
         $queue[] = new FormMiddleware(
             $appState,
