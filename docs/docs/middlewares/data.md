@@ -2,7 +2,7 @@
 This middleware parses the specified YAML or JSON files or resources from URL and makes their content available in a map variable within the templates.
 
 ## Options
-Options are a map where the key is the name of the attribute and the value can be either a map with type, format and resource location specified or is the path to the YAML formatted data file relative to the `src/data` folder. https is also supported.
+Options are a map where the key is the name of the attribute and the value can be either a map with type, format and resource location specified or is the path to the YAML formatted data file relative to the `src/data` folder. HTTPS is also supported.
 
 **Example**
 ```yaml
