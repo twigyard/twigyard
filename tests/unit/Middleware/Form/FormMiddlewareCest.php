@@ -490,7 +490,6 @@ class FormMiddlewareCest
     private function getFs()
     {
         $fs = new FileSystem();
-        $fs->createDirectory('/sites/www.example.com/var/log', true);
         return $fs;
     }
 }

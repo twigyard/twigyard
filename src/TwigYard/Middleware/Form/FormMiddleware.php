@@ -2,6 +2,7 @@
 
 namespace TwigYard\Middleware\Form;
 
+use Nette\Utils\FileSystem;
 use TwigYard\Component\AppState;
 use TwigYard\Component\CsrfTokenGenerator;
 use TwigYard\Component\SiteTranslatorFactory;
@@ -116,9 +117,14 @@ class FormMiddleware
         $csrfToken = $this->csrfTokenGenerator->generateToken();
         foreach ($this->appState->getConfig()['form'] as $formName => $formConf) {
             foreach ($formConf['handlers'] as $handler) {
-                if ($handler['type'] === FormHandlerFactory::TYPE_LOG
-                    && !is_writable($this->appState->getSiteDir() . '/' . $this->logDir)) {
-                    throw new LogDirectoryNotWritableException();
+                if ($handler['type'] === FormHandlerFactory::TYPE_LOG) {
+                    if (!file_exists($this->appState->getSiteDir() . '/' . $this->logDir)) {
+                        FileSystem::createDir($this->appState->getSiteDir() . '/' . $this->logDir);
+                    }
+
+                    if (!is_writable($this->appState->getSiteDir() . '/' . $this->logDir)) {
+                        throw new LogDirectoryNotWritableException();
+                    }
                 }
             }
             if (!preg_match('#^[a-z0-9_]+$#', $formName)) {
