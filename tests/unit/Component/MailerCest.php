@@ -25,7 +25,7 @@ class MailerCest
 
         $messageBuilderProph = $this->getMessageBuilderProph($prophet, $messageProph);
 
-        $mailer = new Mailer($swiftMailerProph->reveal());
+        $mailer = new Mailer($swiftMailerProph->reveal(), $messageBuilderProph->reveal());
         $mailer->setDebugRecipient('developer@example.com');
         $mailer->send($messageBuilderProph->reveal());
 
@@ -47,7 +47,7 @@ class MailerCest
 
         $messageBuilderProph = $this->getMessageBuilderProph($prophet, $messageProph);
 
-        $mailer = new Mailer($swiftMailerProph->reveal());
+        $mailer = new Mailer($swiftMailerProph->reveal(), $messageBuilderProph->reveal());
         $mailer->send($messageBuilderProph->reveal());
 
         $prophet->checkPredictions();

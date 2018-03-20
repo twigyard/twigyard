@@ -1,0 +1,77 @@
+services:
+    _defaults:
+         autowire: true
+         autoconfigure: true
+         public: true
+
+    # General components
+
+    TwigYard\Component\CsrfTokenGenerator: ~
+
+    TwigYard\Component\CurlDownloader: ~
+
+    TwigYard\Component\ConfigCache:
+        factory: 'TwigYard\Component\ConfigCacheServiceFactory:createConfigCache'
+        arguments:
+            $appRoot: '@=parameter("app.root")'
+            $cacheDir: '@=parameter("app.config").getConfigCacheDir()'
+            $cacheNamespace: '@=parameter("app.config").getCacheNamespaceConfig()'
+            $cacheEnabled: '@=parameter("app.parameters")["cache_enabled"]'
+
+    TwigYard\Component\MailerMessageBuilder: ~
+
+    # Component factories
+
+    TwigYard\Component\AssetCacheManagerFactory:
+        arguments:
+            $cacheNamespace: '@=parameter("app.config").getCacheNamespaceAssets()'
+
+    TwigYard\Component\ConfigCacheServiceFactory: ~
+
+    TwigYard\Component\ImageFactory:
+        arguments:
+            $basePath: '@=parameter("app.config").getBasePath()'
+            $cacheDir: '@=parameter("app.config").getImageCacheDir()'
+
+    TwigYard\Component\LoggerFactory:
+        arguments:
+            $appRoot: '@=parameter("app.root")'
+            $logDir: '@=parameter("app.config").getLogDir()'
+            $logOnLevel: '@=parameter("app.parameters")["log_on_level"]'
+            $logRotationEnabled: '@=parameter("app.parameters")["log_rotation_enabled"]'
+            $maxFiles: '@=parameter("app.parameters")["log_max_files"]'
+            $logglyToken: '@=parameter("app.parameters")["loggly_token"]'
+            $logglyTags: '@=parameter("app.parameters")["loggly_tags"]'
+
+    TwigYard\Component\MailerFactory:
+        arguments:
+            $defaultSiteParameters: '@=parameter("app.site_parameters")'
+
+    TwigYard\Component\SiteLoggerFactory:
+        arguments:
+        arguments:
+            $logDir: '@=parameter("app.config").getLogDir()'
+
+    TwigYard\Component\SiteTranslatorFactory:
+        arguments:
+            $languageResourcesDir: '@=parameter("app.config").getLanguageDir()'
+            $cacheDir: '@=parameter("app.parameters")["cache_enabled"] ? parameter("app.config").getSiteCacheDir() : null'
+
+    TwigYard\Component\TemplatingClosureFactory:
+        arguments:
+            $basePath: '@=parameter("app.config").getBasePath()'
+
+    TwigYard\Component\TwigTemplatingFactory:
+        arguments:
+            $templateDir: '@=parameter("app.config").getTemplateDir()'
+            $languageDir: '@=parameter("app.config").getLanguageDir()'
+            $assetDir: '@=parameter("app.config").getAssetDir()'
+            $siteCacheDir: '@=parameter("app.parameters")["cache_enabled"] ? parameter("app.config").getSiteCacheDir() : null'
+
+    TwigYard\Component\TranslatorFactory:
+        arguments:
+            $appRoot: '@=parameter("app.root")'
+            $cacheDir: '@=parameter("app.parameters")["cache_enabled"] ? parameter("app.config").getSiteCacheDir() : null'
+
+    TwigYard\Component\ValidatorBuilderFactory: ~
+

@@ -137,10 +137,10 @@ class FormMiddlewareCest
         $formValidator = $prophet->prophesize(FormValidator::class);
         $handlerFactory = $prophet->prophesize(FormHandlerFactory::class);
         $translatorFactory = $prophet->prophesize(TranslatorFactory::class);
-        $translatorFactory->getTranslator()->willReturn(new Translator('en'));
+        $translatorFactory->getTranslator(new TypeToken('string'))->willReturn(new Translator('en'));
 
         $siteTranslatorFactory = $prophet->prophesize(SiteTranslatorFactory::class);
-        $siteTranslatorFactory->getTranslator()->willReturn(new Translator('en'));
+        $siteTranslatorFactory->getTranslator(new TypeToken('string'))->willReturn(new Translator('en'));
 
         $mw = new FormMiddleware(
             $appState->reveal(),
@@ -165,6 +165,7 @@ class FormMiddlewareCest
         $prophet = new Prophet();
         $appState = $prophet->prophesize(AppState::class);
         $appState->setForm(new TypeToken('array'))->shouldBeCalled();
+        $appState->getLocale()->willReturn('en');
         $appState->getSiteParameters()->willReturn([]);
         $appState->getConfig()->willReturn([
             'form' => [
@@ -186,10 +187,10 @@ class FormMiddlewareCest
         $formValidator->getErrors()->willReturn([])->shouldBeCalled();
         $handlerFactory = $prophet->prophesize(FormHandlerFactory::class);
         $translatorFactory = $prophet->prophesize(TranslatorFactory::class);
-        $translatorFactory->getTranslator()->willReturn(new Translator('en'));
+        $translatorFactory->getTranslator(new TypeToken('string'))->willReturn(new Translator('en'));
 
         $siteTranslatorFactory = $prophet->prophesize(SiteTranslatorFactory::class);
-        $siteTranslatorFactory->getTranslator()->willReturn(new Translator('en'));
+        $siteTranslatorFactory->getTranslator(new TypeToken('string'))->willReturn(new Translator('en'));
 
         $mw = new FormMiddleware(
             $appState->reveal(),
@@ -266,6 +267,7 @@ class FormMiddlewareCest
             'flash_message_type' => 'error-validation',
             'errors' => [],
         ]])->shouldBeCalled();
+        $appState->getLocale()->willReturn('en');
         $fs = $this->getFs();
         $appState->getSiteDir()->willReturn($fs->path('/sites/www.example.com'));
 
@@ -301,6 +303,7 @@ class FormMiddlewareCest
         $appState->setForm(['form1' => [
             'data' => ['csrf_token' => 'token', 'field1' => 'value1'],
         ]])->shouldBeCalled();
+        $appState->getLocale()->willReturn('en');
 
         $fs = $this->getFs();
         $appState->getSiteDir()->willReturn($fs->path('/sites/www.example.com'));
@@ -362,10 +365,11 @@ class FormMiddlewareCest
         $formValidator = $formValidator ? $formValidator : $prophet->prophesize(FormValidator::class);
         $handlerFactory = $handlerFactory ? $handlerFactory : $prophet->prophesize(FormHandlerFactory::class);
         $translatorFactory = $prophet->prophesize(TranslatorFactory::class);
-        $translatorFactory->getTranslator()->willReturn(new Translator('en'));
+        $translatorFactory->getTranslator(new TypeToken('string'))->willReturn(new Translator('en'));
 
         $siteTranslatorFactory = $prophet->prophesize(SiteTranslatorFactory::class);
-        $siteTranslatorFactory->getTranslator(new TypeToken('string'))->willReturn(new Translator('en'));
+        $siteTranslatorFactory->getTranslator(new TypeToken('string'), new TypeToken('string'))
+            ->willReturn(new Translator('en'));
 
         return new FormMiddleware(
             $appState->reveal(),
@@ -442,6 +446,7 @@ class FormMiddlewareCest
             $formAppState['form1']['anchor'] = $anchor;
         }
         $appState->setForm($formAppState)->shouldBeCalled();
+        $appState->getLocale()->willReturn('en');
 
         $fs = $this->getFs();
         $appState->getSiteDir()->willReturn($fs->path('/sites/www.example.com'));

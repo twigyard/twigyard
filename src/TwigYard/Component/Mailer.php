@@ -10,6 +10,11 @@ class Mailer
     private $swiftMailer;
 
     /**
+     * @var MailerMessageBuilder
+     */
+    private $mailerMessageBuilder;
+
+    /**
      * @var string
      */
     private $debugRecipient;
@@ -17,25 +22,27 @@ class Mailer
     /**
      * Mailer constructor.
      * @param \Swift_Mailer $swiftMailer
+     * @param MailerMessageBuilder $mailerMessageBuilder
      */
-    public function __construct(\Swift_Mailer $swiftMailer)
+    public function __construct(\Swift_Mailer $swiftMailer, MailerMessageBuilder $mailerMessageBuilder)
     {
         $this->swiftMailer = $swiftMailer;
+        $this->mailerMessageBuilder = $mailerMessageBuilder;
         $this->debugRecipient = null;
     }
 
     /**
      * @return \TwigYard\Component\MailerMessageBuilder
      */
-    public function getMessageBuilder()
+    public function getMessageBuilder(): MailerMessageBuilder
     {
-        return new MailerMessageBuilder();
+        return $this->mailerMessageBuilder;
     }
 
     /**
      * @param MailerMessageBuilder $messageBuilder
      */
-    public function send(MailerMessageBuilder $messageBuilder)
+    public function send(MailerMessageBuilder $messageBuilder): void
     {
         $message = $messageBuilder->getMessage();
         if ($this->debugRecipient !== null) {
@@ -50,7 +57,7 @@ class Mailer
     /**
      * @param string $email
      */
-    public function setDebugRecipient($email)
+    public function setDebugRecipient(string $email): void
     {
         $this->debugRecipient = $email;
     }

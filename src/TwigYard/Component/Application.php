@@ -2,7 +2,8 @@
 
 namespace TwigYard\Component;
 
-use TwigYard\Exception\InvalidApplicationConfigException;
+use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use TwigYard\Middleware\Data\DataMiddleware;
 use TwigYard\Middleware\Error\ErrorMiddleware;
 use TwigYard\Middleware\Form\FormHandlerFactory;
@@ -15,11 +16,7 @@ use TwigYard\Middleware\Renderer\RendererMiddleware;
 use TwigYard\Middleware\Router\RouterMiddleware;
 use TwigYard\Middleware\Tracking\TrackingMiddleware;
 use TwigYard\Middleware\Url\UrlMiddleware;
-use Nette\Caching\Cache;
-use Nette\Caching\Storages\DevNullStorage;
-use Nette\Caching\Storages\FileStorage;
 use Relay\RelayBuilder;
-use Symfony\Component\Yaml\Yaml;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Server;
 use Zend\Diactoros\ServerRequestFactory;
@@ -40,16 +37,24 @@ class Application
     private $appRoot;
 
     /**
+     * @var ContainerBuilder
+     */
+    private $container;
+
+    /**
      * @param string $appRoot
      * @param ApplicationConfig $config
      */
-    public function __construct($appRoot, ApplicationConfig $config)
+    public function __construct(string $appRoot, ApplicationConfig $config)
     {
         $this->appRoot = $appRoot;
         $this->config = $config;
+
+        $containerFactory = new ContainerFactory($appRoot, $config);
+        $this->container = $containerFactory->createContainer();
     }
 
-    public function run()
+    public function run(): void
     {
         $server = new Server(
             (new RelayBuilder())->newInstance($this->getQueue()),
@@ -62,37 +67,31 @@ class Application
     /**
      * @return array
      */
-    private function getQueue()
+    private function getQueue(): array
     {
         $appState = new AppState();
-        $globalParameters = $this->getGlobalParameters();
-        $defaultSiteParameters = $this->getDefaultSiteParameters();
-        $siteTranslatorFactory = $this->getSiteTranslatorFactory($appState, $globalParameters);
-        $tplFactory = $this->getTplFactory($siteTranslatorFactory, $globalParameters);
-        $mailerFactory = $this->getMailerFactory($defaultSiteParameters);
-        $csrfTokenGenerator = new CsrfTokenGenerator();
-        $formValidator = new FormValidator($this->getValidatorBuilderFactory($appState));
 
+        $globalParameters = $this->container->getParameter('app.parameters');
+
+        $formValidator = new FormValidator($this->container->get(ValidatorBuilderFactory::class));
         $formHandlerFactory = new FormHandlerFactory(
             $appState,
-            $mailerFactory,
-            $tplFactory,
-            $this->getSiteLoggerFactory()
+            $this->container->get(MailerFactory::class),
+            $this->container->get(TwigTemplatingFactory::class),
+            $this->container->get(SiteLoggerFactory::class)
         );
-
-        $globalLoggerFactory = $this->getGlobalLoggerFactory($globalParameters);
 
         $queue[] = new ErrorMiddleware(
             $appState,
             $globalParameters['show_errors'],
-            $globalLoggerFactory,
+            $this->container->get(LoggerFactory::class),
             $this->config->getTemplateDir(),
             $this->config->getError404PageName(),
             $this->config->getError500PageName()
         );
         $queue[] = new UrlMiddleware(
             $appState,
-            $this->getConfigCache($globalParameters),
+            $this->container->get(ConfigCache::class),
             $this->appRoot . '/' . $this->config->getSitesDir(),
             $globalParameters['site_config'],
             $this->config->getSiteParameters(),
@@ -102,174 +101,27 @@ class Application
         $queue[] = new RedirectMiddleware($appState);
         $queue[] = new HttpauthMiddleware($appState);
         $queue[] = new LocaleMiddleware($appState, self::VALID_LOCALES);
-        $queue[] = new DataMiddleware($appState, $this->config->getDataDir(), new CurlDownloader());
+        $queue[] = new DataMiddleware(
+            $appState,
+            $this->config->getDataDir(),
+            $this->container->get(CurlDownloader::class)
+        );
         $queue[] = new RouterMiddleware($appState);
         $queue[] = new FormMiddleware(
             $appState,
-            $csrfTokenGenerator,
+            $this->container->get(CsrfTokenGenerator::class),
             $formValidator,
             $formHandlerFactory,
-            $this->getTranslatorFactory($appState, $this->appRoot),
-            $siteTranslatorFactory,
+            $this->container->get(TranslatorFactory::class),
+            $this->container->get(SiteTranslatorFactory::class),
             $this->config->getLogDir()
         );
         $queue[] = new TrackingMiddleware($appState, $globalParameters['tracking_enabled']);
-        $queue[] = new RendererMiddleware($appState, $tplFactory);
+        $queue[] = new RendererMiddleware(
+            $appState,
+            $this->container->get(TwigTemplatingFactory::class)
+        );
 
         return $queue;
-    }
-
-    /**
-     * @param array $globalParameters
-     * @param SiteTranslatorFactory $siteTranslatorFactory
-     * @return TwigTemplatingFactory
-     */
-    private function getTplFactory(SiteTranslatorFactory $siteTranslatorFactory, array $globalParameters)
-    {
-        $imageFactory = new ImageFactory($this->config->getBasePath(), $this->config->getImageCacheDir());
-        $assetCacheManagerFactory = new AssetCacheManagerFactory($this->config->getCacheNamespaceAssets());
-        $tplClosureFactory = new TemplatingClosureFactory(
-            $this->config->getBasePath(),
-            $imageFactory,
-            $assetCacheManagerFactory
-        );
-
-        return new TwigTemplatingFactory(
-            $this->config->getTemplateDir(),
-            $this->config->getLanguageDir(),
-            $this->config->getAssetDir(),
-            $tplClosureFactory,
-            $siteTranslatorFactory,
-            $globalParameters['cache_enabled'] ? $this->config->getSiteCacheDir() : null
-        );
-    }
-
-    /**
-     * @return array
-     */
-    private function getGlobalParameters()
-    {
-        return Yaml::parse(
-            file_get_contents(
-                $this->appRoot . '/' . $this->config->getConfigDir() . '/' . $this->config->getGlobalParameters()
-            )
-        )['parameters'];
-    }
-
-    /**
-     * @return array
-     */
-    private function getDefaultSiteParameters()
-    {
-        return Yaml::parse(
-            file_get_contents(
-                $this->appRoot . '/' . $this->config->getConfigDir() . '/' . $this->config->getDefaultSiteParameters()
-            )
-        )['parameters'];
-    }
-
-    /**
-     * @param array $parameters
-     * @return \TwigYard\Component\ConfigCache
-     */
-    private function getConfigCache(array $parameters)
-    {
-        $cacheStorage = $parameters['cache_enabled']
-            ? new FileStorage($this->appRoot . '/' . $this->config->getConfigCacheDir())
-            : new DevNullStorage();
-        $cache = new Cache($cacheStorage, $this->config->getCacheNamespaceConfig());
-
-        return new ConfigCache($cache, $this->getGlobalLoggerFactory($parameters));
-    }
-
-    /**
-     * @param array $globalParameters
-     * @throws \TwigYard\Exception\InvalidApplicationConfigException
-     * @return \TwigYard\Component\LoggerFactory
-     */
-    private function getGlobalLoggerFactory(array $globalParameters)
-    {
-        if (isset($globalParameters['log_rotation_enabled']) && !isset($globalParameters['log_max_files'])) {
-            throw new InvalidApplicationConfigException(
-                'If there is log_rotation_enabled defined in the configuration, log_max_files has to be defined too.'
-            );
-        }
-
-        if (isset($globalParameters['log_max_files']) && !isset($globalParameters['log_rotation_enabled'])) {
-            throw new InvalidApplicationConfigException(
-                'If there is log_max_files defined in the configuration, log_rotation_enabled has to be defined too.'
-            );
-        }
-
-        if (isset($globalParameters['loggly_token']) && !isset($globalParameters['loggly_tags'])) {
-            throw new InvalidApplicationConfigException(
-                'If there is loggly_token defined in the configuration, loggly_tags has to be defined too.'
-            );
-        }
-
-        if (isset($globalParameters['loggly_tags']) && !isset($globalParameters['loggly_token'])) {
-            throw new InvalidApplicationConfigException(
-                'If there is loggly_tags defined in the configuration, loggly_token has to be defined too.'
-            );
-        }
-
-        return new LoggerFactory(
-            $this->appRoot . '/' . $this->config->getLogDir(),
-            constant('Monolog\Logger::' . strtoupper($globalParameters['log_on_level'])),
-            (isset($globalParameters['log_rotation_enabled']) ? $globalParameters['log_rotation_enabled'] : false),
-            (isset($globalParameters['log_max_files']) ? $globalParameters['log_max_files'] : null),
-            (isset($globalParameters['loggly_token']) ? $globalParameters['loggly_token'] : null),
-            (isset($globalParameters['loggly_tags']) ? $globalParameters['loggly_tags'] : [])
-        );
-    }
-
-    /**
-     * @return \TwigYard\Component\SiteLoggerFactory
-     */
-    private function getSiteLoggerFactory()
-    {
-        return new SiteLoggerFactory($this->config->getLogDir());
-    }
-
-    /**
-     * @param array $defaultSiteParameters
-     * @return \TwigYard\Component\MailerFactory
-     */
-    private function getMailerFactory(array $defaultSiteParameters)
-    {
-        return new MailerFactory($defaultSiteParameters);
-    }
-
-    /**
-     * @param \TwigYard\Component\AppState $appState
-     * @return \TwigYard\Component\ValidatorBuilderFactory
-     */
-    private function getValidatorBuilderFactory(AppState $appState)
-    {
-        return new ValidatorBuilderFactory($appState);
-    }
-
-    /**
-     * @param \TwigYard\Component\AppState $appState
-     * @param string $appRoot
-     * @return \TwigYard\Component\TranslatorFactory
-     */
-    private function getTranslatorFactory(AppState $appState, $appRoot)
-    {
-        return new TranslatorFactory($appState, $appRoot, $this->config->getSiteCacheDir());
-    }
-
-    /**
-     * @param \TwigYard\Component\AppState $appState
-     * @param array $globalParameters
-     * @return \TwigYard\Component\SiteTranslatorFactory
-     */
-    private function getSiteTranslatorFactory(AppState $appState, array $globalParameters)
-    {
-        return new SiteTranslatorFactory(
-            $appState,
-            $this->config->getLanguageDir(),
-            $globalParameters['cache_enabled'] ? $this->config->getSiteCacheDir() : null
-        );
     }
 }
