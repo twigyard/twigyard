@@ -2,8 +2,8 @@
 
 namespace TwigYard\Component;
 
+use Symfony\Component\Translation\Formatter\MessageFormatter;
 use Symfony\Component\Translation\Loader\YamlFileLoader;
-use Symfony\Component\Translation\MessageSelector;
 use Symfony\Component\Translation\Translator;
 
 class SiteTranslatorFactory
@@ -11,11 +11,6 @@ class SiteTranslatorFactory
     const RESOURCES_TRANSLATIONS_PATH = '%s.yml';
 
     const TRANSLATIONS_CACHE_DIR = '_translator';
-
-    /**
-     * @var AppState
-     */
-    private $appState;
 
     /**
      * @var string
@@ -29,27 +24,25 @@ class SiteTranslatorFactory
 
     /**
      * FormLoggerFactory constructor.
-     * @param AppState $appState
      * @param string $cacheDir
      * @param string $languageResourcesDir
      */
-    public function __construct(AppState $appState, $languageResourcesDir, $cacheDir)
+    public function __construct($languageResourcesDir, $cacheDir)
     {
-        $this->appState = $appState;
         $this->cacheDir = $cacheDir;
         $this->languageResourcesDir = $languageResourcesDir;
     }
 
     /**
-     * @param string $siteDir
+     * @param $siteDir
+     * @param $locale
      * @return Translator
      */
-    public function getTranslator($siteDir)
+    public function getTranslator($siteDir, $locale)
     {
-        $locale = $this->appState->getLocale();
         $translator = new Translator(
             $locale,
-            new MessageSelector(),
+            new MessageFormatter(),
             $this->cacheDir ? $siteDir . '/' . $this->cacheDir . '/' . self::TRANSLATIONS_CACHE_DIR : null
         );
 

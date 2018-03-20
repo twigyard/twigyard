@@ -14,7 +14,7 @@ class MailerMessageBuilder
      */
     public function __construct()
     {
-        $this->message = Swift_Message::newInstance();
+        $this->message = new Swift_Message();
     }
 
     /**

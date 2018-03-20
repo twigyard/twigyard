@@ -156,7 +156,7 @@ class FormMiddleware
                         $csrfCookieValue = $request->getCookieParams()[self::CSRF_COOKIE_NAME];
                     }
 
-                    $translator = $this->translatorFactory->getTranslator();
+                    $translator = $this->translatorFactory->getTranslator($this->appState->getLocale());
 
                     if ($this->formValidator->validate(
                         isset($formConf['fields']) && is_array($formConf['fields']) ? $formConf['fields'] : [],
@@ -214,7 +214,10 @@ class FormMiddleware
             ));
 
         if (!empty($formConf['success_flash_message'])) {
-            $siteTranslator = $this->siteTranslatorFactory->getTranslator($this->appState->getSiteDir());
+            $siteTranslator = $this->siteTranslatorFactory->getTranslator(
+                $this->appState->getSiteDir(),
+                $this->appState->getLocale()
+            );
             $message = $siteTranslator->trans($formConf['success_flash_message']);
         } else {
             $message = $translator->trans(self::FLASH_MESSAGE_DEFAULT_SUCCESS);

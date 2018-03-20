@@ -11,11 +11,19 @@ class MailerFactory
     private $defaultSiteParameters;
 
     /**
-     * @param array $defaultSiteParameters
+     * @var MailerMessageBuilder
      */
-    public function __construct(array $defaultSiteParameters)
+    private $mailerMessageBuilder;
+
+    /**
+     * MailerFactory constructor.
+     * @param array $defaultSiteParameters
+     * @param MailerMessageBuilder $mailerMessageBuilder
+     */
+    public function __construct(array $defaultSiteParameters, MailerMessageBuilder $mailerMessageBuilder)
     {
         $this->defaultSiteParameters = $defaultSiteParameters;
+        $this->mailerMessageBuilder = $mailerMessageBuilder;
     }
 
     /**
@@ -38,7 +46,10 @@ class MailerFactory
                 ->setPassword($parameters['mailer_smtp_password']);
         }
 
-        $mailer = new Mailer(new \Swift_Mailer(isset($transport) ? $transport : \Swift_MailTransport::newInstance()));
+        $mailer = new Mailer(
+            new \Swift_Mailer(isset($transport) ? $transport : \Swift_MailTransport::newInstance()),
+            $this->mailerMessageBuilder
+        );
         if (array_key_exists('debug_email', $parameters)) {
             $mailer->setDebugRecipient($parameters['debug_email']);
         }

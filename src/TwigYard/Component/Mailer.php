@@ -10,6 +10,11 @@ class Mailer
     private $swiftMailer;
 
     /**
+     * @var MailerMessageBuilder
+     */
+    private $mailerMessageBuilder;
+
+    /**
      * @var string
      */
     private $debugRecipient;
@@ -17,10 +22,12 @@ class Mailer
     /**
      * Mailer constructor.
      * @param \Swift_Mailer $swiftMailer
+     * @param MailerMessageBuilder $mailerMessageBuilder
      */
-    public function __construct(\Swift_Mailer $swiftMailer)
+    public function __construct(\Swift_Mailer $swiftMailer, MailerMessageBuilder $mailerMessageBuilder)
     {
         $this->swiftMailer = $swiftMailer;
+        $this->mailerMessageBuilder = $mailerMessageBuilder;
         $this->debugRecipient = null;
     }
 
@@ -29,7 +36,7 @@ class Mailer
      */
     public function getMessageBuilder()
     {
-        return new MailerMessageBuilder();
+        return $this->mailerMessageBuilder;
     }
 
     /**

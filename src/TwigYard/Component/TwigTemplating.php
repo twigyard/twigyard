@@ -52,7 +52,12 @@ class TwigTemplating implements TemplatingInterface
         $this->twigEnv->addExtension(new Twig_Extensions_Extension_Intl());
         $this->twigEnv->addExtension(new Twig_Extensions_Extension_Date());
         $this->twigEnv->addExtension(
-            new TranslationExtension($siteTranslatorFactory->getTranslator($this->appState->getSiteDir()))
+            new TranslationExtension(
+                $siteTranslatorFactory->getTranslator(
+                    $this->appState->getSiteDir(),
+                    $this->appState->getLocale()
+                )
+            )
         );
 
         $this->twigEnv->addFunction(

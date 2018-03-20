@@ -1,0 +1,63 @@
+services:
+    _defaults:
+         autowire: true
+         autoconfigure: true
+         public: true
+
+    # General components
+
+    TwigYard\Component\AppState: ~
+
+    TwigYard\Component\CsrfTokenGenerator: ~
+
+    TwigYard\Component\CurlDownloader: ~
+
+    TwigYard\Component\MailerMessageBuilder: ~
+
+    # Component factories
+
+    TwigYard\Component\AssetCacheManagerFactory:
+        arguments:
+            $cacheNamespace: '@=parameter("app.config").getCacheNamespaceAssets()'
+
+    TwigYard\Component\ImageFactory:
+        arguments:
+            $basePath: '@=parameter("app.config").getBasePath()'
+            $cacheDir: '@=parameter("app.config").getImageCacheDir()'
+
+    TwigYard\Component\MailerFactory:
+        arguments:
+            $defaultSiteParameters: '@=parameter("app.site_parameters")'
+
+    TwigYard\Component\SiteLoggerFactory:
+        arguments:
+        arguments:
+            $logDir: '@=parameter("app.config").getLogDir()'
+
+    TwigYard\Component\SiteTranslatorFactory:
+        arguments:
+            $languageResourcesDir: '@=parameter("app.config").getLanguageDir()'
+            $cacheDir: '@=parameter("app.parameters")["cache_enabled"] ? parameter("app.config").getSiteCacheDir() : null'
+
+    TwigYard\Component\TemplatingClosureFactory:
+        arguments:
+            $basePath: '@=parameter("app.config").getBasePath()'
+
+    TwigYard\Component\TwigTemplatingFactory:
+        arguments:
+            $templateDir: '@=parameter("app.config").getTemplateDir()'
+            $languageDir: '@=parameter("app.config").getLanguageDir()'
+            $assetDir: '@=parameter("app.config").getAssetDir()'
+            $siteCacheDir: '@=parameter("app.parameters")["cache_enabled"] ? parameter("app.config").getSiteCacheDir() : null'
+
+    TwigYard\Component\TranslatorFactory:
+        arguments:
+            $appRoot: '@=parameter("app.root")'
+            $cacheDir: '@=parameter("app.parameters")["cache_enabled"] ? parameter("app.config").getSiteCacheDir() : null'
+
+    TwigYard\Component\ValidatorBuilderFactory: ~
+
+    #  Following components are wired in Application.php:
+    #
+    #     - TwigYard\Component\ConfigCache
+    #     - TwigYard\Component\LoggerFactory
