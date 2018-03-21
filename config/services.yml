@@ -6,8 +6,6 @@ services:
 
     # General components
 
-    TwigYard\Component\AppState: ~
-
     TwigYard\Component\CsrfTokenGenerator: ~
 
     TwigYard\Component\CurlDownloader: ~
