@@ -56,7 +56,7 @@ class LoggerFactory
      * @param string $logOnLevel
      * @param bool $logRotationEnabled
      * @param int|null $maxFiles
-     * @param null|string $logglyToken
+     * @param string|null $logglyToken
      * @param array|null $logglyTags
      */
     public function __construct(
@@ -110,10 +110,10 @@ class LoggerFactory
     }
 
     /**
-     * @param string $channelName
-     * @return \Monolog\Logger
+     * @param null|string $channelName
+     * @return LoggerInterface
      */
-    public function getLogger(string $channelName): LoggerInterface
+    public function getLogger(?string $channelName): LoggerInterface
     {
         FileSystem::createDir($this->appRoot . '/' . $this->logDir);
         $logger = new Logger($channelName);
