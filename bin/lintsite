@@ -28,7 +28,6 @@ function initYamlLinter(Application $application) {
 }
 
 function initTwigLinter(Application $application) {
-    $twigLintCommand = new TwigLintCommand();
     $twigEnvironment = new \Twig_Environment(new \Twig_Loader_Filesystem());
 
     $twigEnvironment->addExtension(new Twig_Extensions_Extension_Text());
@@ -41,7 +40,7 @@ function initTwigLinter(Application $application) {
     $twigEnvironment->addFunction(new Twig_SimpleFunction('image', function () {}));
     $twigEnvironment->addFunction(new Twig_SimpleFunction('path', function () {}));
 
-    $twigLintCommand->setTwigEnvironment($twigEnvironment);
+    $twigLintCommand = new TwigLintCommand($twigEnvironment);
     $application->add($twigLintCommand);
 }
 
