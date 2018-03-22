@@ -110,7 +110,7 @@ class LoggerFactory
     }
 
     /**
-     * @param null|string $channelName
+     * @param string|null $channelName
      * @return LoggerInterface
      */
     public function getLogger(?string $channelName): LoggerInterface
