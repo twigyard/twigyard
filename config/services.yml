@@ -10,6 +10,14 @@ services:
 
     TwigYard\Component\CurlDownloader: ~
 
+    TwigYard\Component\ConfigCache:
+        factory: 'TwigYard\Component\ConfigCacheServiceFactory:createConfigCache'
+        arguments:
+            $appRoot: '@=parameter("app.root")'
+            $cacheDir: '@=parameter("app.config").getConfigCacheDir()'
+            $cacheNamespace: '@=parameter("app.config").getCacheNamespaceConfig()'
+            $cacheEnabled: '@=parameter("app.parameters")["cache_enabled"]'
+
     TwigYard\Component\MailerMessageBuilder: ~
 
     # Component factories
@@ -18,10 +26,22 @@ services:
         arguments:
             $cacheNamespace: '@=parameter("app.config").getCacheNamespaceAssets()'
 
+    TwigYard\Component\ConfigCacheServiceFactory: ~
+
     TwigYard\Component\ImageFactory:
         arguments:
             $basePath: '@=parameter("app.config").getBasePath()'
             $cacheDir: '@=parameter("app.config").getImageCacheDir()'
+
+    TwigYard\Component\LoggerFactory:
+        arguments:
+            $appRoot: '@=parameter("app.root")'
+            $logDir: '@=parameter("app.config").getLogDir()'
+            $logOnLevel: '@=parameter("app.parameters")["log_on_level"]'
+            $logRotationEnabled: '@=parameter("app.parameters")["log_rotation_enabled"]'
+            $maxFiles: '@=parameter("app.parameters")["log_max_files"]'
+            $logglyToken: '@=parameter("app.parameters")["loggly_token"]'
+            $logglyTags: '@=parameter("app.parameters")["loggly_tags"]'
 
     TwigYard\Component\MailerFactory:
         arguments:
@@ -55,7 +75,3 @@ services:
 
     TwigYard\Component\ValidatorBuilderFactory: ~
 
-    #  Following components are wired in Application.php:
-    #
-    #     - TwigYard\Component\ConfigCache
-    #     - TwigYard\Component\LoggerFactory
