@@ -24,7 +24,7 @@ class ContainerFactory
      * @param $appRoot
      * @param ApplicationConfig $appConfig
      */
-    public function __construct($appRoot, ApplicationConfig $appConfig)
+    public function __construct(string $appRoot, ApplicationConfig $appConfig)
     {
         $this->appRoot = $appRoot;
         $this->appConfig = $appConfig;
@@ -33,7 +33,7 @@ class ContainerFactory
     /**
      * @return ContainerBuilder
      */
-    public function createContainer()
+    public function createContainer(): ContainerBuilder
     {
         $parameters = $this->getGlobalParameters();
         $defaultSiteParameters = $this->getDefaultSiteParameters();
@@ -55,7 +55,7 @@ class ContainerFactory
     /**
      * @return array
      */
-    private function getGlobalParameters()
+    private function getGlobalParameters(): array
     {
         return Yaml::parse(
             file_get_contents(
@@ -67,7 +67,7 @@ class ContainerFactory
     /**
      * @return array
      */
-    private function getDefaultSiteParameters()
+    private function getDefaultSiteParameters(): array
     {
         return Yaml::parse(
             file_get_contents(

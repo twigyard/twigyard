@@ -34,7 +34,7 @@ class Mailer
     /**
      * @return \TwigYard\Component\MailerMessageBuilder
      */
-    public function getMessageBuilder()
+    public function getMessageBuilder(): MailerMessageBuilder
     {
         return $this->mailerMessageBuilder;
     }
@@ -42,7 +42,7 @@ class Mailer
     /**
      * @param MailerMessageBuilder $messageBuilder
      */
-    public function send(MailerMessageBuilder $messageBuilder)
+    public function send(MailerMessageBuilder $messageBuilder): void
     {
         $message = $messageBuilder->getMessage();
         if ($this->debugRecipient !== null) {
@@ -57,7 +57,7 @@ class Mailer
     /**
      * @param string $email
      */
-    public function setDebugRecipient($email)
+    public function setDebugRecipient(string $email): void
     {
         $this->debugRecipient = $email;
     }

@@ -7,6 +7,7 @@ use Monolog\Handler\RotatingFileHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Nette\Utils\FileSystem;
+use Psr\Log\LoggerInterface;
 use TwigYard\Exception\InvalidApplicationConfigException;
 
 class LoggerFactory
@@ -50,22 +51,22 @@ class LoggerFactory
 
     /**
      * LoggerFactory constructor.
-     * @param $appRoot
-     * @param $logDir
-     * @param $logOnLevel
-     * @param $logRotationEnabled
-     * @param int $maxFiles
-     * @param null $logglyToken
-     * @param array $logglyTags
+     * @param string $appRoot
+     * @param string $logDir
+     * @param string $logOnLevel
+     * @param bool $logRotationEnabled
+     * @param int|null $maxFiles
+     * @param null|string $logglyToken
+     * @param array|null $logglyTags
      */
     public function __construct(
-        $appRoot,
-        $logDir,
-        $logOnLevel,
-        $logRotationEnabled,
-        $maxFiles = 0,
-        $logglyToken = null,
-        $logglyTags = []
+        string $appRoot,
+        string $logDir,
+        string $logOnLevel,
+        bool $logRotationEnabled,
+        ?int $maxFiles = 0,
+        ?string $logglyToken = null,
+        ?array $logglyTags = []
     ) {
         $this->appRoot = $appRoot;
         $this->logDir = $logDir;
@@ -81,7 +82,7 @@ class LoggerFactory
     /**
      * @throws InvalidApplicationConfigException
      */
-    private function checkValidity()
+    private function checkValidity(): void
     {
         if (isset($this->logRotationEnabled) && !isset($this->maxFiles)) {
             throw new InvalidApplicationConfigException(
@@ -112,7 +113,7 @@ class LoggerFactory
      * @param string $channelName
      * @return \Monolog\Logger
      */
-    public function getLogger($channelName)
+    public function getLogger(string $channelName): LoggerInterface
     {
         FileSystem::createDir($this->appRoot . '/' . $this->logDir);
         $logger = new Logger($channelName);

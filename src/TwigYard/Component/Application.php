@@ -45,7 +45,7 @@ class Application
      * @param string $appRoot
      * @param ApplicationConfig $config
      */
-    public function __construct($appRoot, ApplicationConfig $config)
+    public function __construct(string $appRoot, ApplicationConfig $config)
     {
         $this->appRoot = $appRoot;
         $this->config = $config;
@@ -54,7 +54,7 @@ class Application
         $this->container = $containerFactory->createContainer();
     }
 
-    public function run()
+    public function run(): void
     {
         $server = new Server(
             (new RelayBuilder())->newInstance($this->getQueue()),
@@ -65,17 +65,9 @@ class Application
     }
 
     /**
-     * @return Container
-     */
-    public function getContainer()
-    {
-        return $this->container;
-    }
-
-    /**
      * @return array
      */
-    private function getQueue()
+    private function getQueue(): array
     {
         $appState = new AppState();
 

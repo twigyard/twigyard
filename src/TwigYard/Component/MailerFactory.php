@@ -35,7 +35,7 @@ class MailerFactory
         $parameters = array_merge($this->defaultSiteParameters, $siteParameters);
 
         if (!empty($parameters['mailer_smtp_host'])) {
-            $transport = \Swift_SmtpTransport::newInstance(
+            $transport = new \Swift_SmtpTransport(
                 $parameters['mailer_smtp_host'],
                 $parameters['mailer_smtp_port'],
                 $parameters['mailer_smtp_encryption']
@@ -47,7 +47,7 @@ class MailerFactory
         }
 
         $mailer = new Mailer(
-            new \Swift_Mailer(isset($transport) ? $transport : \Swift_MailTransport::newInstance()),
+            new \Swift_Mailer(isset($transport) ? $transport : new \Swift_SmtpTransport()),
             $this->mailerMessageBuilder
         );
         if (array_key_exists('debug_email', $parameters)) {

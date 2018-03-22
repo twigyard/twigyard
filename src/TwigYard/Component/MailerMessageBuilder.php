@@ -7,6 +7,9 @@ use Swift_Message;
 
 class MailerMessageBuilder
 {
+    /**
+     * @var Swift_Message
+     */
     private $message;
 
     /**
@@ -21,7 +24,7 @@ class MailerMessageBuilder
      * @param string $body
      * @return $this
      */
-    public function setBody($body)
+    public function setBody(string $body): MailerMessageBuilder
     {
         $this->message->setBody($body, 'text/html');
         $this->message->addPart((new Html2Text($body))->getText(), 'text/plain');
@@ -32,7 +35,7 @@ class MailerMessageBuilder
      * @param string $subject
      * @return $this
      */
-    public function setSubject($subject)
+    public function setSubject(string $subject): MailerMessageBuilder
     {
         $this->message->setSubject($subject);
         return $this;
@@ -42,7 +45,7 @@ class MailerMessageBuilder
      * @param array $toAddresses
      * @return $this
      */
-    public function setTo(array $toAddresses)
+    public function setTo(array $toAddresses): MailerMessageBuilder
     {
         $this->message->setTo($toAddresses);
         return $this;
@@ -52,7 +55,7 @@ class MailerMessageBuilder
      * @param array $fromArray
      * @return $this
      */
-    public function setFrom(array $fromArray)
+    public function setFrom(array $fromArray): MailerMessageBuilder
     {
         $this->message->setFrom($fromArray);
         return $this;
@@ -62,7 +65,7 @@ class MailerMessageBuilder
      * @param array $bccAddresses
      * @return $this
      */
-    public function setBcc(array $bccAddresses)
+    public function setBcc(array $bccAddresses): MailerMessageBuilder
     {
         $this->message->setBcc($bccAddresses);
         return $this;
@@ -71,7 +74,7 @@ class MailerMessageBuilder
     /**
      * @return Swift_Message
      */
-    public function getMessage()
+    public function getMessage(): Swift_Message
     {
         return $this->message;
     }

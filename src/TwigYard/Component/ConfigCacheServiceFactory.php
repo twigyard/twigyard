@@ -10,19 +10,19 @@ class ConfigCacheServiceFactory
 {
     /**
      * @param LoggerFactory $loggerFactory
-     * @param $appRoot
-     * @param $cacheDir
-     * @param $cacheNamespace
-     * @param $cacheEnabled
+     * @param string $appRoot
+     * @param string $cacheDir
+     * @param string $cacheNamespace
+     * @param bool $cacheEnabled
      * @return ConfigCache
      */
     public static function createConfigCache(
         LoggerFactory $loggerFactory,
-        $appRoot,
-        $cacheDir,
-        $cacheNamespace,
-        $cacheEnabled
-    ) {
+        string $appRoot,
+        string $cacheDir,
+        string $cacheNamespace,
+        bool $cacheEnabled
+    ) : ConfigCache {
         $cacheStorage = $cacheEnabled
             ? new FileStorage($appRoot . '/' . $cacheDir)
             : new DevNullStorage();
