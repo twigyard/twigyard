@@ -2,6 +2,7 @@
 
 namespace TwigYard\Component;
 
+use Symfony\Component\VarDumper\VarDumper;
 use TwigYard\Exception\InvalidRouteException;
 
 class TemplatingClosureFactory
@@ -85,6 +86,16 @@ class TemplatingClosureFactory
                 return '';
             }
             return $basePath . '/' . $asset . '?v=' . $cacheManager->getCrc32($basePath . '/' . $asset);
+        };
+    }
+
+    /**
+     * @return \Closure
+     */
+    public function getDumpClosure()
+    {
+        return function ($var) {
+            return VarDumper::dump($var);
         };
     }
 

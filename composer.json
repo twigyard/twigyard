@@ -32,7 +32,8 @@
         "symfony/console": "^4.0.4",
         "symfony/finder": "^4.0.4",
         "symfony/dependency-injection": "^4.0.4",
-        "symfony/expression-language": "^4.0.4"
+        "symfony/expression-language": "^4.0.4",
+        "symfony/var-dumper": "^4.0.4"
     },
     "require-dev": {
         "codeception/codeception": ">=2.3.8",
