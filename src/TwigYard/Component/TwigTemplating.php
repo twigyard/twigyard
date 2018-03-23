@@ -4,8 +4,6 @@ namespace TwigYard\Component;
 
 use Locale;
 use Symfony\Bridge\Twig\Extension\TranslationExtension;
-use Symfony\Component\Translation\Loader\YamlFileLoader;
-use Symfony\Component\Translation\Translator;
 use Twig_Environment;
 use Twig_Extensions_Extension_Date;
 use Twig_Extensions_Extension_I18n;
@@ -65,6 +63,9 @@ class TwigTemplating implements TemplatingInterface
                 $assetDir,
                 isset($options['cache']) ? $options['cache'] : null
             ))
+        );
+        $this->twigEnv->addFunction(
+            new Twig_SimpleFunction('dump', $tplClosureFactory->getDumpClosure())
         );
         $this->twigEnv->addFunction(
             new Twig_SimpleFunction('image', $tplClosureFactory->getImageClosure($assetDir))
