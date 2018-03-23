@@ -1,7 +1,9 @@
 # Image
-This component returns path to image in `image_cache` directory. It also offers edit functions thanks Gregwar.
+This function returns path to image in `image_cache` directory.
+The output image can be modified by functions provided by *Gregwar/Image* library.
 
-For more information about Gregwar visit [Gregwar documentation](https://github.com/Gregwar/Image/).
+For more information about *Gregwar/Image* and the features it provides do visit 
+[Gregwar documentation](https://github.com/Gregwar/Image/).
 
 ## Parameters
 ```image(path)```

@@ -1,5 +1,5 @@
 # Asset
-This component returns path to file. 
+This function returns path to file. 
 
 ## Parameters
 ```asset(path)```

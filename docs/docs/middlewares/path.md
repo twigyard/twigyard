@@ -1,13 +1,13 @@
 # Path
-This component returns the URL for the given route. 
+This function returns the URL for the given route. 
 
 ## Parameters
 ```path(page, queries, locale)```
 
 parameter        | type           | required | description
 -----------------|----------------|----------|------------
-page             | array          | ✓        | The name of page (e.g. www.mysite.com).
-queries          | string         | ❌        | Array of url parameters (e.g. [gallery: nature])
+page             | string         | ✓        | The name of page (e.g. www.mysite.com).
+queries          | array          | ❌        | Array of url parameters (e.g. [gallery: nature])
 locale           | string         | ❌        | Shortcut for language.
 
 **Example**
