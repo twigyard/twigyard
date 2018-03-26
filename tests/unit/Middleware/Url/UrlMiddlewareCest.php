@@ -83,6 +83,19 @@ class UrlMiddlewareCest
     /**
      * @param \UnitTester $I
      */
+    public function redirectToHttpsWithPath(\UnitTester $I)
+    {
+        $fs = $this->getFs();
+        $mw = $this->getMw($fs, null, null, null, null, true);
+        $response = $mw($this->getRequest('www.example.com', '/page'), new Response(), function () {
+        });
+        $I->assertEquals('https://www.example.com', $response->getHeaderLine('location'));
+        $I->assertEquals($response->getStatusCode(), 301);
+    }
+
+    /**
+     * @param \UnitTester $I
+     */
     public function doNotRedirectToHttpsIfDisabledGlobally(\UnitTester $I)
     {
         $fs = $this->getFs();
@@ -281,13 +294,18 @@ EOT;
 
     /**
      * @param string $host
+     * @param string|null $path
      * @return ServerRequest
      */
-    private function getRequest($host)
+    private function getRequest($host, $path = null)
     {
         $uri = (new \Zend\Diactoros\Uri())
             ->withHost($host)
             ->withScheme('http');
+
+        if ($path) {
+            $uri->withPath($path);
+        }
 
         return (new ServerRequest(['SCRIPT_NAME' => '/app.php', 'REMOTE_ADDR' => '127.0.1.2']))->withUri($uri);
     }
