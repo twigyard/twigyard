@@ -12,11 +12,11 @@ path             | string         | ✓        | Relative path to file inside `w
 ```
 # file.html.twig
 
-...
+…
 <img 
     src="{{ asset('animations/circle.svg') }}"
     alt="File name" 
 />
-...
+…
 
 ```
