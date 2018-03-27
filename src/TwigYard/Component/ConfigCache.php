@@ -2,11 +2,11 @@
 
 namespace TwigYard\Component;
 
-use TwigYard\Exception\InvalidSiteConfigException;
 use Nette\Caching\Cache;
 use Symfony\Component\Config\Exception\FileLoaderLoadException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Yaml\Exception\ParseException;
+use TwigYard\Exception\InvalidSiteConfigException;
 
 class ConfigCache implements ConfigCacheInterface
 {
@@ -41,11 +41,12 @@ class ConfigCache implements ConfigCacheInterface
     public function getConfig($sitesDir, $siteConfig)
     {
         $logger = $this->loggerFactory->getLogger(self::LOGGER_CHANNEL);
+
         return $this->cache->load($sitesDir, function () use ($sitesDir, $siteConfig, $logger) {
             $siteDirs = scandir($sitesDir);
             $configs = [];
             foreach ($siteDirs as $dirName) {
-                $dirPath = $sitesDir .'/' . $dirName;
+                $dirPath = $sitesDir . '/' . $dirName;
                 if (is_dir($dirPath) && $dirName !== '.' && $dirName !== '..') {
                     try {
                         $config = (new YamlConfigFileLoader(new FileLocator($dirPath)))->load($siteConfig);
@@ -78,6 +79,7 @@ class ConfigCache implements ConfigCacheInterface
                     }
                 }
             }
+
             return $configs;
         });
     }

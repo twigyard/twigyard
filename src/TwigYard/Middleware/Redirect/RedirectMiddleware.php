@@ -2,10 +2,10 @@
 
 namespace TwigYard\Middleware\Redirect;
 
-use TwigYard\Component\AppState;
-use TwigYard\Middleware\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use TwigYard\Component\AppState;
+use TwigYard\Middleware\MiddlewareInterface;
 use Zend\Diactoros\Response;
 
 class RedirectMiddleware implements MiddlewareInterface

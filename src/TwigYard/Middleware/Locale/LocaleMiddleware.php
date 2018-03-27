@@ -2,11 +2,11 @@
 
 namespace TwigYard\Middleware\Locale;
 
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use TwigYard\Component\AppState;
 use TwigYard\Exception\InvalidSiteConfigException;
 use TwigYard\Middleware\MiddlewareInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\RedirectResponse;
 
 class LocaleMiddleware implements MiddlewareInterface
@@ -35,8 +35,8 @@ class LocaleMiddleware implements MiddlewareInterface
      * @param \Psr\Http\Message\ServerRequestInterface $request
      * @param \Psr\Http\Message\ResponseInterface $response
      * @param callable|\TwigYard\Middleware\MiddlewareInterface $next
-     * @return \Psr\Http\Message\ResponseInterface $response
      * @throws \TwigYard\Exception\InvalidSiteConfigException
+     * @return \Psr\Http\Message\ResponseInterface $response
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {

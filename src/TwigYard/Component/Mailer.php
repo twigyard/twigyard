@@ -50,7 +50,7 @@ class Mailer
             $message->setCc([]);
             $message->setTo([$this->debugRecipient => 'developer']);
         }
-        
+
         $this->swiftMailer->send($message);
     }
 

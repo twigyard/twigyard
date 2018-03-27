@@ -2,11 +2,11 @@
 
 namespace TwigYard\Middleware\Renderer;
 
-use TwigYard\Component\AppState;
-use TwigYard\Middleware\MiddlewareInterface;
-use TwigYard\Component\TemplatingFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use TwigYard\Component\AppState;
+use TwigYard\Component\TemplatingFactoryInterface;
+use TwigYard\Middleware\MiddlewareInterface;
 
 class RendererMiddleware implements MiddlewareInterface
 {
@@ -34,9 +34,9 @@ class RendererMiddleware implements MiddlewareInterface
      * @param \Psr\Http\Message\ServerRequestInterface $request
      * @param \Psr\Http\Message\ResponseInterface $response
      * @param callable|\TwigYard\Middleware\MiddlewareInterface $next
-     * @return \Psr\Http\Message\ResponseInterface $response
      * @throws \TwigYard\Exception\InvalidSiteConfigException
      * @throws \Twig_Error_Loader
+     * @return \Psr\Http\Message\ResponseInterface $response
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {

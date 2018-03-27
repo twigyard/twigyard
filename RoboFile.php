@@ -40,12 +40,9 @@ class RoboFile extends Tasks
             ->run();
 
         $this
-            ->taskExec('vendor/bin/phpcs')
-            ->arg('--standard=PSR2')
-            ->arg('--encoding=utf-8')
-            ->arg(sprintf('--ignore=%s/**/_bootstrap.php,%s/_support/*Tester.php', self::TESTS_DIR, self::TESTS_DIR))
-            ->arg(self::SRC_DIR)
-            ->arg(self::TESTS_DIR)
+            ->taskExec('vendor/bin/php-cs-fixer fix')
+            ->args('--diff')
+            ->args('--config', '.php_cs')
             ->run();
     }
 

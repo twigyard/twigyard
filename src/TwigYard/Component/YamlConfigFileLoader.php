@@ -2,9 +2,9 @@
 
 namespace TwigYard\Component;
 
-use TwigYard\Exception\InvalidSiteConfigException;
 use Symfony\Component\Config\Loader\FileLoader;
 use Symfony\Component\Yaml\Yaml;
+use TwigYard\Exception\InvalidSiteConfigException;
 
 class YamlConfigFileLoader extends FileLoader
 {
@@ -36,13 +36,13 @@ class YamlConfigFileLoader extends FileLoader
      */
     public function supports($resource, $type = null)
     {
-        return is_string($resource) && in_array(pathinfo($resource, PATHINFO_EXTENSION), array('yml', 'yaml'), true);
+        return is_string($resource) && in_array(pathinfo($resource, PATHINFO_EXTENSION), ['yml', 'yaml'], true);
     }
 
     /**
      * @param $file
-     * @return array
      * @throws \TwigYard\Exception\InvalidSiteConfigException
+     * @return array
      */
     protected function loadFile($file)
     {

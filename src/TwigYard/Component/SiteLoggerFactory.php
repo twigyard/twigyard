@@ -35,6 +35,7 @@ class SiteLoggerFactory
         FileSystem::createDir($logDir);
         $logger = new Logger(self::CHANNEL);
         $logger->pushHandler(new StreamHandler($logDir . '/' . $logFile, Logger::INFO));
+
         return $logger;
     }
 }

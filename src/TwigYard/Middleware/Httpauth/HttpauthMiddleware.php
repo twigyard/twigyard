@@ -2,10 +2,10 @@
 
 namespace TwigYard\Middleware\Httpauth;
 
-use TwigYard\Component\AppState;
-use TwigYard\Middleware\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use TwigYard\Component\AppState;
+use TwigYard\Middleware\MiddlewareInterface;
 use Zend\Diactoros\Response;
 
 class HttpauthMiddleware implements MiddlewareInterface
@@ -27,8 +27,8 @@ class HttpauthMiddleware implements MiddlewareInterface
      * @param \Psr\Http\Message\ServerRequestInterface $request
      * @param \Psr\Http\Message\ResponseInterface $response
      * @param callable|\TwigYard\Middleware\MiddlewareInterface $next
-     * @return \Psr\Http\Message\ResponseInterface $response
      * @throws \TwigYard\Exception\InvalidSiteConfigException
+     * @return \Psr\Http\Message\ResponseInterface $response
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
@@ -43,7 +43,7 @@ class HttpauthMiddleware implements MiddlewareInterface
                 list($username, $password) = explode(':', $httpAuthString);
             }
             if ($username !== $conf['username'] || $password !== $conf['password']) {
-                 return (new Response())
+                return (new Response())
                     ->withHeader('WWW-Authenticate', sprintf('Basic realm=""'))
                     ->withStatus(401);
             }

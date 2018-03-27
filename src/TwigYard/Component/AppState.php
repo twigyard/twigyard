@@ -55,7 +55,7 @@ class AppState
      * @var string
      */
     private $siteDir;
-    
+
     /**
      * @var string[]
      */
@@ -86,6 +86,7 @@ class AppState
     public function setConfig(array $config)
     {
         $this->config = $config;
+
         return $this;
     }
 
@@ -104,6 +105,7 @@ class AppState
     public function setData(array $data)
     {
         $this->data = $data;
+
         return $this;
     }
 
@@ -122,6 +124,7 @@ class AppState
     public function setLocale($locale)
     {
         $this->locale = $locale;
+
         return $this;
     }
 
@@ -140,6 +143,7 @@ class AppState
     public function setPage($page)
     {
         $this->page = $page;
+
         return $this;
     }
 
@@ -158,6 +162,7 @@ class AppState
     public function setRouteMap(array $routeMap)
     {
         $this->routeMap = $routeMap;
+
         return $this;
     }
 
@@ -176,6 +181,7 @@ class AppState
     public function setSiteDir($siteDir)
     {
         $this->siteDir = $siteDir;
+
         return $this;
     }
 
@@ -194,6 +200,7 @@ class AppState
     public function setLocaleMap(array $localeMap)
     {
         $this->localeMap = $localeMap;
+
         return $this;
     }
 
@@ -212,6 +219,7 @@ class AppState
     public function setUrlParams(array $urlParams)
     {
         $this->urlParams = $urlParams;
+
         return $this;
     }
 
@@ -223,6 +231,7 @@ class AppState
     public function addUrlParam($name, $urlParam)
     {
         $this->urlParams[$name] = $urlParam;
+
         return $this;
     }
 
@@ -241,6 +250,7 @@ class AppState
     public function setForm(array $form)
     {
         $this->form = $form;
+
         return $this;
     }
 
@@ -253,8 +263,8 @@ class AppState
     }
 
     /**
-     * @return bool
      * @throws MissingAppStateAttributeException
+     * @return bool
      */
     public function isSingleLanguage()
     {
@@ -280,6 +290,7 @@ class AppState
     public function setTrackingIds(array $trackingIds)
     {
         $this->trackingIds = $trackingIds;
+
         return $this;
     }
 
@@ -298,6 +309,7 @@ class AppState
     public function setSiteParameters(array $siteParameters)
     {
         $this->siteParameters = $siteParameters;
+
         return $this;
     }
 
@@ -316,6 +328,7 @@ class AppState
     public function setRemoteIp($remoteIp)
     {
         $this->remoteIp = $remoteIp;
+
         return $this;
     }
 
@@ -334,9 +347,10 @@ class AppState
     public function setLanguageCode($languageCode)
     {
         $this->languageCode = $languageCode;
+
         return $this;
     }
-    
+
     /**
      * @return array
      */

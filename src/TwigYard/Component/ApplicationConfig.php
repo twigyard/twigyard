@@ -2,14 +2,13 @@
 
 namespace TwigYard\Component;
 
-use Monolog\Logger;
 use TwigYard\Exception\InvalidApplicationConfigException;
 
 class ApplicationConfig
 {
     const TYPE_STRING = 'string';
     const TYPE_ARRAY = 'array';
-    
+
     /**
      * @var string
      */
@@ -132,12 +131,12 @@ class ApplicationConfig
             if (!array_key_exists($configKey, $config)) {
                 throw new InvalidApplicationConfigException(sprintf('The property %s is mandatory.', $configKey));
             }
-            
+
             switch ($keyType) {
                 case self::TYPE_ARRAY:
                     $this->setArray($configKey, $config[$configKey]);
                     break;
-                
+
                 case self::TYPE_STRING:
                 default:
                     $this->setString($configKey, $config[$configKey]);

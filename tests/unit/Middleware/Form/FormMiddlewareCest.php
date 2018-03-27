@@ -2,22 +2,22 @@
 
 namespace Unit\Middleware\Form;
 
+use Dflydev\FigCookies\SetCookies;
+use Prophecy\Argument;
+use Prophecy\Argument\Token\TypeToken;
+use Prophecy\Prophet;
+use Symfony\Component\Translation\Translator;
 use TwigYard\Component\AppState;
 use TwigYard\Component\CsrfTokenGenerator;
 use TwigYard\Component\SiteTranslatorFactory;
 use TwigYard\Component\TranslatorFactory;
-use Dflydev\FigCookies\SetCookies;
-use TwigYard\Middleware\Form\Exception\LogDirectoryNotWritableException;
 use TwigYard\Middleware\Form\Exception\InvalidFormNameException;
+use TwigYard\Middleware\Form\Exception\LogDirectoryNotWritableException;
 use TwigYard\Middleware\Form\FormHandlerFactory;
 use TwigYard\Middleware\Form\FormMiddleware;
 use TwigYard\Middleware\Form\FormValidator;
 use TwigYard\Middleware\Form\Handler\HandlerInterface;
 use TwigYard\Middleware\Form\Handler\LogHandler;
-use Prophecy\Argument;
-use Prophecy\Argument\Token\TypeToken;
-use Prophecy\Prophet;
-use Symfony\Component\Translation\Translator;
 use VirtualFileSystem\FileSystem;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
@@ -33,7 +33,7 @@ class FormMiddlewareCest
         $prophet = new Prophet();
         $appState = $prophet->prophesize(AppState::class);
         $appState->getConfig()->willReturn([
-            'form' => ['form1' => ['handlers' => [['logHandlerConfig', 'type' => 'log']]]]
+            'form' => ['form1' => ['handlers' => [['logHandlerConfig', 'type' => 'log']]]],
         ]);
         $fs = new FileSystem();
         $fs->createDirectory('/sites/www.example.com/var/log', true, 0);
@@ -53,13 +53,12 @@ class FormMiddlewareCest
     {
         $prophet = new Prophet();
         $appState = $prophet->prophesize(AppState::class);
-        $appState->getConfig()->willReturn(['form' => ['invalid-form-name!' => ['handlers' =>
-            [['logHandlerConfig', 'type' => 'log']],
+        $appState->getConfig()->willReturn(['form' => ['invalid-form-name!' => ['handlers' => [['logHandlerConfig', 'type' => 'log']],
         ]]]);
         $csrfTokenGenerator = $prophet->prophesize(CsrfTokenGenerator::class);
         $csrfTokenGenerator->generateToken()->willReturn('token');
         $formValidator = $prophet->prophesize(FormValidator::class);
-        $handlerFactory =$prophet->prophesize(FormHandlerFactory::class);
+        $handlerFactory = $prophet->prophesize(FormHandlerFactory::class);
         $translatorFactory = $prophet->prophesize(TranslatorFactory::class);
         $siteTranslatorFactory = $prophet->prophesize(SiteTranslatorFactory::class);
         $fs = new FileSystem();
@@ -90,8 +89,7 @@ class FormMiddlewareCest
     {
         $prophet = new Prophet();
         $appState = $prophet->prophesize(AppState::class);
-        $appState->getConfig()->willReturn(['form' => ['valid_form_n4m3' => ['handlers' =>
-            [['logHandlerConfig', 'type' => 'log']],
+        $appState->getConfig()->willReturn(['form' => ['valid_form_n4m3' => ['handlers' => [['logHandlerConfig', 'type' => 'log']],
         ]]]);
         $appState->setForm(['valid_form_n4m3' => [
             'data' => ['csrf_token' => 'token'],
@@ -102,7 +100,7 @@ class FormMiddlewareCest
         $csrfTokenGenerator = $prophet->prophesize(CsrfTokenGenerator::class);
         $csrfTokenGenerator->generateToken()->willReturn('token');
         $formValidator = $prophet->prophesize(FormValidator::class);
-        $handlerFactory =$prophet->prophesize(FormHandlerFactory::class);
+        $handlerFactory = $prophet->prophesize(FormHandlerFactory::class);
         $translatorFactory = $prophet->prophesize(TranslatorFactory::class);
         $siteTranslatorFactory = $prophet->prophesize(SiteTranslatorFactory::class);
 
@@ -224,7 +222,7 @@ class FormMiddlewareCest
         $mw = $this->getMw($appState, $prophet);
         $request = (new ServerRequest())->withCookieParams([
             'twigyard_flash_message' => 'Flash message',
-            'twigyard_flash_message_type' => 'success'
+            'twigyard_flash_message_type' => 'success',
         ]);
         $response = $mw($request, new Response(), function () {
             return new Response();
@@ -495,6 +493,7 @@ class FormMiddlewareCest
     private function getFs()
     {
         $fs = new FileSystem();
+
         return $fs;
     }
 }

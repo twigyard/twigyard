@@ -2,11 +2,10 @@
 
 namespace Unit\Middleware\Redirect;
 
-use TwigYard\Component\AppState;
-use TwigYard\Middleware\Redirect\RedirectMiddleware;
-use Prophecy\Argument;
 use Prophecy\Prophet;
 use Psr\Http\Message\ServerRequestInterface;
+use TwigYard\Component\AppState;
+use TwigYard\Middleware\Redirect\RedirectMiddleware;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Uri;
@@ -18,7 +17,7 @@ class RedirectMiddlewareCest
      */
     public function noErrorOnConfigMissing(\UnitTester $I)
     {
-        $prophet =  new Prophet();
+        $prophet = new Prophet();
         $appStateProph = $prophet->prophesize(AppState::class);
         $appStateProph->getConfig()->willReturn([]);
 
@@ -69,6 +68,7 @@ class RedirectMiddlewareCest
             function (ServerRequestInterface $request, Response $response) use ($prophet, $I) {
                 $prophet->checkPredictions();
                 $I->assertNotEquals(301, $response->getStatusCode());
+
                 return true;
             }
         );
@@ -84,7 +84,7 @@ class RedirectMiddlewareCest
         $prophet = $prophet ? $prophet : new Prophet();
         $appStateProph = $prophet->prophesize(AppState::class);
         $appStateProph->getConfig()->willReturn(['redirect' => ['/url/old' => '/url/new']]);
-            
+
         return new RedirectMiddleware($appStateProph->reveal());
     }
 }

@@ -2,18 +2,18 @@
 
 namespace TwigYard\Middleware\Form;
 
+use Dflydev\FigCookies\FigResponseCookies;
+use Dflydev\FigCookies\SetCookie;
 use Nette\Utils\FileSystem;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Symfony\Component\Translation\Translator;
 use TwigYard\Component\AppState;
 use TwigYard\Component\CsrfTokenGenerator;
 use TwigYard\Component\SiteTranslatorFactory;
 use TwigYard\Component\TranslatorFactory;
-use Dflydev\FigCookies\FigResponseCookies;
-use Dflydev\FigCookies\SetCookie;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Symfony\Component\Translation\Translator;
-use TwigYard\Middleware\Form\Exception\LogDirectoryNotWritableException;
 use TwigYard\Middleware\Form\Exception\InvalidFormNameException;
+use TwigYard\Middleware\Form\Exception\LogDirectoryNotWritableException;
 use Zend\Diactoros\Response;
 
 class FormMiddleware
@@ -103,9 +103,9 @@ class FormMiddleware
      * @param \Psr\Http\Message\ServerRequestInterface $request
      * @param \Psr\Http\Message\ResponseInterface $response
      * @param callable $next
-     * @return \Dflydev\FigCookies\SetCookie|\Psr\Http\Message\ResponseInterface
      * @throws LogDirectoryNotWritableException
      * @throws InvalidFormNameException
+     * @return \Dflydev\FigCookies\SetCookie|\Psr\Http\Message\ResponseInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
@@ -254,7 +254,7 @@ class FormMiddleware
             ->withExpires((new \DateTime())->modify(sprintf('+%d seconds', self::FLASH_MESSAGE_COOKIE_TTL)));
 
         $modifiedResponse = FigResponseCookies::set($response, $cookie);
-        $modifiedResponse =  FigResponseCookies::set($modifiedResponse, $typeCookie);
+        $modifiedResponse = FigResponseCookies::set($modifiedResponse, $typeCookie);
 
         return $modifiedResponse;
     }

@@ -2,8 +2,8 @@
 
 namespace TwigYard\Middleware\Form\Handler;
 
-use TwigYard\Component\AppState;
 use Monolog\Logger;
+use TwigYard\Component\AppState;
 
 class LogHandler implements HandlerInterface
 {

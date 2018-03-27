@@ -22,7 +22,7 @@ class ConfigCacheServiceFactory
         string $cacheDir,
         string $cacheNamespace,
         bool $cacheEnabled
-    ) : ConfigCache {
+    ): ConfigCache {
         $cacheStorage = $cacheEnabled
             ? new FileStorage($appRoot . '/' . $cacheDir)
             : new DevNullStorage();

@@ -32,5 +32,5 @@ before_script:
 script:
   - find src tests %s -name "*.php" -print0 | xargs -0 -n1 -P8 php -l
   - vendor/bin/phpcs --standard=.php_cs_ruleset.xml --encoding=utf-8 --ignore=tests/**/_bootstrap.php,tests/_support/*Tester.php src tests
-  - vendor/bin/phpcs --standard=PSR2 --encoding=utf-8 --ignore=tests/**/_bootstrap.php,tests/_support/*Tester.php src tests
+  - vendor/bin/php-cs-fixer fix --dry-run --diff --config .php_cs
   - vendor/bin/codecept run --no-interaction

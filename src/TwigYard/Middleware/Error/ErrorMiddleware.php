@@ -2,11 +2,11 @@
 
 namespace TwigYard\Middleware\Error;
 
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use TwigYard\Component\AppState;
 use TwigYard\Component\LoggerFactory;
 use TwigYard\Middleware\MiddlewareInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Stream;
 
@@ -70,8 +70,8 @@ class ErrorMiddleware implements MiddlewareInterface
      * @param \Psr\Http\Message\ServerRequestInterface $request
      * @param \Psr\Http\Message\ResponseInterface $response
      * @param callable $next
-     * @return \Psr\Http\Message\ResponseInterface
      * @throws \Exception
+     * @return \Psr\Http\Message\ResponseInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
@@ -100,7 +100,7 @@ class ErrorMiddleware implements MiddlewareInterface
             $this->loggerFactory->getLogger($this->appState->getUrl())
                 ->critical('[' . $request->getUri() . '] > ' . $e, $this->appState->dumpContext());
             $errStream = $this->getErrorPageStream($this->page500);
-            
+
             return (new Response())
                 ->withBody($errStream)
                 ->withStatus(500);

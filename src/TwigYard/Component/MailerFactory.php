@@ -4,7 +4,6 @@ namespace TwigYard\Component;
 
 class MailerFactory
 {
-
     /**
      * @var array
      */

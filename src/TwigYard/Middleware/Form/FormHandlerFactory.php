@@ -14,11 +14,10 @@ class FormHandlerFactory
 {
     const TYPE_EMAIL = 'email';
     const TYPE_LOG = 'log';
-    
+
     /**
      * @var MailerFactory
      */
-
     private $mailerFactory;
     /**
      * @var AppState
@@ -56,8 +55,8 @@ class FormHandlerFactory
     /**
      * @param array $config
      * @param array $siteParameters
-     * @return \TwigYard\Middleware\Form\Handler\HandlerInterface
      * @throws \TwigYard\Middleware\Form\Exception\InvalidFormHandlerException
+     * @return \TwigYard\Middleware\Form\Handler\HandlerInterface
      */
     public function build(array $config, array $siteParameters)
     {

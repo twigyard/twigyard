@@ -128,7 +128,7 @@ class LoggerFactory
         } else {
             $logger->pushHandler(
                 new StreamHandler(
-                    $this->appRoot . '/'  . $this->logDir . '/' . self::LOG_FILE,
+                    $this->appRoot . '/' . $this->logDir . '/' . self::LOG_FILE,
                     $this->logOnLevel
                 )
             );

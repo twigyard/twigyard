@@ -2,18 +2,15 @@
 
 namespace Unit\Middleware\Form\Handler;
 
+use Prophecy\Argument;
+use Prophecy\Prophecy\ObjectProphecy;
+use Prophecy\Prophet;
 use TwigYard\Component\AppState;
-use TwigYard\Component\MailerFactory;
+use TwigYard\Component\Mailer;
 use TwigYard\Component\MailerMessageBuilder;
 use TwigYard\Component\TemplatingFactoryInterface;
 use TwigYard\Component\TemplatingInterface;
 use TwigYard\Middleware\Form\Handler\EmailHandler;
-use Prophecy\Argument;
-use Prophecy\Argument\Token\TypeToken;
-use Prophecy\Prophecy\ObjectProphecy;
-use Prophecy\Prophet;
-use Zend\Diactoros\Response;
-use TwigYard\Component\Mailer;
 
 class EmailHandlerCest
 {
@@ -26,7 +23,7 @@ class EmailHandlerCest
         $handler = new EmailHandler(
             [
                 'from' => ['name' => 'from name', 'address' => 'from@address'],
-                'recipients' => ['to' => [ 'to@address' ]],
+                'recipients' => ['to' => ['to@address']],
                 'templates' => ['subject' => 'subject.tpl', 'body' => 'body.tpl'],
             ],
             $this->getMailer($prophet, $messageBuilder)->reveal(),
@@ -46,7 +43,7 @@ class EmailHandlerCest
         $handler = new EmailHandler(
             [
                 'from' => ['name' => 'from name', 'address' => 'from@address'],
-                'recipients' => ['bcc' => [ 'bcc@address' ]],
+                'recipients' => ['bcc' => ['bcc@address']],
                 'templates' => ['subject' => 'subject.tpl', 'body' => 'body.tpl'],
             ],
             $this->getMailer($prophet, $messageBuilder)->reveal(),
@@ -70,7 +67,7 @@ class EmailHandlerCest
         $handler = new EmailHandler(
             [
                 'from' => ['name' => 'from name', 'address' => 'from@address'],
-                'recipients' => ['to' => [ 'to@address', '{{email}}' ], 'bcc' => [ 'bcc@address', '{{email}}' ]],
+                'recipients' => ['to' => ['to@address', '{{email}}'], 'bcc' => ['bcc@address', '{{email}}']],
                 'templates' => ['subject' => 'subject.tpl', 'body' => 'body.tpl'],
             ],
             $this->getMailer($prophet, $messageBuilder)->reveal(),
@@ -160,7 +157,6 @@ class EmailHandlerCest
         $templatingFactory = $prophet->prophesize()->willImplement(TemplatingFactoryInterface::class);
         $templatingFactory->createTemplating(Argument::type(AppState::class))->willReturn($templating->reveal());
 
-
         $handler = new EmailHandler(
             [
                 'from' => ['name' => 'from name', 'address' => 'from@address'],
@@ -202,7 +198,7 @@ class EmailHandlerCest
 
         return $mailer;
     }
-    
+
     /**
      * @param \Prophecy\Prophet $prophet
      * @param bool $isMultiLang

@@ -37,6 +37,7 @@ class AssetCacheManager
             if (!file_exists($this->assetsDirOnFileSystem . $file)) {
                 return 0;
             }
+
             return crc32(file_get_contents($this->assetsDirOnFileSystem . $file));
         });
     }

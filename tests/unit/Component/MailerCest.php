@@ -2,11 +2,11 @@
 
 namespace TwigYard\Unit\Component;
 
-use TwigYard\Component\Mailer;
-use TwigYard\Component\MailerMessageBuilder;
 use Prophecy\Argument\Token\TypeToken;
 use Prophecy\Prophecy\ObjectProphecy;
 use Prophecy\Prophet;
+use TwigYard\Component\Mailer;
+use TwigYard\Component\MailerMessageBuilder;
 
 class MailerCest
 {

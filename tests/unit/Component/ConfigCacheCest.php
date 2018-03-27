@@ -2,17 +2,16 @@
 
 namespace TwigYard\Unit\Component;
 
-use TwigYard\Component\LoggerFactory;
-use Prophecy\Argument\Token\AnyValueToken;
-use TwigYard\Component\ConfigCache;
 use Nette\Caching\Cache;
+use Prophecy\Argument\Token\AnyValueToken;
 use Prophecy\Prophet;
 use Psr\Log\LoggerInterface;
+use TwigYard\Component\ConfigCache;
+use TwigYard\Component\LoggerFactory;
 use VirtualFileSystem\FileSystem;
 
 class ConfigCacheCest
 {
-
     /**
      * @param \UnitTester $I
      */
@@ -48,7 +47,7 @@ url:
     extra: [ example2.com ]
 EOT;
         file_put_contents($fs->path('/sites/www.example2.com/site.yml'), $config);
-        
+
         $cache = $prophet->prophesize(Cache::class);
         $cache->load(new AnyValueToken(), new AnyValueToken())->will(function ($args) use ($fs) {
             return $args[1]($fs->path('/sites'), 'site.yml');
@@ -60,7 +59,7 @@ EOT;
             'example1.com' => ['url' => ['canonical' => 'www.example1.com', 'extra' => ['example1.com']]],
         ], $configs);
     }
-    
+
     /**
      * @param \UnitTester $I
      */
@@ -77,7 +76,7 @@ url:
     extra: [ example1.com ]
 EOT;
         file_put_contents($fs->path('/sites/www.example2.com/site.yml'), $config);
-        
+
         $cache = $prophet->prophesize(Cache::class);
         $cache->load(new AnyValueToken(), new AnyValueToken())->will(function ($args) use ($fs) {
             return $args[1]($fs->path('/sites'), 'site.yml');
@@ -116,7 +115,6 @@ EOT;
         ], $configs);
     }
 
-
     /**
      * @param \UnitTester $I
      */
@@ -136,7 +134,7 @@ redirect:
     url/old2: url/new2
 EOT;
         file_put_contents($fs->path('/sites/www.example1.com/site.yml'), $config);
-        
+
         $cache = $prophet->prophesize(Cache::class);
         $cache->load(new AnyValueToken(), new AnyValueToken())->will(function ($args) use ($fs) {
             return $args[1]($fs->path('/sites'), 'site.yml');
@@ -201,7 +199,7 @@ EOT;
                     'config_key3' => 'specific_value3',
                 ],
                 'parent_mw' => ['config_key2' => 'only_parent_value'],
-                'specific_mw' => ['config_key3' => 'only_specific_value']],
+                'specific_mw' => ['config_key3' => 'only_specific_value'], ],
         ], $configs);
     }
 

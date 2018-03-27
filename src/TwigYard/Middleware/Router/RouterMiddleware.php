@@ -2,10 +2,10 @@
 
 namespace TwigYard\Middleware\Router;
 
-use TwigYard\Component\AppState;
-use TwigYard\Middleware\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use TwigYard\Component\AppState;
+use TwigYard\Middleware\MiddlewareInterface;
 use Zend\Diactoros\Response;
 
 class RouterMiddleware implements MiddlewareInterface

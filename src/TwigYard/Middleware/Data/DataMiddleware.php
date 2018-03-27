@@ -2,17 +2,16 @@
 
 namespace TwigYard\Middleware\Data;
 
-use TwigYard\Component\AppState;
-use TwigYard\Component\CurlDownloader;
-use TwigYard\Exception\CannotAccessRemoteSourceException;
-use TwigYard\Exception\InvalidDataFormatException;
-use TwigYard\Exception\InvalidDataTypeException;
-use TwigYard\Exception\InvalidSiteConfigException;
-use TwigYard\Middleware\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
+use TwigYard\Component\AppState;
+use TwigYard\Component\CurlDownloader;
+use TwigYard\Exception\InvalidDataFormatException;
+use TwigYard\Exception\InvalidDataTypeException;
+use TwigYard\Exception\InvalidSiteConfigException;
+use TwigYard\Middleware\MiddlewareInterface;
 
 class DataMiddleware implements MiddlewareInterface
 {

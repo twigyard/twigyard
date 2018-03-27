@@ -13,14 +13,14 @@ class TranslatorFactory
         '/vendor/symfony/validator/Resources/translations/validators.%s.xlf' => 'xliff',
         '/vendor/twigyard/twigyard/src/TwigYard/languages/messages.%s.yml' => 'yaml',
     ];
-    
+
     const TRANSLATIONS_CACHE_DIR = '_translator';
 
     /**
      * @var string
      */
     private $appRoot;
-    
+
     /**
      * @var string
      */

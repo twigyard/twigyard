@@ -2,7 +2,7 @@
 
 namespace TwigYard\Component;
 
-use Symfony\Component\DependencyInjection\Container;
+use Relay\RelayBuilder;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use TwigYard\Middleware\Data\DataMiddleware;
 use TwigYard\Middleware\Error\ErrorMiddleware;
@@ -16,7 +16,6 @@ use TwigYard\Middleware\Renderer\RendererMiddleware;
 use TwigYard\Middleware\Router\RouterMiddleware;
 use TwigYard\Middleware\Tracking\TrackingMiddleware;
 use TwigYard\Middleware\Url\UrlMiddleware;
-use Relay\RelayBuilder;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Server;
 use Zend\Diactoros\ServerRequestFactory;

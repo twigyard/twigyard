@@ -2,10 +2,6 @@
 
 namespace Unit\Middleware\Data;
 
-use TwigYard\Component\AppState;
-use TwigYard\Component\ConfigCacheInterface;
-use TwigYard\Exception\InvalidSiteConfigException;
-use TwigYard\Middleware\Url\UrlMiddleware;
 use Prophecy\Argument;
 use Prophecy\Argument\Token\AnyValueToken;
 use Prophecy\Argument\Token\TypeToken;
@@ -13,6 +9,10 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Prophecy\Prophet;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Yaml\Yaml;
+use TwigYard\Component\AppState;
+use TwigYard\Component\ConfigCacheInterface;
+use TwigYard\Exception\InvalidSiteConfigException;
+use TwigYard\Middleware\Url\UrlMiddleware;
 use VirtualFileSystem\FileSystem;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
@@ -29,6 +29,7 @@ class UrlMiddlewareCest
         $mw = $this->getMw($fs, null, $prophet, null);
         $callBackCalled = $mw($this->getRequest('www.example.com'), new Response(), function () use ($prophet) {
             $prophet->checkPredictions();
+
             return true;
         });
         $I->assertTrue($callBackCalled);
@@ -49,6 +50,7 @@ class UrlMiddlewareCest
         $callBackCalled = $mw($request, new Response(), function (ServerRequestInterface $request) use ($I, $prophet) {
             $I->assertEquals($request->getUri()->getPath(), '/images');
             $prophet->checkPredictions();
+
             return true;
         });
         $I->assertTrue($callBackCalled);
@@ -211,6 +213,7 @@ class UrlMiddlewareCest
         $request = $this->getRequest('www.example.com.example');
         $callBackCalled = $mw($request, new Response(), function () use ($prophet) {
             $prophet->checkPredictions();
+
             return true;
         });
         $I->assertTrue($callBackCalled);
@@ -276,6 +279,7 @@ EOT;
     private function getFs()
     {
         $fs = new FileSystem();
+
         return $fs;
     }
 

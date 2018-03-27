@@ -75,16 +75,18 @@ class TemplatingClosureFactory
      */
     public function getAssetClosure($assetDir, $cacheDir)
     {
-        $basePath =$this->basePath;
+        $basePath = $this->basePath;
         $this->assetCacheManagerFactory->setAssetDir($assetDir);
         $this->assetCacheManagerFactory->setCacheDir($cacheDir);
         $cacheManager = $this->assetCacheManagerFactory->createAssetCacheManager();
-        
+
         return function ($asset) use ($basePath, $cacheManager) {
             if (!is_string($asset)) {
                 trigger_error('The asset function only accepts string as a path to a resource.', E_USER_ERROR);
+
                 return '';
             }
+
             return $basePath . '/' . $asset . '?v=' . $cacheManager->getCrc32($basePath . '/' . $asset);
         };
     }

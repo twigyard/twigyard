@@ -28,6 +28,7 @@ class MailerMessageBuilder
     {
         $this->message->setBody($body, 'text/html');
         $this->message->addPart((new Html2Text($body))->getText(), 'text/plain');
+
         return $this;
     }
 
@@ -38,6 +39,7 @@ class MailerMessageBuilder
     public function setSubject(string $subject): MailerMessageBuilder
     {
         $this->message->setSubject($subject);
+
         return $this;
     }
 
@@ -48,6 +50,7 @@ class MailerMessageBuilder
     public function setTo(array $toAddresses): MailerMessageBuilder
     {
         $this->message->setTo($toAddresses);
+
         return $this;
     }
 
@@ -58,6 +61,7 @@ class MailerMessageBuilder
     public function setFrom(array $fromArray): MailerMessageBuilder
     {
         $this->message->setFrom($fromArray);
+
         return $this;
     }
 
@@ -68,6 +72,7 @@ class MailerMessageBuilder
     public function setBcc(array $bccAddresses): MailerMessageBuilder
     {
         $this->message->setBcc($bccAddresses);
+
         return $this;
     }
 

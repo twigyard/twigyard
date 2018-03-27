@@ -2,13 +2,13 @@
 
 namespace TwigYard\Middleware\Url;
 
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Symfony\Component\Yaml\Yaml;
 use TwigYard\Component\AppState;
 use TwigYard\Component\ConfigCacheInterface;
 use TwigYard\Exception\InvalidSiteConfigException;
 use TwigYard\Middleware\MiddlewareInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Symfony\Component\Yaml\Yaml;
 use Zend\Diactoros\Response\RedirectResponse;
 
 class UrlMiddleware implements MiddlewareInterface
@@ -32,7 +32,7 @@ class UrlMiddleware implements MiddlewareInterface
      * @var string
      */
     private $siteConfig;
-    
+
     /**
      * @var string
      */
@@ -42,7 +42,7 @@ class UrlMiddleware implements MiddlewareInterface
      * @var string
      */
     private $parentDomain;
-    
+
     /**
      * @var bool
      */
@@ -55,7 +55,7 @@ class UrlMiddleware implements MiddlewareInterface
      * @param string $siteConfig
      * @param string $siteParameters
      * @param string $parentDomain
-     * @param boolean $sslAllowed
+     * @param bool $sslAllowed
      */
     public function __construct(
         AppState $appState,
@@ -79,8 +79,8 @@ class UrlMiddleware implements MiddlewareInterface
      * @param \Psr\Http\Message\ServerRequestInterface $request
      * @param \Psr\Http\Message\ResponseInterface $response
      * @param callable|\TwigYard\Middleware\MiddlewareInterface $next
-     * @return \Psr\Http\Message\ResponseInterface $response
      * @throws \TwigYard\Exception\InvalidSiteConfigException
+     * @return \Psr\Http\Message\ResponseInterface $response
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
@@ -88,7 +88,7 @@ class UrlMiddleware implements MiddlewareInterface
         $host = $request->getUri()->getHost();
 
         if ($this->parentDomain) {
-            $host = substr($host, 0, - strlen($this->parentDomain) - 1);
+            $host = substr($host, 0, -strlen($this->parentDomain) - 1);
         }
 
         if (!isset($configs[$host])) {

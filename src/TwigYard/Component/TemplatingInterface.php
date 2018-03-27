@@ -2,8 +2,6 @@
 
 namespace TwigYard\Component;
 
-use Symfony\Component\Translation\Translator;
-
 interface TemplatingInterface
 {
     /**

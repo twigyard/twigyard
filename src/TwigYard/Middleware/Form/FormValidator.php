@@ -2,11 +2,11 @@
 
 namespace TwigYard\Middleware\Form;
 
-use TwigYard\Component\ValidatorBuilderFactory;
-use TwigYard\Middleware\Form\Exception\ConstraintNotFoundException;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Mapping\Loader\AbstractLoader;
+use TwigYard\Component\ValidatorBuilderFactory;
+use TwigYard\Middleware\Form\Exception\ConstraintNotFoundException;
 
 class FormValidator
 {
@@ -61,6 +61,7 @@ class FormValidator
         if ($formData[FormMiddleware::CSRF_FIELD_NAME] !== $csrfValue) {
             $this->flashMessage = $translator->trans(self::FLASH_MESSAGE_CSRF_ERROR);
             $this->flashMessageType = self::FLASH_MESSAGE_TYPE_ERROR_EXPIRED_TOKEN;
+
             return false;
         }
 
@@ -83,6 +84,7 @@ class FormValidator
         if (count($this->errors) > 0) {
             $this->flashMessage = $translator->trans(self::FLASH_MESSAGE_VALIDATION_ERROR);
             $this->flashMessageType = self::FLASH_MESSAGE_TYPE_ERROR_VALIDATION;
+
             return false;
         }
 
@@ -119,7 +121,7 @@ class FormValidator
      */
     private function parseNodes(array $nodes)
     {
-        $values = array();
+        $values = [];
 
         foreach ($nodes as $name => $childNodes) {
             if (is_numeric($name) && is_array($childNodes) && 1 === count($childNodes)) {
@@ -145,8 +147,8 @@ class FormValidator
     /**
      * @param string $name
      * @param array|null $options
-     * @return Constraint
      * @throws ConstraintNotFoundException
+     * @return Constraint
      */
     private function getConstraint($name, $options = null)
     {

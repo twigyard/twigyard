@@ -82,8 +82,8 @@ class TwigTemplating implements TemplatingInterface
 
     /**
      * @param string $templateName
-     * @return string
      * @throws \Exception
+     * @return string
      */
     public function render($templateName)
     {

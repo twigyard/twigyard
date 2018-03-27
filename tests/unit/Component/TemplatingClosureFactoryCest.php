@@ -3,11 +3,11 @@
 namespace TwigYard\Unit\Component;
 
 use Codeception\Util\Stub;
+use Prophecy\Prophet;
 use TwigYard\Component\AssetCacheManager;
 use TwigYard\Component\AssetCacheManagerFactory;
 use TwigYard\Component\ImageFactory;
 use TwigYard\Component\TemplatingClosureFactory;
-use Prophecy\Prophet;
 use TwigYard\Exception\InvalidRouteException;
 
 class TemplatingClosureCest
@@ -134,7 +134,7 @@ class TemplatingClosureCest
         $assetCacheManagerFactory->setAssetDir('base')->shouldBeCalled();
         $assetCacheManagerFactory->setCacheDir('sites_var_cache')->shouldBeCalled();
         $assetCacheManagerFactory->createAssetCacheManager()->willReturn($assetCacheManager);
-        
+
         return $assetCacheManagerFactory;
     }
 
@@ -153,7 +153,7 @@ class TemplatingClosureCest
             ],
             'products' => [
                 'en_US' => '/en/products/{slug}',
-            ]
+            ],
         ];
     }
 }

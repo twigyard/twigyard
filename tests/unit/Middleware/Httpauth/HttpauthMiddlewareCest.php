@@ -2,9 +2,9 @@
 
 namespace Unit\Middleware\Httpauth;
 
+use Prophecy\Prophet;
 use TwigYard\Component\AppState;
 use TwigYard\Middleware\Httpauth\HttpauthMiddleware;
-use Prophecy\Prophet;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 
@@ -67,6 +67,7 @@ class HttpauthMiddlewareCest
     private function getRequest($user, $pass)
     {
         $authString = 'Basic ' . base64_encode($user . ':' . $pass);
+
         return (new ServerRequest())
             ->withQueryParams(['httpauth' => $authString])
             ->withAttribute('site.config', ['httpauth' => ['username' => 'user', 'password' => 'pass']]);
@@ -80,6 +81,7 @@ class HttpauthMiddlewareCest
         $prophet = new Prophet();
         $appStateProph = $prophet->prophesize(AppState::class);
         $appStateProph->getConfig()->willReturn(['httpauth' => ['username' => 'user', 'password' => 'pass']]);
+
         return new HttpauthMiddleware($appStateProph->reveal(), 'data');
     }
 }
