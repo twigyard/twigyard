@@ -21,7 +21,7 @@ class ContainerFactory
 
     /**
      * ContainerFactory constructor.
-     * @param $appRoot
+     * @param string $appRoot
      * @param ApplicationConfig $appConfig
      */
     public function __construct(string $appRoot, ApplicationConfig $appConfig)

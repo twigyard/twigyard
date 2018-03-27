@@ -26,17 +26,17 @@ class ImageFactory
      * @param string $basePath
      * @param string $cacheDir
      */
-    public function __construct($basePath, $cacheDir)
+    public function __construct(string $basePath, string $cacheDir)
     {
         $this->basePath = $basePath;
         $this->cacheDir = $cacheDir;
     }
 
     /**
-     * @param $image
-     * @return \Gregwar\Image\Image
+     * @param string $image
+     * @return Image
      */
-    public function getImage($image)
+    public function getImage(string $image): Image
     {
         $image = new Image($this->assetDir . '/' . $image);
         $image->setCacheDir($this->basePath . '/' . $this->cacheDir);
@@ -49,7 +49,7 @@ class ImageFactory
     /**
      * @param string $assetDir
      */
-    public function setAssetDir($assetDir)
+    public function setAssetDir(string $assetDir): void
     {
         $this->assetDir = $assetDir;
     }

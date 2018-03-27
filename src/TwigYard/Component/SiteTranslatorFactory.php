@@ -13,7 +13,7 @@ class SiteTranslatorFactory
     const TRANSLATIONS_CACHE_DIR = '_translator';
 
     /**
-     * @var string
+     * @var string|null
      */
     private $cacheDir;
 
@@ -24,21 +24,21 @@ class SiteTranslatorFactory
 
     /**
      * FormLoggerFactory constructor.
-     * @param string $cacheDir
+     * @param string|null $cacheDir
      * @param string $languageResourcesDir
      */
-    public function __construct($languageResourcesDir, $cacheDir)
+    public function __construct(string $languageResourcesDir, ?string $cacheDir)
     {
         $this->cacheDir = $cacheDir;
         $this->languageResourcesDir = $languageResourcesDir;
     }
 
     /**
-     * @param $siteDir
-     * @param $locale
+     * @param string $siteDir
+     * @param string $locale
      * @return Translator
      */
-    public function getTranslator($siteDir, $locale)
+    public function getTranslator(string $siteDir, string $locale): Translator
     {
         $translator = new Translator(
             $locale,

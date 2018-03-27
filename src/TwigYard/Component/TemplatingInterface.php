@@ -5,19 +5,18 @@ namespace TwigYard\Component;
 interface TemplatingInterface
 {
     /**
-     * @param \TwigYard\Component\AppState $appState
+     * TemplatingInterface constructor.
+     * @param AppState $appState
      * @param string $templateDir
-     * @param string $languageDir
      * @param string $assetDir
-     * @param \TwigYard\Component\TemplatingClosureFactory $tplClosureFactory
-     * @param \TwigYard\Component\SiteTranslatorFactory $siteTranslatorFactory
+     * @param TemplatingClosureFactory $tplClosureFactory
+     * @param SiteTranslatorFactory $siteTranslatorFactory
      * @param array $options
      */
     public function __construct(
         AppState $appState,
-        $templateDir,
-        $languageDir,
-        $assetDir,
+        string $templateDir,
+        string $assetDir,
         TemplatingClosureFactory $tplClosureFactory,
         SiteTranslatorFactory $siteTranslatorFactory,
         array $options
@@ -27,5 +26,5 @@ interface TemplatingInterface
      * @param string $templateName
      * @return string
      */
-    public function render($templateName);
+    public function render(string $templateName): string;
 }

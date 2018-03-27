@@ -64,7 +64,6 @@ services:
     TwigYard\Component\TwigTemplatingFactory:
         arguments:
             $templateDir: '@=parameter("app.config").getTemplateDir()'
-            $languageDir: '@=parameter("app.config").getLanguageDir()'
             $assetDir: '@=parameter("app.config").getAssetDir()'
             $siteCacheDir: '@=parameter("app.parameters")["cache_enabled"] ? parameter("app.config").getSiteCacheDir() : null'
 

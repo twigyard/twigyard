@@ -15,7 +15,7 @@ class Mailer
     private $mailerMessageBuilder;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $debugRecipient;
 
@@ -55,9 +55,9 @@ class Mailer
     }
 
     /**
-     * @param string $email
+     * @param string|null $email
      */
-    public function setDebugRecipient(string $email): void
+    public function setDebugRecipient(?string $email): void
     {
         $this->debugRecipient = $email;
     }

@@ -41,8 +41,29 @@ class RoboFile extends Tasks
 
         $this
             ->taskExec('vendor/bin/php-cs-fixer fix')
+            ->args('--dry-run')
             ->args('--diff')
             ->args('--config', '.php_cs')
+            ->run();
+    }
+
+    public function phpcsFix()
+    {
+        $this
+            ->taskExec('vendor/bin/php-cs-fixer fix')
+            ->args('--diff')
+            ->args('--config', '.php_cs')
+            ->run();
+    }
+
+    public function phpstan()
+    {
+        $this
+            ->taskExec('vendor/bin/phpstan')
+            ->args('analyze')
+            ->args(self::SRC_DIR)
+            ->args('-c', 'phpstan.neon')
+            ->args('--level', 7)
             ->run();
     }
 
@@ -51,6 +72,7 @@ class RoboFile extends Tasks
         $this->stopOnFail(true);
         $this->lintPhp();
         $this->phpcs();
+        $this->phpstan();
         $this->codecept();
     }
 }

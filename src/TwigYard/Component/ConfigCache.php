@@ -23,7 +23,7 @@ class ConfigCache implements ConfigCacheInterface
     private $loggerFactory;
 
     /**
-    /**
+     * ConfigCache constructor.
      * @param Cache $cache
      * @param LoggerFactory $loggerFactory
      */
@@ -38,7 +38,7 @@ class ConfigCache implements ConfigCacheInterface
      * @param string $siteConfig
      * @return array
      */
-    public function getConfig($sitesDir, $siteConfig)
+    public function getConfig(string $sitesDir, string $siteConfig): array
     {
         $logger = $this->loggerFactory->getLogger(self::LOGGER_CHANNEL);
 

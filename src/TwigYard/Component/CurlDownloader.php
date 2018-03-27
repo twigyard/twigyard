@@ -10,10 +10,10 @@ class CurlDownloader
 
     /**
      * @param string $url
-     * @throws \TwigYard\Exception\CannotAccessRemoteSourceException
+     * @throws CannotAccessRemoteSourceException
      * @return string
      */
-    public function loadRemoteContent($url)
+    public function loadRemoteContent(string $url): string
     {
         $ch = curl_init();
         curl_setopt_array($ch, [

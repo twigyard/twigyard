@@ -6,6 +6,7 @@ use TwigYard\Component\AppState;
 use TwigYard\Component\Mailer;
 use TwigYard\Component\TemplatingFactoryInterface;
 use TwigYard\Component\TemplatingInterface;
+use TwigYard\Exception\MissingAppStateAttributeException;
 
 class EmailHandler implements HandlerInterface
 {
@@ -25,12 +26,12 @@ class EmailHandler implements HandlerInterface
     private $templatingFactory;
 
     /**
-     * @var TemplatingInterface
+     * @var TemplatingInterface|null
      */
     private $templating;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $localeSubDir;
 
@@ -62,8 +63,9 @@ class EmailHandler implements HandlerInterface
 
     /**
      * @param array $formData
+     * @throws MissingAppStateAttributeException
      */
-    public function handle(array $formData)
+    public function handle(array $formData): void
     {
         $subjectContent = $this->renderTemplate($this->config['templates']['subject']);
         $bodyContent = $this->renderTemplate($this->config['templates']['body']);
@@ -90,7 +92,7 @@ class EmailHandler implements HandlerInterface
      * @param array $formData
      * @return array
      */
-    public function replacePlaceholders(array $valueArr, array $formData)
+    public function replacePlaceholders(array $valueArr, array $formData): array
     {
         foreach ($valueArr as &$value) {
             $value = preg_replace_callback(
@@ -107,9 +109,10 @@ class EmailHandler implements HandlerInterface
 
     /**
      * @param string $name
+     * @throws MissingAppStateAttributeException
      * @return string
      */
-    private function renderTemplate($name)
+    private function renderTemplate(string $name): string
     {
         if (!$this->templating) {
             $this->templating = $this->templatingFactory->createTemplating($this->appState);

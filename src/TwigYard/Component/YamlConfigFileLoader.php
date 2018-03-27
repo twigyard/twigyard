@@ -2,6 +2,8 @@
 
 namespace TwigYard\Component;
 
+use Symfony\Component\Config\Exception\FileLoaderImportCircularReferenceException;
+use Symfony\Component\Config\Exception\FileLoaderLoadException;
 use Symfony\Component\Config\Loader\FileLoader;
 use Symfony\Component\Yaml\Yaml;
 use TwigYard\Exception\InvalidSiteConfigException;
@@ -11,16 +13,15 @@ class YamlConfigFileLoader extends FileLoader
     /**
      * @param mixed $resource
      * @param null $type
+     * @throws FileLoaderImportCircularReferenceException
+     * @throws FileLoaderLoadException
+     * @throws InvalidSiteConfigException
      * @return array
      */
     public function load($resource, $type = null)
     {
         $path = $this->locator->locate($resource);
         $content = $this->loadFile($path);
-
-        if (null === $content) {
-            return [];
-        }
 
         if (!is_array($content)) {
             $content = [$content];
@@ -34,17 +35,17 @@ class YamlConfigFileLoader extends FileLoader
     /**
      * {@inheritdoc}
      */
-    public function supports($resource, $type = null)
+    public function supports($resource, $type = null): bool
     {
         return is_string($resource) && in_array(pathinfo($resource, PATHINFO_EXTENSION), ['yml', 'yaml'], true);
     }
 
     /**
-     * @param $file
-     * @throws \TwigYard\Exception\InvalidSiteConfigException
-     * @return array
+     * @param string $file
+     * @throws InvalidSiteConfigException
+     * @return mixed
      */
-    protected function loadFile($file)
+    protected function loadFile(string $file)
     {
         if (!file_exists($file)) {
             throw new InvalidSiteConfigException(sprintf('The file "%s" is not valid.', $file));
@@ -56,9 +57,11 @@ class YamlConfigFileLoader extends FileLoader
     /**
      * @param array $content
      * @param string $file
-     * @throws \TwigYard\Exception\InvalidSiteConfigException
+     * @throws FileLoaderImportCircularReferenceException
+     * @throws FileLoaderLoadException
+     * @throws InvalidSiteConfigException
      */
-    private function parseImports(array &$content, $file)
+    private function parseImports(array &$content, string $file): void
     {
         if (!isset($content['imports'])) {
             return;

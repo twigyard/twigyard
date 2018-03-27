@@ -53,6 +53,9 @@ class Application
         $this->container = $containerFactory->createContainer();
     }
 
+    /**
+     * @throws \Exception
+     */
     public function run(): void
     {
         $server = new Server(
@@ -64,6 +67,7 @@ class Application
     }
 
     /**
+     * @throws \Exception
      * @return array
      */
     private function getQueue(): array
@@ -72,25 +76,52 @@ class Application
 
         $globalParameters = $this->container->getParameter('app.parameters');
 
-        $formValidator = new FormValidator($this->container->get(ValidatorBuilderFactory::class));
+        $validatorBuilderFactory = $this->container->get(ValidatorBuilderFactory::class);
+        $mailerFactory = $this->container->get(MailerFactory::class);
+        $twigTemplatingFactory = $this->container->get(TwigTemplatingFactory::class);
+        $siteLoggerFactory = $this->container->get(SiteLoggerFactory::class);
+        $loggerFactory = $this->container->get(LoggerFactory::class);
+        $configCache = $this->container->get(ConfigCache::class);
+        $curlDownloader = $this->container->get(CurlDownloader::class);
+        $csrfTokenGenerator = $this->container->get(CsrfTokenGenerator::class);
+        $translatorFactory = $this->container->get(TranslatorFactory::class);
+        $siteTranslatorFactory = $this->container->get(SiteTranslatorFactory::class);
+
+        if (
+            !$validatorBuilderFactory instanceof ValidatorBuilderFactory
+            || !$mailerFactory instanceof MailerFactory
+            || !$twigTemplatingFactory instanceof TwigTemplatingFactory
+            || !$siteLoggerFactory instanceof SiteLoggerFactory
+            || !$loggerFactory instanceof LoggerFactory
+            || !$configCache instanceof ConfigCache
+            || !$curlDownloader instanceof CurlDownloader
+            || !$csrfTokenGenerator instanceof CsrfTokenGenerator
+            || !$translatorFactory instanceof TranslatorFactory
+            || !$siteTranslatorFactory instanceof SiteTranslatorFactory
+        ) {
+            throw new \Exception('Error while receiving instances from containers.');
+        }
+
+        $formValidator = new FormValidator($validatorBuilderFactory);
         $formHandlerFactory = new FormHandlerFactory(
             $appState,
-            $this->container->get(MailerFactory::class),
-            $this->container->get(TwigTemplatingFactory::class),
-            $this->container->get(SiteLoggerFactory::class)
+            $mailerFactory,
+            $twigTemplatingFactory,
+            $siteLoggerFactory
         );
 
+        $queue = [];
         $queue[] = new ErrorMiddleware(
             $appState,
             $globalParameters['show_errors'],
-            $this->container->get(LoggerFactory::class),
+            $loggerFactory,
             $this->config->getTemplateDir(),
             $this->config->getError404PageName(),
             $this->config->getError500PageName()
         );
         $queue[] = new UrlMiddleware(
             $appState,
-            $this->container->get(ConfigCache::class),
+            $configCache,
             $this->appRoot . '/' . $this->config->getSitesDir(),
             $globalParameters['site_config'],
             $this->config->getSiteParameters(),
@@ -103,22 +134,22 @@ class Application
         $queue[] = new DataMiddleware(
             $appState,
             $this->config->getDataDir(),
-            $this->container->get(CurlDownloader::class)
+            $curlDownloader
         );
         $queue[] = new RouterMiddleware($appState);
         $queue[] = new FormMiddleware(
             $appState,
-            $this->container->get(CsrfTokenGenerator::class),
+            $csrfTokenGenerator,
             $formValidator,
             $formHandlerFactory,
-            $this->container->get(TranslatorFactory::class),
-            $this->container->get(SiteTranslatorFactory::class),
+            $translatorFactory,
+            $siteTranslatorFactory,
             $this->config->getLogDir()
         );
         $queue[] = new TrackingMiddleware($appState, $globalParameters['tracking_enabled']);
         $queue[] = new RendererMiddleware(
             $appState,
-            $this->container->get(TwigTemplatingFactory::class)
+            $twigTemplatingFactory
         );
 
         return $queue;

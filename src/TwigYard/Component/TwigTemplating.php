@@ -20,24 +20,23 @@ class TwigTemplating implements TemplatingInterface
     private $twigEnv;
 
     /**
-     * @var \TwigYard\Component\AppState
+     * @var AppState
      */
     private $appState;
 
     /**
-     * @param \TwigYard\Component\AppState $appState
+     * TwigTemplating constructor.
+     * @param AppState $appState
      * @param string $templateDir
-     * @param string $languageDir
      * @param string $assetDir
-     * @param \TwigYard\Component\TemplatingClosureFactory $tplClosureFactory
-     * @param \TwigYard\Component\SiteTranslatorFactory $siteTranslatorFactory
+     * @param TemplatingClosureFactory $tplClosureFactory
+     * @param SiteTranslatorFactory $siteTranslatorFactory
      * @param array $options
      */
     public function __construct(
         AppState $appState,
-        $templateDir,
-        $languageDir,
-        $assetDir,
+        string $templateDir,
+        string $assetDir,
         TemplatingClosureFactory $tplClosureFactory,
         SiteTranslatorFactory $siteTranslatorFactory,
         array $options
@@ -85,7 +84,7 @@ class TwigTemplating implements TemplatingInterface
      * @throws \Exception
      * @return string
      */
-    public function render($templateName)
+    public function render(string $templateName): string
     {
         return $this->twigEnv->render($templateName, [
             'url' => $this->appState->getUrl(),

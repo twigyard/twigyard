@@ -12,6 +12,7 @@ use TwigYard\Component\AppState;
 use TwigYard\Component\CsrfTokenGenerator;
 use TwigYard\Component\SiteTranslatorFactory;
 use TwigYard\Component\TranslatorFactory;
+use TwigYard\Exception\MissingAppStateAttributeException;
 use TwigYard\Middleware\Form\Exception\InvalidFormNameException;
 use TwigYard\Middleware\Form\Exception\LogDirectoryNotWritableException;
 use Zend\Diactoros\Response;
@@ -62,16 +63,6 @@ class FormMiddleware
     private $logDir;
 
     /**
-     * @var string
-     */
-    private $siteCacheDir;
-
-    /**
-     * @var string
-     */
-    private $languageResourcesDir;
-
-    /**
      * FormMiddleware constructor.
      * @param AppState $appState
      * @param CsrfTokenGenerator $csrfTokenGenerator
@@ -88,7 +79,7 @@ class FormMiddleware
         FormHandlerFactory $formHandlerFactory,
         TranslatorFactory $translatorFactory,
         SiteTranslatorFactory $siteTranslatorFactory,
-        $logDir
+        string $logDir
     ) {
         $this->appState = $appState;
         $this->csrfTokenGenerator = $csrfTokenGenerator;
@@ -100,12 +91,15 @@ class FormMiddleware
     }
 
     /**
-     * @param \Psr\Http\Message\ServerRequestInterface $request
-     * @param \Psr\Http\Message\ResponseInterface $response
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
      * @param callable $next
-     * @throws LogDirectoryNotWritableException
+     * @throws Exception\ConstraintNotFoundException
+     * @throws Exception\InvalidFormHandlerException
      * @throws InvalidFormNameException
-     * @return \Dflydev\FigCookies\SetCookie|\Psr\Http\Message\ResponseInterface
+     * @throws LogDirectoryNotWritableException
+     * @throws MissingAppStateAttributeException
+     * @return ResponseInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
@@ -198,10 +192,11 @@ class FormMiddleware
      * @param string $formName
      * @param array $formConf
      * @param string $path
-     * @param \Symfony\Component\Translation\Translator $translator
+     * @param Translator $translator
+     * @throws MissingAppStateAttributeException
      * @return ResponseInterface
      */
-    private function getSubmitSuccessResponse($formName, array $formConf, $path, Translator $translator)
+    private function getSubmitSuccessResponse(string $formName, array $formConf, string $path, Translator $translator): ResponseInterface
     {
         $response = (new Response())
             ->withStatus(302)
@@ -228,9 +223,9 @@ class FormMiddleware
 
     /**
      * @param string $csrfToken
-     * @return \Dflydev\FigCookies\SetCookie
+     * @return SetCookie
      */
-    private function getCsrfCookie($csrfToken)
+    private function getCsrfCookie(string $csrfToken): SetCookie
     {
         return SetCookie::create(self::CSRF_COOKIE_NAME)
             ->withValue($csrfToken)
@@ -238,12 +233,12 @@ class FormMiddleware
     }
 
     /**
-     * @param \Psr\Http\Message\ResponseInterface $response
-     * @param string $flashMessage
-     * @param string $flashMessageType
+     * @param ResponseInterface $response
+     * @param string|null $flashMessage
+     * @param string|null $flashMessageType
      * @return ResponseInterface
      */
-    private function setFlashMessageCookie(ResponseInterface $response, $flashMessage = null, $flashMessageType = null)
+    private function setFlashMessageCookie(ResponseInterface $response, ?string $flashMessage = null, ?string $flashMessageType = null): ResponseInterface
     {
         $cookie = SetCookie::create(self::FLASH_MESSAGE_COOKIE_NAME)
             ->withValue($flashMessage)

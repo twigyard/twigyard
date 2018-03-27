@@ -148,15 +148,15 @@ class ApplicationConfig
     /**
      * @return string
      */
-    public function getBasePath()
+    public function getBasePath(): string
     {
-        return $this->basePath;
+        return $this->basePath ?: '';
     }
 
     /**
      * @return string
      */
-    public function getConfigDir()
+    public function getConfigDir(): string
     {
         return $this->configDir;
     }
@@ -164,15 +164,15 @@ class ApplicationConfig
     /**
      * @return string
      */
-    public function getGlobalParameters()
+    public function getGlobalParameters(): string
     {
         return $this->globalParameters;
     }
 
     /**
-     * @return array
+     * @return string
      */
-    public function getDefaultSiteParameters()
+    public function getDefaultSiteParameters(): string
     {
         return $this->defaultSiteParameters;
     }
@@ -180,7 +180,7 @@ class ApplicationConfig
     /**
      * @return string
      */
-    public function getSitesDir()
+    public function getSitesDir(): string
     {
         return $this->sitesDir;
     }
@@ -188,7 +188,7 @@ class ApplicationConfig
     /**
      * @return string
      */
-    public function getConfigCacheDir()
+    public function getConfigCacheDir(): string
     {
         return $this->configCacheDir;
     }
@@ -196,7 +196,7 @@ class ApplicationConfig
     /**
      * @return string
      */
-    public function getLogDir()
+    public function getLogDir(): string
     {
         return $this->logDir;
     }
@@ -204,7 +204,7 @@ class ApplicationConfig
     /**
      * @return string
      */
-    public function getAssetDir()
+    public function getAssetDir(): string
     {
         return $this->assetDir;
     }
@@ -212,7 +212,7 @@ class ApplicationConfig
     /**
      * @return string
      */
-    public function getDataDir()
+    public function getDataDir(): string
     {
         return $this->dataDir;
     }
@@ -220,7 +220,7 @@ class ApplicationConfig
     /**
      * @return string
      */
-    public function getLanguageDir()
+    public function getLanguageDir(): string
     {
         return $this->languageDir;
     }
@@ -228,7 +228,7 @@ class ApplicationConfig
     /**
      * @return string
      */
-    public function getSiteCacheDir()
+    public function getSiteCacheDir(): string
     {
         return $this->siteCacheDir;
     }
@@ -236,7 +236,7 @@ class ApplicationConfig
     /**
      * @return string
      */
-    public function getTemplateDir()
+    public function getTemplateDir(): string
     {
         return $this->templateDir;
     }
@@ -244,7 +244,7 @@ class ApplicationConfig
     /**
      * @return string
      */
-    public function getSiteParameters()
+    public function getSiteParameters(): string
     {
         return $this->siteParameters;
     }
@@ -252,7 +252,7 @@ class ApplicationConfig
     /**
      * @return string
      */
-    public function getError404PageName()
+    public function getError404PageName(): string
     {
         return $this->error404PageName;
     }
@@ -260,7 +260,7 @@ class ApplicationConfig
     /**
      * @return string
      */
-    public function getError500PageName()
+    public function getError500PageName(): string
     {
         return $this->error500PageName;
     }
@@ -268,7 +268,7 @@ class ApplicationConfig
     /**
      * @return string
      */
-    public function getImageCacheDir()
+    public function getImageCacheDir(): string
     {
         return $this->imageCacheDir;
     }
@@ -276,7 +276,7 @@ class ApplicationConfig
     /**
      * @return string
      */
-    public function getCacheNamespaceConfig()
+    public function getCacheNamespaceConfig(): string
     {
         return $this->cacheNamespaceConfig;
     }
@@ -284,7 +284,7 @@ class ApplicationConfig
     /**
      * @return string
      */
-    public function getCacheNamespaceAssets()
+    public function getCacheNamespaceAssets(): string
     {
         return $this->cacheNamespaceAssets;
     }
@@ -293,7 +293,7 @@ class ApplicationConfig
      * @param string $index
      * @return string
      */
-    private function convertIndexToProperty($index)
+    private function convertIndexToProperty(string $index): string
     {
         return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $index))));
     }
@@ -302,17 +302,17 @@ class ApplicationConfig
      * @param string $index
      * @param array $value
      */
-    private function setArray($index, array $value)
+    private function setArray(string $index, array $value)
     {
         $this->{$this->convertIndexToProperty($index)} = $value;
     }
 
     /**
      * @param string $index
-     * @param string $value
+     * @param string|null $value
      */
-    private function setString($index, $value)
+    private function setString(string $index, ?string $value)
     {
-        $this->{$this->convertIndexToProperty($index)} = (string) $value;
+        $this->{$this->convertIndexToProperty($index)} = $value;
     }
 }

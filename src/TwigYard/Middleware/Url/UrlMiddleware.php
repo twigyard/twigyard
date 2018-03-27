@@ -14,7 +14,7 @@ use Zend\Diactoros\Response\RedirectResponse;
 class UrlMiddleware implements MiddlewareInterface
 {
     /**
-     * @var \TwigYard\Component\AppState
+     * @var AppState
      */
     private $appState;
 
@@ -39,7 +39,7 @@ class UrlMiddleware implements MiddlewareInterface
     private $siteParameters;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $parentDomain;
 
@@ -49,8 +49,9 @@ class UrlMiddleware implements MiddlewareInterface
     private $sslAllowed;
 
     /**
-     * @param \TwigYard\Component\AppState $appState
-     * @param \TwigYard\Component\ConfigCacheInterface $configCache
+     * UrlMiddleware constructor.
+     * @param AppState $appState
+     * @param ConfigCacheInterface $configCache
      * @param string $sitesDir
      * @param string $siteConfig
      * @param string $siteParameters
@@ -60,11 +61,11 @@ class UrlMiddleware implements MiddlewareInterface
     public function __construct(
         AppState $appState,
         ConfigCacheInterface $configCache,
-        $sitesDir,
-        $siteConfig,
-        $siteParameters,
-        $parentDomain,
-        $sslAllowed
+        string $sitesDir,
+        string $siteConfig,
+        string $siteParameters,
+        ?string $parentDomain,
+        bool $sslAllowed
     ) {
         $this->appState = $appState;
         $this->configCache = $configCache;
@@ -76,11 +77,11 @@ class UrlMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @param \Psr\Http\Message\ServerRequestInterface $request
-     * @param \Psr\Http\Message\ResponseInterface $response
-     * @param callable|\TwigYard\Middleware\MiddlewareInterface $next
-     * @throws \TwigYard\Exception\InvalidSiteConfigException
-     * @return \Psr\Http\Message\ResponseInterface $response
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @param callable $next
+     * @throws InvalidSiteConfigException
+     * @return ResponseInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {

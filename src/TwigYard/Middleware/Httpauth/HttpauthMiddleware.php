@@ -11,12 +11,12 @@ use Zend\Diactoros\Response;
 class HttpauthMiddleware implements MiddlewareInterface
 {
     /**
-     * @var \TwigYard\Component\AppState
+     * @var AppState
      */
     private $appState;
 
     /**
-     * @param \TwigYard\Component\AppState $appState
+     * @param AppState $appState
      */
     public function __construct(AppState $appState)
     {
@@ -24,11 +24,10 @@ class HttpauthMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @param \Psr\Http\Message\ServerRequestInterface $request
-     * @param \Psr\Http\Message\ResponseInterface $response
-     * @param callable|\TwigYard\Middleware\MiddlewareInterface $next
-     * @throws \TwigYard\Exception\InvalidSiteConfigException
-     * @return \Psr\Http\Message\ResponseInterface $response
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @param callable $next
+     * @return ResponseInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {

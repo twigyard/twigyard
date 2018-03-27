@@ -29,7 +29,7 @@ class MailerFactory
      * @param array $siteParameters
      * @return \TwigYard\Component\Mailer
      */
-    public function createMailer(array $siteParameters)
+    public function createMailer(array $siteParameters): Mailer
     {
         $parameters = array_merge($this->defaultSiteParameters, $siteParameters);
 
@@ -49,6 +49,7 @@ class MailerFactory
             new \Swift_Mailer(isset($transport) ? $transport : new \Swift_SmtpTransport()),
             $this->mailerMessageBuilder
         );
+
         if (array_key_exists('debug_email', $parameters)) {
             $mailer->setDebugRecipient($parameters['debug_email']);
         }

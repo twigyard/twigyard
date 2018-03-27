@@ -39,7 +39,8 @@
         "codeception/codeception": ">=2.3.8",
         "php-vfs/php-vfs": ">=1.4.0",
         "squizlabs/php_codesniffer": ">=3.2.2",
-        "friendsofphp/php-cs-fixer": "^2.11"
+        "friendsofphp/php-cs-fixer": "^2.11",
+        "phpstan/phpstan": "^0.9.2"
     },
     "bin": [
         "bin/lintsite"

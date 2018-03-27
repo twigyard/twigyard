@@ -12,7 +12,7 @@ class TwigTemplatingFactory implements TemplatingFactoryInterface
     private $assetDir;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $siteCacheDir;
 
@@ -22,38 +22,31 @@ class TwigTemplatingFactory implements TemplatingFactoryInterface
     private $templateDir;
 
     /**
-     * @var string
-     */
-    private $languageDir;
-
-    /**
-     * @var \TwigYard\Component\TemplatingClosureFactory
+     * @var TemplatingClosureFactory
      */
     private $tplClosureFactory;
 
     /**
-     * @var \TwigYard\Component\SiteTranslatorFactory
+     * @var SiteTranslatorFactory
      */
     private $siteTranslatorFactory;
 
     /**
+     * TwigTemplatingFactory constructor.
      * @param string $templateDir
-     * @param string $languageDir
      * @param string $assetDir
-     * @param \TwigYard\Component\TemplatingClosureFactory $tplClosureFactory
-     * @param \TwigYard\Component\SiteTranslatorFactory $siteTranslatorFactory
-     * @param string $siteCacheDir
+     * @param TemplatingClosureFactory $tplClosureFactory
+     * @param SiteTranslatorFactory $siteTranslatorFactory
+     * @param string|null $siteCacheDir
      */
     public function __construct(
-        $templateDir,
-        $languageDir,
-        $assetDir,
+        string $templateDir,
+        string $assetDir,
         TemplatingClosureFactory $tplClosureFactory,
         SiteTranslatorFactory $siteTranslatorFactory,
-        $siteCacheDir
+        ?string $siteCacheDir
     ) {
         $this->templateDir = $templateDir;
-        $this->languageDir = $languageDir;
         $this->assetDir = $assetDir;
         $this->tplClosureFactory = $tplClosureFactory;
         $this->siteTranslatorFactory = $siteTranslatorFactory;
@@ -61,15 +54,14 @@ class TwigTemplatingFactory implements TemplatingFactoryInterface
     }
 
     /**
-     * @param \TwigYard\Component\AppState $appState
-     * @return \TwigYard\Component\TwigTemplating
+     * @param AppState $appState
+     * @return TemplatingInterface
      */
-    public function createTemplating(AppState $appState)
+    public function createTemplating(AppState $appState): TemplatingInterface
     {
         return new TwigTemplating(
             $appState,
             $appState->getSiteDir() . '/' . $this->templateDir,
-            $appState->getSiteDir() . '/' . $this->languageDir,
             $appState->getSiteDir() . '/' . $this->assetDir,
             $this->tplClosureFactory,
             $this->siteTranslatorFactory,

@@ -13,7 +13,7 @@ use Zend\Diactoros\Stream;
 class ErrorMiddleware implements MiddlewareInterface
 {
     /**
-     * @var \TwigYard\Component\AppState
+     * @var AppState
      */
     private $appState;
 
@@ -38,25 +38,26 @@ class ErrorMiddleware implements MiddlewareInterface
     private $page500;
 
     /**
-     * @var \TwigYard\Component\LoggerFactory
+     * @var LoggerFactory
      */
     private $loggerFactory;
 
     /**
-     * @param \TwigYard\Component\AppState $appState
+     * ErrorMiddleware constructor.
+     * @param AppState $appState
      * @param bool $showErrors
-     * @param \TwigYard\Component\LoggerFactory $loggerFactory
+     * @param LoggerFactory $loggerFactory
      * @param string $templateDir
      * @param string $page404
      * @param string $page500
      */
     public function __construct(
         AppState $appState,
-        $showErrors,
+        bool $showErrors,
         LoggerFactory $loggerFactory,
-        $templateDir,
-        $page404,
-        $page500
+        string $templateDir,
+        string $page404,
+        string $page500
     ) {
         $this->appState = $appState;
         $this->showErrors = $showErrors;
@@ -67,11 +68,11 @@ class ErrorMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @param \Psr\Http\Message\ServerRequestInterface $request
-     * @param \Psr\Http\Message\ResponseInterface $response
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
      * @param callable $next
      * @throws \Exception
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return ResponseInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
@@ -118,9 +119,9 @@ class ErrorMiddleware implements MiddlewareInterface
 
     /**
      * @param string $pageName
-     * @return \Zend\Diactoros\Stream
+     * @return Stream
      */
-    private function getErrorPageStream($pageName)
+    private function getErrorPageStream(string $pageName): Stream
     {
         $errPage = $this->appState->getSiteDir() . '/' . $this->templateDir . '/' . $pageName;
         $localeErrPage = $this->appState->getSiteDir()

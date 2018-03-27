@@ -8,6 +8,7 @@ use TwigYard\Component\SiteLoggerFactory;
 use TwigYard\Component\TemplatingFactoryInterface;
 use TwigYard\Middleware\Form\Exception\InvalidFormHandlerException;
 use TwigYard\Middleware\Form\Handler\EmailHandler;
+use TwigYard\Middleware\Form\Handler\HandlerInterface;
 use TwigYard\Middleware\Form\Handler\LogHandler;
 
 class FormHandlerFactory
@@ -55,10 +56,10 @@ class FormHandlerFactory
     /**
      * @param array $config
      * @param array $siteParameters
-     * @throws \TwigYard\Middleware\Form\Exception\InvalidFormHandlerException
-     * @return \TwigYard\Middleware\Form\Handler\HandlerInterface
+     * @throws InvalidFormHandlerException
+     * @return HandlerInterface
      */
-    public function build(array $config, array $siteParameters)
+    public function build(array $config, array $siteParameters): HandlerInterface
     {
         if ($config['type'] === self::TYPE_EMAIL) {
             return new EmailHandler(

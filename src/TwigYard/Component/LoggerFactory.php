@@ -25,27 +25,27 @@ class LoggerFactory
     private $logDir;
 
     /**
-     * @var string
+     * @var int
      */
     private $logOnLevel;
 
     /**
-     * @var string
+     * @var bool|null
      */
     private $logRotationEnabled;
 
     /**
-     * @var string
+     * @var int|null
      */
     private $maxFiles;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $logglyToken;
 
     /**
-     * @var array
+     * @var array|null
      */
     private $logglyTags;
 
@@ -56,53 +56,58 @@ class LoggerFactory
      * @param string $logOnLevel
      * @param bool $logRotationEnabled
      * @param int|null $maxFiles
-     * @param string|null $logglyToken
+     * @param null|string $logglyToken
      * @param array|null $logglyTags
+     * @throws InvalidApplicationConfigException
      */
     public function __construct(
         string $appRoot,
         string $logDir,
         string $logOnLevel,
-        bool $logRotationEnabled,
-        ?int $maxFiles = 0,
-        ?string $logglyToken = null,
-        ?array $logglyTags = []
+        ?bool $logRotationEnabled,
+        ?int $maxFiles,
+        ?string $logglyToken,
+        ?array $logglyTags
     ) {
+        $this->checkValidity($logRotationEnabled, $maxFiles, $logglyToken, $logglyTags);
+
         $this->appRoot = $appRoot;
         $this->logDir = $logDir;
-        $this->logOnLevel = constant('Monolog\Logger::' . strtoupper($logOnLevel));
+        $this->logOnLevel = (int) constant('Monolog\Logger::' . strtoupper($logOnLevel));
         $this->logRotationEnabled = $logRotationEnabled;
         $this->maxFiles = $maxFiles;
         $this->logglyToken = $logglyToken;
         $this->logglyTags = $logglyTags;
-
-        $this->checkValidity();
     }
 
     /**
+     * @param bool|null $logRotationEnabled
+     * @param int|null $maxFiles
+     * @param string|null $logglyToken
+     * @param array|null $logglyTags
      * @throws InvalidApplicationConfigException
      */
-    private function checkValidity(): void
+    private function checkValidity(?bool $logRotationEnabled, ?int $maxFiles, ?string $logglyToken, ?array $logglyTags): void
     {
-        if (isset($this->logRotationEnabled) && !isset($this->maxFiles)) {
+        if (isset($logRotationEnabled) && !isset($maxFiles)) {
             throw new InvalidApplicationConfigException(
                 'If there is log_rotation_enabled defined in the configuration, log_max_files has to be defined too.'
             );
         }
 
-        if (isset($this->maxFiles) && !isset($this->logRotationEnabled)) {
+        if (isset($maxFiles) && !isset($logRotationEnabled)) {
             throw new InvalidApplicationConfigException(
                 'If there is log_max_files defined in the configuration, log_rotation_enabled has to be defined too.'
             );
         }
 
-        if (isset($this->logglyToken) && !isset($this->logglyTags)) {
+        if (isset($logglyToken) && !isset($logglyTags)) {
             throw new InvalidApplicationConfigException(
                 'If there is loggly_token defined in the configuration, loggly_tags has to be defined too.'
             );
         }
 
-        if (isset($this->logglyTags) && !isset($this->logglyToken)) {
+        if (isset($logglyTags) && !isset($logglyToken)) {
             throw new InvalidApplicationConfigException(
                 'If there is loggly_tags defined in the configuration, loggly_token has to be defined too.'
             );
@@ -116,8 +121,8 @@ class LoggerFactory
     public function getLogger(?string $channelName): LoggerInterface
     {
         FileSystem::createDir($this->appRoot . '/' . $this->logDir);
-        $logger = new Logger($channelName);
-        if ($this->logRotationEnabled) {
+        $logger = new Logger($channelName ?: 'NULL');
+        if ($this->logRotationEnabled && $this->maxFiles) {
             $logger->pushHandler(
                 new RotatingFileHandler(
                     $this->appRoot . '/' . $this->logDir . '/' . self::LOG_FILE,
@@ -137,9 +142,13 @@ class LoggerFactory
         if ($this->logglyToken !== null) {
             $loggerHandler = new LogglyHandler($this->logglyToken, $this->logOnLevel);
             $loggerHandler->addTag($channelName);
-            foreach ($this->logglyTags as $tag) {
-                $loggerHandler->addTag($tag);
+
+            if ($this->logglyTags) {
+                foreach ($this->logglyTags as $tag) {
+                    $loggerHandler->addTag($tag);
+                }
             }
+
             $logger->pushHandler($loggerHandler);
         }
 

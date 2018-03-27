@@ -176,6 +176,7 @@ class FormMiddlewareCest
             ],
         ]);
         $csrfTokenGenerator = $prophet->prophesize(CsrfTokenGenerator::class);
+        $csrfTokenGenerator->generateToken()->willReturn('token');
         $formValidator = $prophet->prophesize(FormValidator::class);
         $formValidator
             ->validate([], new TypeToken('array'), new TypeToken('string'), new TypeToken(Translator::class))

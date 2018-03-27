@@ -3,6 +3,7 @@
 namespace TwigYard\Unit\Component;
 
 use Codeception\Util\Stub;
+use Gregwar\Image\Image;
 use Prophecy\Prophet;
 use TwigYard\Component\AssetCacheManager;
 use TwigYard\Component\AssetCacheManagerFactory;
@@ -106,7 +107,7 @@ class TemplatingClosureCest
         $stub = Stub::make(ImageFactory::class, [
             'getImage' => Stub::once(function ($a) {
                 if ($a === 'image') {
-                    return 'ImageInstance';
+                    return new Image();
                 }
             }),
             'setAssetDir' => Stub::once(function ($a) use ($I) {
@@ -119,7 +120,7 @@ class TemplatingClosureCest
             $this->getAssetCacheManagerFactory()->reveal()
         );
         $closure = $factory->getImageClosure('web');
-        $I->assertEquals('ImageInstance', $closure('image'));
+        $I->assertEquals(new Image(), $closure('image'));
     }
 
     /**

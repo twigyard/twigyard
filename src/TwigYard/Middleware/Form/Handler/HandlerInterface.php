@@ -7,5 +7,5 @@ interface HandlerInterface
     /**
      * @param array $formData
      */
-    public function handle(array $formData);
+    public function handle(array $formData): void;
 }

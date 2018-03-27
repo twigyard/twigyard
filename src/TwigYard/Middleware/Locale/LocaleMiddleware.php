@@ -6,6 +6,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TwigYard\Component\AppState;
 use TwigYard\Exception\InvalidSiteConfigException;
+use TwigYard\Exception\MissingAppStateAttributeException;
 use TwigYard\Middleware\MiddlewareInterface;
 use Zend\Diactoros\Response\RedirectResponse;
 
@@ -17,12 +18,13 @@ class LocaleMiddleware implements MiddlewareInterface
     private $validLocales;
 
     /**
-     * @var \TwigYard\Component\AppState
+     * @var AppState
      */
     private $appState;
 
     /**
-     * @param \TwigYard\Component\AppState $appState
+     * LocaleMiddleware constructor.
+     * @param AppState $appState
      * @param array $validLocales
      */
     public function __construct(AppState $appState, array $validLocales)
@@ -32,11 +34,12 @@ class LocaleMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @param \Psr\Http\Message\ServerRequestInterface $request
-     * @param \Psr\Http\Message\ResponseInterface $response
-     * @param callable|\TwigYard\Middleware\MiddlewareInterface $next
-     * @throws \TwigYard\Exception\InvalidSiteConfigException
-     * @return \Psr\Http\Message\ResponseInterface $response
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @param callable $next
+     * @throws InvalidSiteConfigException
+     * @throws MissingAppStateAttributeException
+     * @return ResponseInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
@@ -80,9 +83,9 @@ class LocaleMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @return \TwigYard\Exception\InvalidSiteConfigException
+     * @return InvalidSiteConfigException
      */
-    private function getInvalidLocaleException()
+    private function getInvalidLocaleException(): InvalidSiteConfigException
     {
         return new InvalidSiteConfigException(
             sprintf('The specified locale is invalid. The allowed locales are: %s', implode(' ,', $this->validLocales))
