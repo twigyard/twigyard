@@ -54,6 +54,11 @@ class AppState
     /**
      * @var string
      */
+    private $scheme;
+
+    /**
+     * @var string
+     */
     private $siteDir;
     
     /**
@@ -280,6 +285,25 @@ class AppState
     public function setTrackingIds(array $trackingIds)
     {
         $this->trackingIds = $trackingIds;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getScheme(): string
+    {
+        return $this->scheme;
+    }
+
+    /**
+     * @param string $scheme
+     * @return AppState
+     */
+    public function setScheme(string $scheme): AppState
+    {
+        $this->scheme = $scheme;
+
         return $this;
     }
 

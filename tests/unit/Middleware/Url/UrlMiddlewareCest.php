@@ -248,6 +248,10 @@ EOT;
             ->willReturn($appStateProph)
             ->shouldBeCalled();
         $appStateProph
+            ->setScheme(new TypeToken('string'))
+            ->willReturn($appStateProph)
+            ->shouldBeCalled();
+        $appStateProph
             ->setSiteDir($fs->path('/sites/www.example.com'))
             ->willReturn($appStateProph)
             ->shouldBeCalled();
@@ -321,6 +325,10 @@ EOT;
             }
             $appStateProph
                 ->setConfig(['url' => $config])
+                ->willReturn($appStateProph)
+                ->shouldBeCalled();
+            $appStateProph
+                ->setScheme(new TypeToken('string'))
                 ->willReturn($appStateProph)
                 ->shouldBeCalled();
             $appStateProph
