@@ -38,4 +38,4 @@ router:
 name           | type   | description
 ---------------|--------|------------
 page           | string | The name of the page to be rendered.
-url_params     | map    | A map of parameters parsed from URI if any are present.
+url_params     | map    | A map of parameters parsed from URI if any are present. The key is the parameter name as defined in the router (i.e. `product_id`) and the value is the parameter value for the current page (i.e. `1`).
