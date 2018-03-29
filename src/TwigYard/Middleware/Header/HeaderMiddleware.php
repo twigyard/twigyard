@@ -75,7 +75,7 @@ class HeaderMiddleware implements MiddlewareInterface
                         $headers[self::HEADER_CONTENT_SECURITY_POLICY] = rtrim($headers[self::HEADER_CONTENT_SECURITY_POLICY]);
                     }
 
-                    if (!strlen($headers[self::HEADER_CONTENT_SECURITY_POLICY])) {
+                    if (!mb_strlen($headers[self::HEADER_CONTENT_SECURITY_POLICY])) {
                         unset($headers[self::HEADER_CONTENT_SECURITY_POLICY]);
                     }
                 }
