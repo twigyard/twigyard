@@ -27,7 +27,7 @@ class UrlMiddlewareCest
         $prophet = new Prophet();
         $fs = $this->getFs();
         $mw = $this->getMw($fs, null, $prophet, null);
-        $callBackCalled = $mw($this->getRequest('www.example.com'), new Response(), function () use ($prophet) {
+        $callBackCalled = $mw($this->getRequest('http', 'www.example.com'), new Response(), function () use ($prophet) {
             $prophet->checkPredictions();
 
             return true;
@@ -42,10 +42,7 @@ class UrlMiddlewareCest
     {
         $fs = $this->getFs();
         $prophet = new Prophet();
-
-        $request = $this->getRequest('www.example.com');
-        $request = $request->withUri($request->getUri()->withPath('/images'));
-
+        $request = $this->getRequest('http', 'www.example.com', '/images');
         $mw = $this->getMw($fs, null, $prophet, null);
         $callBackCalled = $mw($request, new Response(), function (ServerRequestInterface $request) use ($I, $prophet) {
             $I->assertEquals($request->getUri()->getPath(), '/images');
@@ -63,7 +60,7 @@ class UrlMiddlewareCest
     {
         $fs = $this->getFs();
         $mw = $this->getMw($fs, null, null, null);
-        $response = $mw($this->getRequest('example.com'), new Response(), function () {
+        $response = $mw($this->getRequest('http', 'example.com'), new Response(), function () {
         });
         $I->assertEquals($response->getHeaderLine('location'), 'http://www.example.com');
         $I->assertEquals($response->getStatusCode(), 301);
@@ -76,9 +73,22 @@ class UrlMiddlewareCest
     {
         $fs = $this->getFs();
         $mw = $this->getMw($fs, null, null, null, null, true);
-        $response = $mw($this->getRequest('www.example.com'), new Response(), function () {
+        $response = $mw($this->getRequest('http', 'www.example.com'), new Response(), function () {
         });
         $I->assertEquals('https://www.example.com', $response->getHeaderLine('location'));
+        $I->assertEquals($response->getStatusCode(), 301);
+    }
+
+    /**
+     * @param \UnitTester $I
+     */
+    public function redirectToHttpsWithPath(\UnitTester $I)
+    {
+        $fs = $this->getFs();
+        $mw = $this->getMw($fs, null, null, null, null, true);
+        $response = $mw($this->getRequest('http', 'www.example.com', '/path'), new Response(), function () {
+        });
+        $I->assertEquals('https://www.example.com/path', $response->getHeaderLine('location'));
         $I->assertEquals($response->getStatusCode(), 301);
     }
 
@@ -89,7 +99,7 @@ class UrlMiddlewareCest
     {
         $fs = $this->getFs();
         $mw = $this->getMw($fs, null, null, null, null, true, false);
-        $response = $mw($this->getRequest('www.example.com'), new Response(), function () {
+        $response = $mw($this->getRequest('http', 'www.example.com'), new Response(), function () {
             return true;
         });
         $I->assertTrue($response);
@@ -102,7 +112,7 @@ class UrlMiddlewareCest
     {
         $fs = $this->getFs();
         $mw = $this->getMw($fs, null, null, null, null, false);
-        $response = $mw($this->getRequest('www.example.com'), new Response(), function () {
+        $response = $mw($this->getRequest('http', 'www.example.com'), new Response(), function () {
             return true;
         });
         $I->assertTrue($response);
@@ -115,11 +125,7 @@ class UrlMiddlewareCest
     {
         $fs = $this->getFs();
         $mw = $this->getMw($fs, null, null, null, null, true);
-        $uri = (new \Zend\Diactoros\Uri())
-            ->withHost('www.example.com')
-            ->withScheme('https');
-        $request = (new ServerRequest(['SCRIPT_NAME' => '/app.php', 'REMOTE_ADDR' => '127.0.1.2']))->withUri($uri);
-        $response = $mw($request, new Response(), function () {
+        $response = $mw($this->getRequest('https', 'www.example.com'), new Response(), function () {
             return true;
         });
         $I->assertTrue($response);
@@ -136,7 +142,7 @@ class UrlMiddlewareCest
         $configCacheProph = $prophet->prophesize(ConfigCacheInterface::class);
         $configCacheProph->getConfig(new AnyValueToken(), new AnyValueToken())->willReturn([]);
         $mw = $this->getMw($fs, $configCacheProph->reveal());
-        $response = $mw($this->getRequest('www.example.com'), new Response(), function () {
+        $response = $mw($this->getRequest('http', 'www.example.com'), new Response(), function () {
         });
         $I->assertEquals($response->getStatusCode(), 404);
     }
@@ -160,7 +166,7 @@ class UrlMiddlewareCest
             false,
             'devdomain'
         );
-        $mw($this->getRequest('www.example.com'), new Response(), function () {
+        $mw($this->getRequest('http', 'www.example.com'), new Response(), function () {
         });
         $prophet->checkPredictions();
     }
@@ -178,7 +184,7 @@ class UrlMiddlewareCest
         $configCache = $configCacheProph->reveal();
 
         $mw = $this->getMw($fs, $configCache, $prophet, null, $appStateProph);
-        $mw($this->getRequest('www.example2.com'), new Response(), function () {
+        $mw($this->getRequest('http', 'www.example2.com'), new Response(), function () {
         });
         $prophet->checkPredictions();
     }
@@ -197,7 +203,7 @@ class UrlMiddlewareCest
 
         $mw = $this->getMw($fs, $configCache, $prophet, null, $appStateProph);
         $I->expectException(InvalidSiteConfigException::class, function () use ($mw) {
-            $mw($this->getRequest('www.example.com'), new Response(), function () {
+            $mw($this->getRequest('http', 'www.example.com'), new Response(), function () {
             });
         });
     }
@@ -210,7 +216,7 @@ class UrlMiddlewareCest
         $fs = $this->getFs();
         $prophet = new Prophet();
         $mw = $this->getMw($fs, null, $prophet, 'example');
-        $request = $this->getRequest('www.example.com.example');
+        $request = $this->getRequest('http', 'www.example.com.example');
         $callBackCalled = $mw($request, new Response(), function () use ($prophet) {
             $prophet->checkPredictions();
 
@@ -224,7 +230,7 @@ class UrlMiddlewareCest
         $fs = $this->getFs();
         $prophet = new Prophet();
         $mw = $this->getMw($fs, null, $prophet, '');
-        $request = $this->getRequest('www.example.com.example');
+        $request = $this->getRequest('http', 'www.example.com.example');
         $response = $mw($request, new Response(), function () {
         });
         $I->assertEquals($response->getStatusCode(), 404);
@@ -272,7 +278,7 @@ EOT;
             ->shouldBeCalled();
 
         $mw = $this->getMw($fs, null, $prophet, null, $appStateProph);
-        $mw($this->getRequest('www.example.com'), new Response(), function () {
+        $mw($this->getRequest('http', 'www.example.com'), new Response(), function () {
         });
         $prophet->checkPredictions();
     }
@@ -291,11 +297,15 @@ EOT;
      * @param string $host
      * @return ServerRequest
      */
-    private function getRequest($host)
+    private function getRequest($scheme, $host, $path = null)
     {
         $uri = (new \Zend\Diactoros\Uri())
             ->withHost($host)
-            ->withScheme('http');
+            ->withScheme($scheme);
+
+        if ($path) {
+            $uri = $uri->withPath($path);
+        }
 
         return (new ServerRequest(['SCRIPT_NAME' => '/app.php', 'REMOTE_ADDR' => '127.0.1.2']))->withUri($uri);
     }

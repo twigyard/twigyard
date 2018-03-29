@@ -102,14 +102,20 @@ class UrlMiddleware implements MiddlewareInterface
 
         $canonicalUrl = $configs[$host]['url']['canonical'];
         if ($host !== $canonicalUrl) {
-            return new RedirectResponse($request->getUri()->getScheme() . '://' . $canonicalUrl, 301);
+            return new RedirectResponse(
+                $request->getUri()->getScheme() . '://' . $canonicalUrl . $request->getUri()->getPath(),
+                301
+            );
         }
 
         if ($this->sslAllowed
             && !empty($configs[$host]['url']['ssl'])
             && $request->getUri()->getScheme() !== 'https'
         ) {
-            return new RedirectResponse('https://' . $host, 301);
+            return new RedirectResponse(
+                'https://' . $host . $request->getUri()->getPath(),
+                301
+            );
         }
 
         $this->appState
