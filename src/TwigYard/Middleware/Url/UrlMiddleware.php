@@ -2,19 +2,19 @@
 
 namespace TwigYard\Middleware\Url;
 
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Symfony\Component\Yaml\Yaml;
 use TwigYard\Component\AppState;
 use TwigYard\Component\ConfigCacheInterface;
 use TwigYard\Exception\InvalidSiteConfigException;
 use TwigYard\Middleware\MiddlewareInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Symfony\Component\Yaml\Yaml;
 use Zend\Diactoros\Response\RedirectResponse;
 
 class UrlMiddleware implements MiddlewareInterface
 {
     /**
-     * @var \TwigYard\Component\AppState
+     * @var AppState
      */
     private $appState;
 
@@ -32,39 +32,40 @@ class UrlMiddleware implements MiddlewareInterface
      * @var string
      */
     private $siteConfig;
-    
+
     /**
      * @var string
      */
     private $siteParameters;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $parentDomain;
-    
+
     /**
      * @var bool
      */
     private $sslAllowed;
 
     /**
-     * @param \TwigYard\Component\AppState $appState
-     * @param \TwigYard\Component\ConfigCacheInterface $configCache
+     * UrlMiddleware constructor.
+     * @param AppState $appState
+     * @param ConfigCacheInterface $configCache
      * @param string $sitesDir
      * @param string $siteConfig
      * @param string $siteParameters
      * @param string $parentDomain
-     * @param boolean $sslAllowed
+     * @param bool $sslAllowed
      */
     public function __construct(
         AppState $appState,
         ConfigCacheInterface $configCache,
-        $sitesDir,
-        $siteConfig,
-        $siteParameters,
-        $parentDomain,
-        $sslAllowed
+        string $sitesDir,
+        string $siteConfig,
+        string $siteParameters,
+        ?string $parentDomain,
+        bool $sslAllowed
     ) {
         $this->appState = $appState;
         $this->configCache = $configCache;
@@ -76,11 +77,11 @@ class UrlMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @param \Psr\Http\Message\ServerRequestInterface $request
-     * @param \Psr\Http\Message\ResponseInterface $response
-     * @param callable|\TwigYard\Middleware\MiddlewareInterface $next
-     * @return \Psr\Http\Message\ResponseInterface $response
-     * @throws \TwigYard\Exception\InvalidSiteConfigException
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @param callable $next
+     * @throws InvalidSiteConfigException
+     * @return ResponseInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
@@ -88,7 +89,7 @@ class UrlMiddleware implements MiddlewareInterface
         $host = $request->getUri()->getHost();
 
         if ($this->parentDomain) {
-            $host = substr($host, 0, - strlen($this->parentDomain) - 1);
+            $host = substr($host, 0, -strlen($this->parentDomain) - 1);
         }
 
         if (!isset($configs[$host])) {

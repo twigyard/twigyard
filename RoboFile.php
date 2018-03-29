@@ -40,12 +40,30 @@ class RoboFile extends Tasks
             ->run();
 
         $this
-            ->taskExec('vendor/bin/phpcs')
-            ->arg('--standard=PSR2')
-            ->arg('--encoding=utf-8')
-            ->arg(sprintf('--ignore=%s/**/_bootstrap.php,%s/_support/*Tester.php', self::TESTS_DIR, self::TESTS_DIR))
-            ->arg(self::SRC_DIR)
-            ->arg(self::TESTS_DIR)
+            ->taskExec('vendor/bin/php-cs-fixer fix')
+            ->args('--dry-run')
+            ->args('--diff')
+            ->args('--config', '.php_cs')
+            ->run();
+    }
+
+    public function phpcsFix()
+    {
+        $this
+            ->taskExec('vendor/bin/php-cs-fixer fix')
+            ->args('--diff')
+            ->args('--config', '.php_cs')
+            ->run();
+    }
+
+    public function phpstan()
+    {
+        $this
+            ->taskExec('vendor/bin/phpstan')
+            ->args('analyze')
+            ->args(self::SRC_DIR)
+            ->args('-c', 'phpstan.neon')
+            ->args('--level', 7)
             ->run();
     }
 
@@ -54,6 +72,7 @@ class RoboFile extends Tasks
         $this->stopOnFail(true);
         $this->lintPhp();
         $this->phpcs();
+        $this->phpstan();
         $this->codecept();
     }
 }

@@ -19,7 +19,7 @@ class SiteLoggerFactory
      * FormLoggerFactory constructor.
      * @param string $logDir
      */
-    public function __construct($logDir)
+    public function __construct(string $logDir)
     {
         $this->logDir = $logDir;
     }
@@ -29,12 +29,13 @@ class SiteLoggerFactory
      * @param string $logFile
      * @return \Monolog\Logger
      */
-    public function getFormLogger($siteDir, $logFile)
+    public function getFormLogger(string $siteDir, string $logFile): Logger
     {
         $logDir = $siteDir . '/' . $this->logDir;
         FileSystem::createDir($logDir);
         $logger = new Logger(self::CHANNEL);
         $logger->pushHandler(new StreamHandler($logDir . '/' . $logFile, Logger::INFO));
+
         return $logger;
     }
 }

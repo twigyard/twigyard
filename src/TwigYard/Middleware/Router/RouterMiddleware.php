@@ -2,21 +2,22 @@
 
 namespace TwigYard\Middleware\Router;
 
-use TwigYard\Component\AppState;
-use TwigYard\Middleware\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use TwigYard\Component\AppState;
+use TwigYard\Exception\MissingAppStateAttributeException;
+use TwigYard\Middleware\MiddlewareInterface;
 use Zend\Diactoros\Response;
 
 class RouterMiddleware implements MiddlewareInterface
 {
     /**
-     * @var \TwigYard\Component\AppState
+     * @var AppState
      */
     private $appState;
 
     /**
-     * @param \TwigYard\Component\AppState $appState
+     * @param AppState $appState
      */
     public function __construct(AppState $appState)
     {
@@ -24,10 +25,11 @@ class RouterMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @param \Psr\Http\Message\ServerRequestInterface $request
-     * @param \Psr\Http\Message\ResponseInterface $response
-     * @param callable|\TwigYard\Middleware\MiddlewareInterface $next
-     * @return \Psr\Http\Message\ResponseInterface $response
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @param callable $next
+     * @throws MissingAppStateAttributeException
+     * @return ResponseInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
@@ -39,16 +41,17 @@ class RouterMiddleware implements MiddlewareInterface
             }
 
             $this->appState->setRouteMap($this->getRouteMap($conf));
-            $this->appState->setPage($activePage);
+            $this->appState->setPage((string) $activePage);
         }
 
         return $next($request, $response);
     }
 
     /**
-     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param ServerRequestInterface $request
      * @param array $conf
-     * @return null|string
+     * @throws MissingAppStateAttributeException
+     * @return int|string|null
      */
     private function getActivePage(ServerRequestInterface $request, array $conf)
     {
@@ -71,7 +74,7 @@ class RouterMiddleware implements MiddlewareInterface
                         foreach ($this->appState->getData()[$matches[3]] as $param) {
                             foreach ($propArr as $propPart) {
                                 if (!isset($param[$propPart])) {
-                                    return (new Response())->withStatus(404);
+                                    return null;
                                 }
                                 $param = $param[$propPart];
                             }
@@ -103,9 +106,10 @@ class RouterMiddleware implements MiddlewareInterface
 
     /**
      * @param array $conf
+     * @throws MissingAppStateAttributeException
      * @return array
      */
-    private function getRouteMap(array $conf)
+    private function getRouteMap(array $conf): array
     {
         $routeMap = [];
         foreach ($conf as $pageName => $confUris) {

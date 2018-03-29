@@ -1,0 +1,22 @@
+parameters:
+	bootstrap: null
+	excludes_analyse: []
+	autoload_directories:
+		- "tests"
+	autoload_files:
+		- vendor/autoload.php
+		- vendor/codeception/codeception/autoload.php
+	fileExtensions:
+		- php
+	checkFunctionArgumentTypes: true
+	checkNullables: true
+	checkUnionTypes: true
+	polluteScopeWithLoopInitialAssignments: true
+	polluteCatchScopeWithTryAssignments: true
+	ignoreErrors: []
+	reportUnmatchedIgnoredErrors: true
+	universalObjectCratesClasses:
+		- stdClass
+		- SimpleXMLElement
+	earlyTerminatingMethodCalls: []
+	memoryLimitFile: %tmpDir%/.memory_limit

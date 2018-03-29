@@ -2,6 +2,7 @@
 
 namespace Unit\Middleware\Data;
 
+use Prophecy\Prophet;
 use TwigYard\Component\AppState;
 use TwigYard\Component\CurlDownloader;
 use TwigYard\Exception\CannotAccessRemoteSourceException;
@@ -9,7 +10,6 @@ use TwigYard\Exception\InvalidDataFormatException;
 use TwigYard\Exception\InvalidDataTypeException;
 use TwigYard\Exception\InvalidSiteConfigException;
 use TwigYard\Middleware\Data\DataMiddleware;
-use Prophecy\Prophet;
 use VirtualFileSystem\FileSystem;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
@@ -26,6 +26,7 @@ class DataMiddlewareCest
         $mw = $this->getMw($fs, $prophet);
         $callBackCalled = $mw(new ServerRequest(), new Response(), function () use ($prophet) {
             $prophet->checkPredictions();
+
             return true;
         });
         $I->assertTrue($callBackCalled);
@@ -64,7 +65,7 @@ class DataMiddlewareCest
      */
     public function noErrorOnConfigMissing(\UnitTester $I)
     {
-        $prophet =  new Prophet();
+        $prophet = new Prophet();
         $appStateProph = $prophet->prophesize(AppState::class);
         $appStateProph->getConfig()->willReturn([]);
         $curlDownloader = $prophet->prophesize(CurlDownloader::class);
@@ -81,7 +82,7 @@ class DataMiddlewareCest
      */
     public function parseJsonDataFromUrl(\UnitTester $I)
     {
-        $prophet =  new Prophet();
+        $prophet = new Prophet();
         $appStateProph = $prophet->prophesize(AppState::class);
         $appStateProph->getConfig()->willReturn(['data' => [
             'dataSet' => [
@@ -197,7 +198,7 @@ class DataMiddlewareCest
      */
     private function getCurlDownloader($url, $content, Prophet $prophet = null)
     {
-        $prophet =  $prophet ?: new Prophet();
+        $prophet = $prophet ?: new Prophet();
         $curlDownloaderProph = $prophet->prophesize(CurlDownloader::class);
         $curlDownloaderProph->loadRemoteContent($url)->willReturn($content)->shouldBeCalled();
 
@@ -217,7 +218,7 @@ class DataMiddlewareCest
         CurlDownloader $curlDownloader = null,
         AppState $appState = null
     ) {
-        $prophet =  $prophet ?: new Prophet();
+        $prophet = $prophet ?: new Prophet();
 
         if ($appState === null) {
             $appStateProph = $prophet->prophesize(AppState::class);

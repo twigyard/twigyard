@@ -13,22 +13,22 @@ class TemplatingClosureFactory
     private $basePath;
 
     /**
-     * @var \TwigYard\Component\ImageFactory
+     * @var ImageFactory
      */
     private $imageFactory;
 
     /**
-     * @var \TwigYard\Component\AssetCacheManagerFactory
+     * @var AssetCacheManagerFactory
      */
     private $assetCacheManagerFactory;
 
     /**
-     * TemplatingClosure constructor.
+     * TemplatingClosureFactory constructor.
      * @param string $basePath
-     * @param \TwigYard\Component\ImageFactory $imageFactory
-     * @param \TwigYard\Component\AssetCacheManagerFactory $cacheManagerFactory
+     * @param ImageFactory $imageFactory
+     * @param AssetCacheManagerFactory $cacheManagerFactory
      */
-    public function __construct($basePath, ImageFactory $imageFactory, AssetCacheManagerFactory $cacheManagerFactory)
+    public function __construct(string $basePath, ImageFactory $imageFactory, AssetCacheManagerFactory $cacheManagerFactory)
     {
         $this->basePath = $basePath;
         $this->imageFactory = $imageFactory;
@@ -40,7 +40,7 @@ class TemplatingClosureFactory
      * @param string $locale
      * @return \Closure
      */
-    public function getPathClosure(array $routeMap, $locale)
+    public function getPathClosure(array $routeMap, string $locale): \Closure
     {
         return function ($pageName, array $query = [], $localeForce = null) use ($routeMap, $locale) {
             $locale = $localeForce ? $localeForce : $locale;
@@ -70,21 +70,23 @@ class TemplatingClosureFactory
 
     /**
      * @param string $assetDir
-     * @param string $cacheDir
-     * @return \Closure|string
+     * @param string|null $cacheDir
+     * @return \Closure
      */
-    public function getAssetClosure($assetDir, $cacheDir)
+    public function getAssetClosure(string $assetDir, ?string $cacheDir): \Closure
     {
-        $basePath =$this->basePath;
+        $basePath = $this->basePath;
         $this->assetCacheManagerFactory->setAssetDir($assetDir);
         $this->assetCacheManagerFactory->setCacheDir($cacheDir);
         $cacheManager = $this->assetCacheManagerFactory->createAssetCacheManager();
-        
+
         return function ($asset) use ($basePath, $cacheManager) {
             if (!is_string($asset)) {
                 trigger_error('The asset function only accepts string as a path to a resource.', E_USER_ERROR);
+
                 return '';
             }
+
             return $basePath . '/' . $asset . '?v=' . $cacheManager->getCrc32($basePath . '/' . $asset);
         };
     }
@@ -92,7 +94,7 @@ class TemplatingClosureFactory
     /**
      * @return \Closure
      */
-    public function getDumpClosure()
+    public function getDumpClosure(): \Closure
     {
         return function ($var) {
             return VarDumper::dump($var);
@@ -101,9 +103,9 @@ class TemplatingClosureFactory
 
     /**
      * @param string $assetDir
-     * @return \Closure|string
+     * @return \Closure
      */
-    public function getImageClosure($assetDir)
+    public function getImageClosure(string $assetDir): \Closure
     {
         $imageFactory = $this->imageFactory;
         $imageFactory->setAssetDir($assetDir);

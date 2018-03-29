@@ -2,12 +2,12 @@
 
 namespace Unit\Middleware\Error;
 
-use TwigYard\Component\AppState;
-use TwigYard\Component\LoggerFactory;
-use TwigYard\Middleware\Error\ErrorMiddleware;
 use Monolog\Logger;
 use Prophecy\Argument\Token\AnyValuesToken;
 use Prophecy\Prophet;
+use TwigYard\Component\AppState;
+use TwigYard\Component\LoggerFactory;
+use TwigYard\Middleware\Error\ErrorMiddleware;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 

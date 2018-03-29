@@ -13,34 +13,35 @@ class TranslatorFactory
         '/vendor/symfony/validator/Resources/translations/validators.%s.xlf' => 'xliff',
         '/vendor/twigyard/twigyard/src/TwigYard/languages/messages.%s.yml' => 'yaml',
     ];
-    
+
     const TRANSLATIONS_CACHE_DIR = '_translator';
 
     /**
      * @var string
      */
     private $appRoot;
-    
+
     /**
-     * @var string
+     * @var string|null
      */
     private $cacheDir;
 
     /**
      * TranslatorFactory constructor.
-     * @param $appRoot
-     * @param $cacheDir
+     * @param string $appRoot
+     * @param string|null $cacheDir
      */
-    public function __construct($appRoot, $cacheDir)
+    public function __construct(string $appRoot, ?string $cacheDir)
     {
+        $this->appRoot = $appRoot;
         $this->cacheDir = $cacheDir;
     }
 
     /**
-     * @param $locale
+     * @param string $locale
      * @return Translator
      */
-    public function getTranslator($locale)
+    public function getTranslator(string $locale): Translator
     {
         $translator = new Translator(
             $locale,

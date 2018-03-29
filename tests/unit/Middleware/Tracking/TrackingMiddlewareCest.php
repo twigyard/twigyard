@@ -2,11 +2,11 @@
 
 namespace Unit\Middleware\Tracking;
 
-use TwigYard\Component\AppState;
-use TwigYard\Middleware\Tracking\TrackingMiddleware;
 use Prophecy\Argument\Token\AnyValueToken;
 use Prophecy\Prophet;
 use Psr\Http\Message\ServerRequestInterface;
+use TwigYard\Component\AppState;
+use TwigYard\Middleware\Tracking\TrackingMiddleware;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 
@@ -17,7 +17,7 @@ class TrackingMiddlewareCest
      */
     public function noErrorOnConfigMissing(\UnitTester $I)
     {
-        $prophet =  new Prophet();
+        $prophet = new Prophet();
         $appStateProph = $prophet->prophesize(AppState::class);
         $appStateProph->getConfig()->willReturn([]);
 
@@ -40,12 +40,13 @@ class TrackingMiddlewareCest
             new Response(),
             function (ServerRequestInterface $request, Response $response) use ($prophet, $I) {
                 $prophet->checkPredictions();
+
                 return true;
             }
         );
         $I->assertTrue($callBackCalled);
     }
-    
+
     public function dontSendTrackingIdsParamsIfDisabled(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -55,6 +56,7 @@ class TrackingMiddlewareCest
             new Response(),
             function (ServerRequestInterface $request, Response $response) use ($prophet, $I) {
                 $prophet->checkPredictions();
+
                 return true;
             }
         );

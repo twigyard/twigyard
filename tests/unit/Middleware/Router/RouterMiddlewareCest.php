@@ -2,10 +2,9 @@
 
 namespace Unit\Middleware\Router;
 
+use Prophecy\Prophet;
 use TwigYard\Component\AppState;
 use TwigYard\Middleware\Router\RouterMiddleware;
-use Prophecy\Argument;
-use Prophecy\Prophet;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Uri;
@@ -17,7 +16,7 @@ class RouterMiddlewareCest
      */
     public function noErrorOnConfigMissing(\UnitTester $I)
     {
-        $prophet =  new Prophet();
+        $prophet = new Prophet();
         $appStateProph = $prophet->prophesize(AppState::class);
         $appStateProph->getConfig()->willReturn([]);
 
@@ -65,6 +64,7 @@ class RouterMiddlewareCest
         );
         $callBackCalled = $mw($request, new Response(), function () use ($prophet) {
             $prophet->checkPredictions();
+
             return true;
         });
         $I->assertTrue($callBackCalled);
@@ -80,6 +80,7 @@ class RouterMiddlewareCest
         $mw = $this->getMwSinglelang($prophet, ['router' => ['page1' => '/page1/{var1}']]);
         $callBackCalled = $mw($request, new Response(), function () use ($prophet) {
             $prophet->checkPredictions();
+
             return true;
         });
         $I->assertTrue($callBackCalled);
@@ -99,6 +100,7 @@ class RouterMiddlewareCest
         );
         $callBackCalled = $mw($request, new Response(), function () use ($prophet) {
             $prophet->checkPredictions();
+
             return true;
         });
         $I->assertTrue($callBackCalled);
@@ -118,6 +120,7 @@ class RouterMiddlewareCest
         );
         $callBackCalled = $mw($request, new Response(), function () use ($prophet) {
             $prophet->checkPredictions();
+
             return true;
         });
         $I->assertTrue($callBackCalled);
@@ -250,7 +253,6 @@ class RouterMiddlewareCest
             ->addUrlParam('var1', $urlParam)
             ->willReturn($appStateProph)
             ->shouldBeCalled();
-        
 
         if ($data !== null) {
             $appStateProph->getData()->willReturn($data);

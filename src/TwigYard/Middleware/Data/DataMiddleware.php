@@ -2,6 +2,10 @@
 
 namespace TwigYard\Middleware\Data;
 
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Symfony\Component\Yaml\Exception\ParseException;
+use Symfony\Component\Yaml\Yaml;
 use TwigYard\Component\AppState;
 use TwigYard\Component\CurlDownloader;
 use TwigYard\Exception\CannotAccessRemoteSourceException;
@@ -9,10 +13,6 @@ use TwigYard\Exception\InvalidDataFormatException;
 use TwigYard\Exception\InvalidDataTypeException;
 use TwigYard\Exception\InvalidSiteConfigException;
 use TwigYard\Middleware\MiddlewareInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Symfony\Component\Yaml\Exception\ParseException;
-use Symfony\Component\Yaml\Yaml;
 
 class DataMiddleware implements MiddlewareInterface
 {
@@ -28,21 +28,22 @@ class DataMiddleware implements MiddlewareInterface
     private $dataDir;
 
     /**
-     * @var \TwigYard\Component\AppState
+     * @var AppState
      */
     private $appState;
 
     /**
-     * @var \TwigYard\Component\CurlDownloader
+     * @var CurlDownloader
      */
     private $curlDownloader;
 
     /**
-     * @param \TwigYard\Component\AppState $appState
+     * DataMiddleware constructor.
+     * @param AppState $appState
      * @param string $dataDir
-     * @param \TwigYard\Component\CurlDownloader $curlDownloader
+     * @param CurlDownloader $curlDownloader
      */
-    public function __construct(AppState $appState, $dataDir, CurlDownloader $curlDownloader)
+    public function __construct(AppState $appState, string $dataDir, CurlDownloader $curlDownloader)
     {
         $this->dataDir = $dataDir;
         $this->appState = $appState;
@@ -50,14 +51,14 @@ class DataMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @param \Psr\Http\Message\ServerRequestInterface $request
-     * @param \Psr\Http\Message\ResponseInterface $response
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
      * @param callable $next
-     * @throws \TwigYard\Exception\CannotAccessRemoteSourceException
-     * @throws \TwigYard\Exception\InvalidDataFormatException
-     * @throws \TwigYard\Exception\InvalidDataTypeException
-     * @throws \TwigYard\Exception\InvalidSiteConfigException
-     * @return \Psr\Http\Message\ResponseInterface $response
+     * @throws CannotAccessRemoteSourceException
+     * @throws InvalidDataFormatException
+     * @throws InvalidDataTypeException
+     * @throws InvalidSiteConfigException
+     * @return ResponseInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {

@@ -2,12 +2,11 @@
 
 namespace Unit\Middleware\Locale;
 
+use Prophecy\Prophet;
+use Psr\Http\Message\ServerRequestInterface;
 use TwigYard\Component\AppState;
 use TwigYard\Exception\InvalidSiteConfigException;
 use TwigYard\Middleware\Locale\LocaleMiddleware;
-use Prophecy\Argument;
-use Prophecy\Prophet;
-use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Uri;
@@ -23,6 +22,7 @@ class LocaleMiddlewareCest
         $mw = $this->getMw(['locale' => 'cs_CZ'], $prophet, ['cs_CZ' => '']);
         $callBackCalled = $mw($this->getRequest(), new Response(), function () use ($prophet) {
             $prophet->checkPredictions();
+
             return true;
         });
         $I->assertTrue($callBackCalled);
@@ -51,6 +51,7 @@ class LocaleMiddlewareCest
         $callBackCalled = $mw($request, new Response(), function (ServerRequestInterface $request) use ($I, $prophet) {
             $prophet->checkPredictions();
             $I->assertEquals($request->getUri()->getPath(), '/some-page/param');
+
             return true;
         });
         $I->assertTrue($callBackCalled);
@@ -65,8 +66,8 @@ class LocaleMiddlewareCest
             $mw = $this->getMw([
                 'locale' => [
                     'default' => ['key' => 'cs', 'name' => 'cs_CZ'],
-                    'extra' => ['xx' => 'xx_XX']
-                ]
+                    'extra' => ['xx' => 'xx_XX'],
+                ],
             ]);
             $mw($this->getRequest(), new Response(), function () {
             });
@@ -90,7 +91,7 @@ class LocaleMiddlewareCest
      */
     public function noErrorOnConfigMissing(\UnitTester $I)
     {
-        $prophet =  new Prophet();
+        $prophet = new Prophet();
         $appStateProph = $prophet->prophesize(AppState::class);
         $appStateProph->getConfig()->willReturn([]);
 
@@ -118,8 +119,8 @@ class LocaleMiddlewareCest
         return [
             'locale' => [
                 'default' => ['key' => 'cs', 'name' => 'cs_CZ'],
-                'extra' => ['en' => 'en_US']
-            ]
+                'extra' => ['en' => 'en_US'],
+            ],
         ];
     }
 

@@ -18,30 +18,31 @@ class AssetCacheManager
 
     /**
      * AssetCacheManager constructor.
-     * @param \Nette\Caching\Cache $cache
+     * @param Cache $cache
      * @param string $assetsDirOnFileSystem
      */
-    public function __construct(Cache $cache, $assetsDirOnFileSystem)
+    public function __construct(Cache $cache, string $assetsDirOnFileSystem)
     {
         $this->cache = $cache;
         $this->assetsDirOnFileSystem = $assetsDirOnFileSystem;
     }
 
     /**
-     * @param $file
+     * @param string $file
      * @return int
      */
-    public function getCrc32($file)
+    public function getCrc32(string $file): int
     {
         return $this->cache->load($file, function () use ($file) {
             if (!file_exists($this->assetsDirOnFileSystem . $file)) {
                 return 0;
             }
+
             return crc32(file_get_contents($this->assetsDirOnFileSystem . $file));
         });
     }
 
-    public function clean()
+    public function clean(): void
     {
         $this->cache->clean([Cache::ALL => true]);
     }

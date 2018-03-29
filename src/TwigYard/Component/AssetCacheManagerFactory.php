@@ -10,7 +10,7 @@ use Nette\DirectoryNotFoundException;
 class AssetCacheManagerFactory
 {
     /**
-     * @var string
+     * @var string|null
      */
     private $cacheDir;
 
@@ -26,9 +26,9 @@ class AssetCacheManagerFactory
 
     /**
      * AssetManagerFactory constructor.
-     * @param $cacheNamespace
+     * @param string $cacheNamespace
      */
-    public function __construct($cacheNamespace)
+    public function __construct(string $cacheNamespace)
     {
         $this->cacheNamespace = $cacheNamespace;
     }
@@ -36,7 +36,7 @@ class AssetCacheManagerFactory
     /**
      * @return AssetCacheManager
      */
-    public function createAssetCacheManager()
+    public function createAssetCacheManager(): AssetCacheManager
     {
         if ($this->cacheDir) {
             try {
@@ -59,15 +59,15 @@ class AssetCacheManagerFactory
     /**
      * @param string $assetDir
      */
-    public function setAssetDir($assetDir)
+    public function setAssetDir(string $assetDir): void
     {
         $this->assetDir = $assetDir;
     }
 
     /**
-     * @param string $cacheDir
+     * @param string|null $cacheDir
      */
-    public function setCacheDir($cacheDir)
+    public function setCacheDir(?string $cacheDir): void
     {
         $this->cacheDir = $cacheDir;
     }

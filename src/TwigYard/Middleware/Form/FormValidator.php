@@ -2,11 +2,11 @@
 
 namespace TwigYard\Middleware\Form;
 
-use TwigYard\Component\ValidatorBuilderFactory;
-use TwigYard\Middleware\Form\Exception\ConstraintNotFoundException;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Mapping\Loader\AbstractLoader;
+use TwigYard\Component\ValidatorBuilderFactory;
+use TwigYard\Middleware\Form\Exception\ConstraintNotFoundException;
 
 class FormValidator
 {
@@ -54,13 +54,15 @@ class FormValidator
      * @param array $formData
      * @param string $csrfValue
      * @param Translator $translator
+     * @throws ConstraintNotFoundException
      * @return bool
      */
-    public function validate(array $formFields, array $formData, $csrfValue, Translator $translator)
+    public function validate(array $formFields, array $formData, string $csrfValue, Translator $translator): bool
     {
         if ($formData[FormMiddleware::CSRF_FIELD_NAME] !== $csrfValue) {
             $this->flashMessage = $translator->trans(self::FLASH_MESSAGE_CSRF_ERROR);
             $this->flashMessageType = self::FLASH_MESSAGE_TYPE_ERROR_EXPIRED_TOKEN;
+
             return false;
         }
 
@@ -83,6 +85,7 @@ class FormValidator
         if (count($this->errors) > 0) {
             $this->flashMessage = $translator->trans(self::FLASH_MESSAGE_VALIDATION_ERROR);
             $this->flashMessageType = self::FLASH_MESSAGE_TYPE_ERROR_VALIDATION;
+
             return false;
         }
 
@@ -92,7 +95,7 @@ class FormValidator
     /**
      * @return array
      */
-    public function getErrors()
+    public function getErrors(): array
     {
         return $this->errors;
     }
@@ -100,7 +103,7 @@ class FormValidator
     /**
      * @return string
      */
-    public function getFlashMessage()
+    public function getFlashMessage(): string
     {
         return $this->flashMessage;
     }
@@ -108,18 +111,19 @@ class FormValidator
     /**
      * @return string
      */
-    public function getFlashMessageType()
+    public function getFlashMessageType(): string
     {
         return $this->flashMessageType;
     }
 
     /**
      * @param array $nodes
+     * @throws ConstraintNotFoundException
      * @return array
      */
-    private function parseNodes(array $nodes)
+    private function parseNodes(array $nodes): array
     {
-        $values = array();
+        $values = [];
 
         foreach ($nodes as $name => $childNodes) {
             if (is_numeric($name) && is_array($childNodes) && 1 === count($childNodes)) {
@@ -145,13 +149,14 @@ class FormValidator
     /**
      * @param string $name
      * @param array|null $options
-     * @return Constraint
      * @throws ConstraintNotFoundException
+     * @return mixed
      */
-    private function getConstraint($name, $options = null)
+    private function getConstraint(string $name, ?array $options = null)
     {
         foreach (self::CONSTRAINTS_NAMESPACES as $namespace) {
-            $className = (string) $namespace . $name;
+            $className = $namespace . $name;
+
             if (class_exists($className)) {
                 return new $className($options);
             }

@@ -8,17 +8,17 @@ use TwigYard\Component\SiteLoggerFactory;
 use TwigYard\Component\TemplatingFactoryInterface;
 use TwigYard\Middleware\Form\Exception\InvalidFormHandlerException;
 use TwigYard\Middleware\Form\Handler\EmailHandler;
+use TwigYard\Middleware\Form\Handler\HandlerInterface;
 use TwigYard\Middleware\Form\Handler\LogHandler;
 
 class FormHandlerFactory
 {
     const TYPE_EMAIL = 'email';
     const TYPE_LOG = 'log';
-    
+
     /**
      * @var MailerFactory
      */
-
     private $mailerFactory;
     /**
      * @var AppState
@@ -56,10 +56,10 @@ class FormHandlerFactory
     /**
      * @param array $config
      * @param array $siteParameters
-     * @return \TwigYard\Middleware\Form\Handler\HandlerInterface
-     * @throws \TwigYard\Middleware\Form\Exception\InvalidFormHandlerException
+     * @throws InvalidFormHandlerException
+     * @return HandlerInterface
      */
-    public function build(array $config, array $siteParameters)
+    public function build(array $config, array $siteParameters): HandlerInterface
     {
         if ($config['type'] === self::TYPE_EMAIL) {
             return new EmailHandler(

@@ -2,13 +2,13 @@
 
 namespace Unit\Middleware\Renderer;
 
+use Prophecy\Argument;
+use Prophecy\Prophet;
+use Psr\Http\Message\ServerRequestInterface;
 use TwigYard\Component\AppState;
 use TwigYard\Component\TemplatingFactoryInterface;
 use TwigYard\Component\TwigTemplating;
 use TwigYard\Middleware\Renderer\RendererMiddleware;
-use Prophecy\Argument;
-use Prophecy\Prophet;
-use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 
@@ -19,7 +19,7 @@ class RendererMiddlewareCest
      */
     public function noErrorOnConfigMissing(\UnitTester $I)
     {
-        $prophet =  new Prophet();
+        $prophet = new Prophet();
         $appStateProph = $prophet->prophesize(AppState::class);
         $appStateProph->getConfig()->willReturn([]);
 
@@ -46,6 +46,7 @@ class RendererMiddlewareCest
             function (ServerRequestInterface $request, Response $response) use ($prophet, $I) {
                 $prophet->checkPredictions();
                 $I->assertEquals('test html', $response->getBody());
+
                 return true;
             }
         );
@@ -65,12 +66,12 @@ class RendererMiddlewareCest
             function (ServerRequestInterface $request, Response $response) use ($prophet, $I) {
                 $prophet->checkPredictions();
                 $I->assertEquals('test html', $response->getBody());
+
                 return true;
             }
         );
         $I->assertTrue($callBackCalled);
     }
-
 
     /**
      * @param \UnitTester $I
@@ -85,6 +86,7 @@ class RendererMiddlewareCest
             function (ServerRequestInterface $request, Response $response) use ($prophet, $I) {
                 $prophet->checkPredictions();
                 $I->assertEquals('test html', $response->getBody());
+
                 return true;
             }
         );

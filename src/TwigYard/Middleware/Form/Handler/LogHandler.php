@@ -2,8 +2,8 @@
 
 namespace TwigYard\Middleware\Form\Handler;
 
-use TwigYard\Component\AppState;
 use Monolog\Logger;
+use TwigYard\Component\AppState;
 
 class LogHandler implements HandlerInterface
 {
@@ -13,13 +13,13 @@ class LogHandler implements HandlerInterface
     private $appState;
 
     /**
-     * @var \Monolog\Logger
+     * @var Logger
      */
     private $logger;
 
     /**
-     * EmailHandler constructor.
-     * @param \Monolog\Logger $logger
+     * LogHandler constructor.
+     * @param Logger $logger
      * @param AppState $appState
      */
     public function __construct(
@@ -33,7 +33,7 @@ class LogHandler implements HandlerInterface
     /**
      * @param array $formData
      */
-    public function handle(array $formData)
+    public function handle(array $formData): void
     {
         unset($formData['csrf_token']);
         $this->logger->addInfo('IP: ' . $this->appState->getRemoteIp() . ', FORM_DATA:', $formData);

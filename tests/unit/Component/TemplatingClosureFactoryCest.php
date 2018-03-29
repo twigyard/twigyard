@@ -3,11 +3,12 @@
 namespace TwigYard\Unit\Component;
 
 use Codeception\Util\Stub;
+use Gregwar\Image\Image;
+use Prophecy\Prophet;
 use TwigYard\Component\AssetCacheManager;
 use TwigYard\Component\AssetCacheManagerFactory;
 use TwigYard\Component\ImageFactory;
 use TwigYard\Component\TemplatingClosureFactory;
-use Prophecy\Prophet;
 use TwigYard\Exception\InvalidRouteException;
 
 class TemplatingClosureCest
@@ -106,7 +107,7 @@ class TemplatingClosureCest
         $stub = Stub::make(ImageFactory::class, [
             'getImage' => Stub::once(function ($a) {
                 if ($a === 'image') {
-                    return 'ImageInstance';
+                    return new Image();
                 }
             }),
             'setAssetDir' => Stub::once(function ($a) use ($I) {
@@ -119,7 +120,7 @@ class TemplatingClosureCest
             $this->getAssetCacheManagerFactory()->reveal()
         );
         $closure = $factory->getImageClosure('web');
-        $I->assertEquals('ImageInstance', $closure('image'));
+        $I->assertEquals(new Image(), $closure('image'));
     }
 
     /**
@@ -134,7 +135,7 @@ class TemplatingClosureCest
         $assetCacheManagerFactory->setAssetDir('base')->shouldBeCalled();
         $assetCacheManagerFactory->setCacheDir('sites_var_cache')->shouldBeCalled();
         $assetCacheManagerFactory->createAssetCacheManager()->willReturn($assetCacheManager);
-        
+
         return $assetCacheManagerFactory;
     }
 
@@ -153,7 +154,7 @@ class TemplatingClosureCest
             ],
             'products' => [
                 'en_US' => '/en/products/{slug}',
-            ]
+            ],
         ];
     }
 }
