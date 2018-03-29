@@ -115,6 +115,11 @@ class UrlMiddleware implements MiddlewareInterface
         $this->appState
             ->setConfig($configs[$host])
             ->setSiteDir($this->sitesDir . '/' . $host)
+            ->setScheme(
+                isset($request->getServerParams()['REQUEST_SCHEME'])
+                    ? $request->getServerParams()['REQUEST_SCHEME']
+                    : 'http'
+            )
             ->setRemoteIp($request->getServerParams()['REMOTE_ADDR']);
         if (file_exists($this->appState->getSiteDir() . '/' . $this->siteParameters)) {
             $this->appState->setSiteParameters(

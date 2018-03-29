@@ -92,6 +92,7 @@ class TwigTemplating implements TemplatingInterface
             'form' => $this->appState->getForm(),
             'locale' => $this->appState->getLocale(),
             'page' => $this->appState->getPage(),
+            'scheme' => $this->appState->getScheme(),
             'url_params' => $this->appState->getUrlParams() ? $this->appState->getUrlParams() : [],
             'tracking' => $this->appState->getTrackingIds(),
         ]);
