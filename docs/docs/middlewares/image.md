@@ -28,7 +28,7 @@ path        | string | ✓          | Relative path to image inside `web` direct
 
 **Example**
 
-It is possible chaining of Gregwar's functions.
+It is possible to chain of Gregwar's functions.
 
 ```
 # file.html.twig
