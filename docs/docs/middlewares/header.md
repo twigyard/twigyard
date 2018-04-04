@@ -19,8 +19,8 @@ These HTTP headers are injected to HTTP response when `header` attribute is not 
 header:
     'Content-Security-Policy':
         'default-src':
-            - self     # default value for HTTP
-            - 'https:' # default value for HTTPS
+            - "'self'"     # default value for HTTP
+            - "https:"     # default value for HTTPS
     'Referrer-Policy': strict-origin
     'X-Content-Type-Options': nosniff
 ```
@@ -33,10 +33,10 @@ header:
 header:
     'Content-Security-Policy':
         'default-src':
-            - self
+            - "'self'"
         'img-src':
-            - self
-            - https://i.imgur.com
+            - "'self'"
+            - "https://i.imgur.com"
     'Referrer-Policy': same-origin
     'X-Content-Type-Options': nosniff
 ```

@@ -16,7 +16,7 @@ class HeaderMiddleware implements MiddlewareInterface
     const HEADER_X_CONTENT_TYPE_OPTIONS = 'X-Content-Type-Options';
 
     const HEADER_DEFAULT_PARAMS = [
-        self::HEADER_CONTENT_SECURITY_POLICY => 'default-src self;',
+        self::HEADER_CONTENT_SECURITY_POLICY => 'default-src \'self\';',
         self::HEADER_REFERRER_POLICY => 'strict-origin',
         self::HEADER_X_CONTENT_TYPE_OPTIONS => 'nosniff',
     ];

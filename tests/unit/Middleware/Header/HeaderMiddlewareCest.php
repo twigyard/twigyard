@@ -27,7 +27,7 @@ class HeaderMiddlewareCest
             function (ServerRequestInterface $request, Response $response) use ($I) {
                 $I->assertEquals(
                     [
-                        'Content-Security-Policy' => ['default-src self;'],
+                        'Content-Security-Policy' => ['default-src \'self\';'],
                         'Referrer-Policy' => ['strict-origin'],
                         'X-Content-Type-Options' => ['nosniff'],
                     ],
@@ -125,8 +125,8 @@ class HeaderMiddlewareCest
         $config = [
             'header' => [
                 'Content-Security-Policy' => [
-                    'default-src' => ['self'],
-                    'img-src' => ['self', 'http://www.example.com'],
+                    'default-src' => ['\'self\''],
+                    'img-src' => ['\'self\'', 'http://www.example.com'],
                 ],
                 'Referrer-Policy' => 'same-origin',
                 'X-Content-Type-Options' => 'nosniff',
@@ -142,7 +142,7 @@ class HeaderMiddlewareCest
             function (ServerRequestInterface $request, Response $response) use ($I) {
                 $I->assertEquals(
                     [
-                        'Content-Security-Policy' => ['default-src self; img-src self http://www.example.com;'],
+                        'Content-Security-Policy' => ['default-src \'self\'; img-src \'self\' http://www.example.com;'],
                         'Referrer-Policy' => ['same-origin'],
                         'X-Content-Type-Options' => ['nosniff'],
                     ],
