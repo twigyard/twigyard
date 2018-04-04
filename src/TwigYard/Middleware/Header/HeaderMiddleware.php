@@ -55,42 +55,12 @@ class HeaderMiddleware implements MiddlewareInterface
         }
 
         if (is_array($config) && array_key_exists(self::HEADER_CONFIG, $config)) {
-            $headerConfig = $config[self::HEADER_CONFIG];
-
-            if (is_array($headerConfig)) {
-                if (array_key_exists(self::HEADER_CONTENT_SECURITY_POLICY, $headerConfig)) {
-                    $headers[self::HEADER_CONTENT_SECURITY_POLICY] = '';
-
-                    if (is_array($headerConfig[self::HEADER_CONTENT_SECURITY_POLICY])) {
-                        foreach ($headerConfig[self::HEADER_CONTENT_SECURITY_POLICY] as $name => $value) {
-                            if (is_array($value)) {
-                                $headers[self::HEADER_CONTENT_SECURITY_POLICY] .= sprintf(
-                                    '%s %s; ',
-                                    $name,
-                                    implode(' ', $value)
-                                );
-                            }
-                        }
-
-                        $headers[self::HEADER_CONTENT_SECURITY_POLICY] = rtrim($headers[self::HEADER_CONTENT_SECURITY_POLICY]);
-                    }
-
-                    if (!mb_strlen($headers[self::HEADER_CONTENT_SECURITY_POLICY])) {
-                        unset($headers[self::HEADER_CONTENT_SECURITY_POLICY]);
-                    }
-                }
-
-                if (array_key_exists(self::HEADER_REFERRER_POLICY, $headerConfig)) {
-                    $headers[self::HEADER_REFERRER_POLICY] = $headerConfig[self::HEADER_REFERRER_POLICY];
-                }
-
-                if (array_key_exists(self::HEADER_X_CONTENT_TYPE_OPTIONS, $headerConfig)) {
-                    $headers[self::HEADER_X_CONTENT_TYPE_OPTIONS] = $headerConfig[self::HEADER_X_CONTENT_TYPE_OPTIONS];
-                }
+            if (is_array($config[self::HEADER_CONFIG])) {
+                $headers = $this->setContentSecurityPolicyHeader($headers, $config[self::HEADER_CONFIG]);
+                $headers = $this->setRefererPolicyHeader($headers, $config[self::HEADER_CONFIG]);
+                $headers = $this->setXContentTypeOptionsHeader($headers, $config[self::HEADER_CONFIG]);
             } else {
-                foreach ($headers as $name => $value) {
-                    unset($headers[$name]);
-                }
+                $headers = $this->resetHeaders($headers);
             }
         }
 
@@ -101,5 +71,82 @@ class HeaderMiddleware implements MiddlewareInterface
         }
 
         return $next($request, $response);
+    }
+
+    /**
+     * @param array $headers
+     * @param array $headerConfig
+     * @return array
+     */
+    private function setContentSecurityPolicyHeader(array $headers, array $headerConfig): array
+    {
+        if (array_key_exists(self::HEADER_CONTENT_SECURITY_POLICY, $headerConfig)) {
+            $headers[self::HEADER_CONTENT_SECURITY_POLICY] = '';
+
+            if (is_array($headerConfig[self::HEADER_CONTENT_SECURITY_POLICY])) {
+                foreach ($headerConfig[self::HEADER_CONTENT_SECURITY_POLICY] as $name => $value) {
+                    if (is_array($value)) {
+                        $headers[self::HEADER_CONTENT_SECURITY_POLICY] .= sprintf(
+                            '%s %s; ',
+                            $name,
+                            implode(' ', $value)
+                        );
+                    }
+                }
+
+                $headers[self::HEADER_CONTENT_SECURITY_POLICY] = rtrim($headers[self::HEADER_CONTENT_SECURITY_POLICY]);
+            }
+
+            if (!mb_strlen($headers[self::HEADER_CONTENT_SECURITY_POLICY])) {
+                unset($headers[self::HEADER_CONTENT_SECURITY_POLICY]);
+            }
+        }
+
+        if (array_key_exists(self::HEADER_REFERRER_POLICY, $headerConfig)) {
+            $headers[self::HEADER_REFERRER_POLICY] = $headerConfig[self::HEADER_REFERRER_POLICY];
+        }
+
+        return $headers;
+    }
+
+    /**
+     * @param array $headers
+     * @param array $headerConfig
+     * @return array
+     */
+    private function setRefererPolicyHeader(array $headers, array $headerConfig): array
+    {
+        if (array_key_exists(self::HEADER_REFERRER_POLICY, $headerConfig)) {
+            $headers[self::HEADER_REFERRER_POLICY] = $headerConfig[self::HEADER_REFERRER_POLICY];
+        }
+
+        return $headers;
+    }
+
+    /**
+     * @param array $headers
+     * @param array $headerConfig
+     * @return array
+     */
+    private function setXContentTypeOptionsHeader(array $headers, array $headerConfig): array
+    {
+        if (array_key_exists(self::HEADER_X_CONTENT_TYPE_OPTIONS, $headerConfig)) {
+            $headers[self::HEADER_X_CONTENT_TYPE_OPTIONS] = $headerConfig[self::HEADER_X_CONTENT_TYPE_OPTIONS];
+        }
+
+        return $headers;
+    }
+
+    /**
+     * @param array $headers
+     * @return array
+     */
+    private function resetHeaders(array $headers): array
+    {
+        foreach ($headers as $name => $value) {
+            unset($headers[$name]);
+        }
+
+        return $headers;
     }
 }
