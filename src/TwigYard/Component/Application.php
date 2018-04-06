@@ -9,6 +9,7 @@ use TwigYard\Middleware\Error\ErrorMiddleware;
 use TwigYard\Middleware\Form\FormHandlerFactory;
 use TwigYard\Middleware\Form\FormMiddleware;
 use TwigYard\Middleware\Form\FormValidator;
+use TwigYard\Middleware\Header\HeaderMiddleware;
 use TwigYard\Middleware\Httpauth\HttpauthMiddleware;
 use TwigYard\Middleware\Locale\LocaleMiddleware;
 use TwigYard\Middleware\Redirect\RedirectMiddleware;
@@ -151,6 +152,7 @@ class Application
             $appState,
             $twigTemplatingFactory
         );
+        $queue[] = new HeaderMiddleware($appState);
 
         return $queue;
     }
