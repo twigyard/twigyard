@@ -25,6 +25,11 @@ class TwigTemplating implements TemplatingInterface
     private $appState;
 
     /**
+     * @var string|null
+     */
+    private $parentDomain;
+
+    /**
      * TwigTemplating constructor.
      * @param AppState $appState
      * @param string $templateDir
@@ -32,6 +37,7 @@ class TwigTemplating implements TemplatingInterface
      * @param TemplatingClosureFactory $tplClosureFactory
      * @param SiteTranslatorFactory $siteTranslatorFactory
      * @param array $options
+     * @param string|null $parentDomain
      */
     public function __construct(
         AppState $appState,
@@ -39,9 +45,11 @@ class TwigTemplating implements TemplatingInterface
         string $assetDir,
         TemplatingClosureFactory $tplClosureFactory,
         SiteTranslatorFactory $siteTranslatorFactory,
-        array $options
+        array $options,
+        ?string $parentDomain
     ) {
         $this->appState = $appState;
+        $this->parentDomain = $parentDomain;
 
         $this->twigEnv = new Twig_Environment(new Twig_Loader_Filesystem($templateDir), $options);
         $this->twigEnv->addExtension(new Twig_Extensions_Extension_Text());
@@ -87,7 +95,9 @@ class TwigTemplating implements TemplatingInterface
     public function render(string $templateName): string
     {
         return $this->twigEnv->render($templateName, [
-            'url' => $this->appState->getUrl(),
+            'url' => $this->parentDomain
+                ? sprintf('%s.%s', $this->appState->getUrl(), $this->parentDomain)
+                : $this->appState->getUrl(),
             'data' => $this->appState->getData(),
             'form' => $this->appState->getForm(),
             'locale' => $this->appState->getLocale(),

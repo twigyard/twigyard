@@ -22,6 +22,11 @@ class TwigTemplatingFactory implements TemplatingFactoryInterface
     private $templateDir;
 
     /**
+     * @var string|null
+     */
+    private $parentDomain;
+
+    /**
      * @var TemplatingClosureFactory
      */
     private $tplClosureFactory;
@@ -38,19 +43,22 @@ class TwigTemplatingFactory implements TemplatingFactoryInterface
      * @param TemplatingClosureFactory $tplClosureFactory
      * @param SiteTranslatorFactory $siteTranslatorFactory
      * @param string|null $siteCacheDir
+     * @param string|null $parentDomain
      */
     public function __construct(
         string $templateDir,
         string $assetDir,
         TemplatingClosureFactory $tplClosureFactory,
         SiteTranslatorFactory $siteTranslatorFactory,
-        ?string $siteCacheDir
+        ?string $siteCacheDir,
+        ?string $parentDomain
     ) {
         $this->templateDir = $templateDir;
         $this->assetDir = $assetDir;
         $this->tplClosureFactory = $tplClosureFactory;
         $this->siteTranslatorFactory = $siteTranslatorFactory;
         $this->siteCacheDir = $siteCacheDir;
+        $this->parentDomain = $parentDomain;
     }
 
     /**
@@ -67,7 +75,8 @@ class TwigTemplatingFactory implements TemplatingFactoryInterface
             $this->siteTranslatorFactory,
             $this->siteCacheDir
                 ? ['cache' => $appState->getSiteDir() . '/' . $this->siteCacheDir . '/' . self::CACHE_DIR]
-                : []
+                : [],
+            $this->parentDomain
         );
     }
 }
