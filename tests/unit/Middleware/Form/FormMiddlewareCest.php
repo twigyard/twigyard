@@ -55,6 +55,7 @@ class FormMiddlewareCest
         $appState = $prophet->prophesize(AppState::class);
         $appState->getConfig()->willReturn(['form' => ['invalid-form-name!' => ['handlers' => [['logHandlerConfig', 'type' => 'log']],
         ]]]);
+        $appState->getScheme()->willReturn('http');
         $csrfTokenGenerator = $prophet->prophesize(CsrfTokenGenerator::class);
         $csrfTokenGenerator->generateToken()->willReturn('token');
         $formValidator = $prophet->prophesize(FormValidator::class);
@@ -91,6 +92,7 @@ class FormMiddlewareCest
         $appState = $prophet->prophesize(AppState::class);
         $appState->getConfig()->willReturn(['form' => ['valid_form_n4m3' => ['handlers' => [['logHandlerConfig', 'type' => 'log']],
         ]]]);
+        $appState->getScheme()->willReturn('http');
         $appState->setForm(['valid_form_n4m3' => [
             'data' => ['csrf_token' => 'token'],
         ]])->shouldBeCalled();
@@ -131,6 +133,7 @@ class FormMiddlewareCest
         $prophet = new Prophet();
         $appState = $prophet->prophesize(AppState::class);
         $appState->getConfig()->willReturn([]);
+        $appState->getScheme()->willReturn('http');
         $csrfTokenGenerator = $prophet->prophesize(CsrfTokenGenerator::class);
         $formValidator = $prophet->prophesize(FormValidator::class);
         $handlerFactory = $prophet->prophesize(FormHandlerFactory::class);
@@ -163,6 +166,7 @@ class FormMiddlewareCest
         $prophet = new Prophet();
         $appState = $prophet->prophesize(AppState::class);
         $appState->setForm(new TypeToken('array'))->shouldBeCalled();
+        $appState->getScheme()->willReturn('http');
         $appState->getLocale()->willReturn('en');
         $appState->getSiteParameters()->willReturn([]);
         $appState->getConfig()->willReturn([
@@ -209,7 +213,7 @@ class FormMiddlewareCest
     /**
      * @param \UnitTester $I
      */
-    public function setCookieAndCsrfOnGetRequest(\UnitTester $I)
+    public function setCookieAndCsrfOnGetRequest(\UnitTester $I, $scheme = 'http', $secure = false)
     {
         $prophet = new Prophet();
         $appState = $prophet->prophesize(AppState::class);
@@ -218,6 +222,7 @@ class FormMiddlewareCest
             'flash_message' => 'Flash message',
             'flash_message_type' => 'success',
         ]])->shouldBeCalled();
+        $appState->getScheme()->willReturn($scheme);
         $fs = $this->getFs();
         $appState->getSiteDir()->willReturn($fs->path('/sites/www.example.com'));
         $mw = $this->getMw($appState, $prophet);
@@ -229,12 +234,23 @@ class FormMiddlewareCest
             return new Response();
         });
         $prophet->checkPredictions();
-        $flashMessage = SetCookies::fromResponse($response)->get('twigyard_flash_message')->getValue();
-        $flashMessageType = SetCookies::fromResponse($response)->get('twigyard_flash_message_type')->getValue();
-        $csrfToken = SetCookies::fromResponse($response)->get('twigyard_csrf_token')->getValue();
-        $I->assertEquals('token', $csrfToken);
-        $I->assertEquals(null, $flashMessage);
-        $I->assertEquals(null, $flashMessageType);
+        $flashMessageCookie = SetCookies::fromResponse($response)->get('twigyard_flash_message');
+        $flashMessageTypeCookie = SetCookies::fromResponse($response)->get('twigyard_flash_message_type');
+        $csrfTokenCookie = SetCookies::fromResponse($response)->get('twigyard_csrf_token');
+        $I->assertEquals('token', $csrfTokenCookie->getValue());
+        $I->assertEquals(null, $flashMessageCookie->getValue());
+        $I->assertEquals(null, $flashMessageTypeCookie->getValue());
+        $I->assertEquals($secure, $csrfTokenCookie->getSecure());
+        $I->assertEquals($secure, $flashMessageCookie->getSecure());
+        $I->assertEquals($secure, $flashMessageTypeCookie->getSecure());
+    }
+
+    /**
+     * @param \UnitTester $I
+     */
+    public function setCookieAndCsrfOnHttpsGetRequest(\UnitTester $I)
+    {
+        $this->setCookieAndCsrfOnGetRequest($I, 'https', true);
     }
 
     /**
@@ -266,6 +282,7 @@ class FormMiddlewareCest
             'flash_message_type' => 'error-validation',
             'errors' => [],
         ]])->shouldBeCalled();
+        $appState->getScheme()->willReturn('http');
         $appState->getLocale()->willReturn('en');
         $fs = $this->getFs();
         $appState->getSiteDir()->willReturn($fs->path('/sites/www.example.com'));
@@ -302,6 +319,7 @@ class FormMiddlewareCest
         $appState->setForm(['form1' => [
             'data' => ['csrf_token' => 'token', 'field1' => 'value1'],
         ]])->shouldBeCalled();
+        $appState->getScheme()->willReturn('http');
         $appState->getLocale()->willReturn('en');
 
         $fs = $this->getFs();
@@ -445,6 +463,7 @@ class FormMiddlewareCest
             $formAppState['form1']['anchor'] = $anchor;
         }
         $appState->setForm($formAppState)->shouldBeCalled();
+        $appState->getScheme()->willReturn('http');
         $appState->getLocale()->willReturn('en');
 
         $fs = $this->getFs();

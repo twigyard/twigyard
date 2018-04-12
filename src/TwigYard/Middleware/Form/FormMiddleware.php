@@ -227,9 +227,16 @@ class FormMiddleware
      */
     private function getCsrfCookie(string $csrfToken): SetCookie
     {
-        return SetCookie::create(self::CSRF_COOKIE_NAME)
+        $csrfCookie = SetCookie::create(self::CSRF_COOKIE_NAME)
             ->withValue($csrfToken)
-            ->withExpires((new \DateTime())->modify(sprintf('+%d seconds', self::CSRF_COOKIE_TTL)));
+            ->withExpires((new \DateTime())->modify(sprintf('+%d seconds', self::CSRF_COOKIE_TTL)))
+            ->withHttpOnly(true);
+
+        if ($this->appState->getScheme() == 'https') {
+            $csrfCookie = $csrfCookie->withSecure(true);
+        }
+
+        return $csrfCookie;
     }
 
     /**
@@ -242,11 +249,18 @@ class FormMiddleware
     {
         $cookie = SetCookie::create(self::FLASH_MESSAGE_COOKIE_NAME)
             ->withValue($flashMessage)
-            ->withExpires((new \DateTime())->modify(sprintf('+%d seconds', self::FLASH_MESSAGE_COOKIE_TTL)));
+            ->withExpires((new \DateTime())->modify(sprintf('+%d seconds', self::FLASH_MESSAGE_COOKIE_TTL)))
+            ->withHttpOnly(true);
 
         $typeCookie = SetCookie::create(self::FLASH_MESSAGE_TYPE_COOKIE_NAME)
             ->withValue($flashMessageType)
-            ->withExpires((new \DateTime())->modify(sprintf('+%d seconds', self::FLASH_MESSAGE_COOKIE_TTL)));
+            ->withExpires((new \DateTime())->modify(sprintf('+%d seconds', self::FLASH_MESSAGE_COOKIE_TTL)))
+            ->withHttpOnly(true);
+
+        if ($this->appState->getScheme() == 'https') {
+            $cookie = $cookie->withSecure(true);
+            $typeCookie = $typeCookie->withSecure(true);
+        }
 
         $modifiedResponse = FigResponseCookies::set($response, $cookie);
         $modifiedResponse = FigResponseCookies::set($modifiedResponse, $typeCookie);
