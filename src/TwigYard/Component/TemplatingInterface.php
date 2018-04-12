@@ -12,6 +12,7 @@ interface TemplatingInterface
      * @param TemplatingClosureFactory $tplClosureFactory
      * @param SiteTranslatorFactory $siteTranslatorFactory
      * @param array $options
+     * @param string|null $parentDomain
      */
     public function __construct(
         AppState $appState,
@@ -19,7 +20,8 @@ interface TemplatingInterface
         string $assetDir,
         TemplatingClosureFactory $tplClosureFactory,
         SiteTranslatorFactory $siteTranslatorFactory,
-        array $options
+        array $options,
+        ?string $parentDomain
     );
 
     /**

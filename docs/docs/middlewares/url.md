@@ -21,7 +21,8 @@ url:
 ```
 
 ## Provides
-name | type     | description
------|----------|------------
-url  | string   | The canonical URL. 
+name    | type     | description
+--------|----------|------------
+url     | string   | The URL where the site runs on current environment. It consists of the canonical URL as defined in `site.yml` and `parent_domain` as defined in `parameters.yml`.
+scheme  | string   | The URL scheme (`http` or `https`). 
 

@@ -66,6 +66,7 @@ services:
             $templateDir: '@=parameter("app.config").getTemplateDir()'
             $assetDir: '@=parameter("app.config").getAssetDir()'
             $siteCacheDir: '@=parameter("app.parameters")["cache_enabled"] ? parameter("app.config").getSiteCacheDir() : null'
+            $parentDomain: '@=parameter("app.parameters")["parent_domain"]'
 
     TwigYard\Component\TranslatorFactory:
         arguments:

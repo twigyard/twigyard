@@ -11,13 +11,15 @@ interface TemplatingFactoryInterface
      * @param TemplatingClosureFactory $tplClosureFactory
      * @param SiteTranslatorFactory $siteTranslatorFactory
      * @param string|null $siteCacheDir
+     * @param string|null $parentDomain
      */
     public function __construct(
         string $templateDir,
         string $assetDir,
         TemplatingClosureFactory $tplClosureFactory,
         SiteTranslatorFactory $siteTranslatorFactory,
-        ?string $siteCacheDir
+        ?string $siteCacheDir,
+        ?string $parentDomain
     );
 
     /**
