@@ -36,6 +36,11 @@ class HttpauthMiddleware implements MiddlewareInterface
             $username = '';
             $password = '';
             $authParams = isset($request->getQueryParams()['httpauth']) ? $request->getQueryParams()['httpauth'] : null;
+            $clientIp = $request->getServerParams()['REMOTE_ADDR'];
+
+            if (array_key_exists('exclude_ip_addresses', $conf) && in_array($clientIp, $conf['exclude_ip_addresses'])) {
+                return $next($request, $response);
+            }
 
             if ($authParams) {
                 $httpAuthString = base64_decode(substr($authParams, 6));
