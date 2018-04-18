@@ -16,7 +16,7 @@ class HttpauthMiddlewareCest
     public function promptsIfNoAuthHeader(\UnitTester $I)
     {
         $mw = $this->getMw();
-        $response = $mw(new ServerRequest(['REMOTE_ADDR' => '127.0.0.1']), new Response(), function () {
+        $response = $mw($this->getRequest(), new Response(), function () {
         });
         $I->assertTrue($response->hasHeader('WWW-Authenticate'));
         $I->assertEquals(401, $response->getStatusCode());

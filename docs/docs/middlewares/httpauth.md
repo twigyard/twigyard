@@ -6,7 +6,7 @@ option                 | type   | required | description
 -----------------------|--------|----------|------------
 username               | string | ✓        | The username to be provided by user.
 password               | string | ✓        | The password to be provided by user.
-exclude_ip_addresses    | string | ❌       | The list of IP addresses that can access site without authorization.
+exclude_ip_addresses   | string | ❌       | The list of IP addresses that can access the site without authorization.
 
 **Example**
 ```yaml
@@ -16,8 +16,7 @@ httpauth:
     username: user
     password: pass
     exclude_ip_addresses:
-        - '172.0.0.1'
-        - '212.0.0.1'
+        - '75.76.77.78'
 ```
 
 ## Provides
