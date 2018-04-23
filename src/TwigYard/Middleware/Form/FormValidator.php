@@ -148,11 +148,11 @@ class FormValidator
 
     /**
      * @param string $name
-     * @param array|null $options
+     * @param mixed $options
      * @throws ConstraintNotFoundException
      * @return mixed
      */
-    private function getConstraint(string $name, ?array $options = null)
+    private function getConstraint(string $name, $options = null)
     {
         foreach (self::CONSTRAINTS_NAMESPACES as $namespace) {
             $className = $namespace . $name;
