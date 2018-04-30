@@ -76,12 +76,20 @@ class ErrorMiddleware implements MiddlewareInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
+        $url = null;
+
+        try {
+            $url = $this->appState->getUrl();
+        } catch (\TypeError $typeError) {
+        }
+
         if ($this->showErrors !== true) {
-            set_error_handler(function ($errNo, $errStr) use ($request) {
+            set_error_handler(function ($errNo, $errStr) use ($request, $url) {
                 if (!ini_get('error_reporting')) {
                     return;
                 }
-                $this->loggerFactory->getLogger($this->appState->getUrl())
+
+                $this->loggerFactory->getLogger($url)
                     ->critical(
                         '[' . $request->getUri() . '] > ' . $errNo . ': ' . $errStr,
                         $this->appState->dumpContext()
@@ -98,8 +106,11 @@ class ErrorMiddleware implements MiddlewareInterface
             if ($this->showErrors === true) {
                 throw $e;
             }
-            $this->loggerFactory->getLogger($this->appState->getUrl())
-                ->critical('[' . $request->getUri() . '] > ' . $e, $this->appState->dumpContext());
+            $this->loggerFactory->getLogger($url)
+                ->critical(
+                    '[' . $request->getUri() . '] > ' . $e,
+                    $this->appState->dumpContext()
+                );
             $errStream = $this->getErrorPageStream($this->page500);
 
             return (new Response())
@@ -108,8 +119,12 @@ class ErrorMiddleware implements MiddlewareInterface
         }
 
         if ($response->getStatusCode() === 404) {
-            $this->loggerFactory->getLogger($this->appState->getUrl())
-                ->info('[' . $request->getUri() . '] > 404', $this->appState->dumpContext());
+            $this->loggerFactory->getLogger($url)
+                ->info(
+                    '[' . $request->getUri() . '] > 404',
+                    $this->appState->dumpContext()
+                );
+
             $errStream = $this->getErrorPageStream($this->page404);
             $response = $response->withBody($errStream);
         }
@@ -123,16 +138,22 @@ class ErrorMiddleware implements MiddlewareInterface
      */
     private function getErrorPageStream(string $pageName): Stream
     {
-        $errPage = $this->appState->getSiteDir() . '/' . $this->templateDir . '/' . $pageName;
-        $localeErrPage = $this->appState->getSiteDir()
-            . '/' . $this->templateDir
-            . '/' . $this->appState->getLocale()
-            . '/' . $pageName;
+        $errPage = '';
+        $localeErrPage = '';
+
+        try {
+            $errPage = $this->appState->getSiteDir() . '/' . $this->templateDir . '/' . $pageName;
+            $localeErrPage = $this->appState->getSiteDir()
+                . '/' . $this->templateDir
+                . '/' . $this->appState->getLocale()
+                . '/' . $pageName;
+        } catch (\TypeError $typeError) {
+        }
 
         if (is_file($localeErrPage)) {
-            return  new Stream($localeErrPage);
+            return new Stream($localeErrPage);
         } elseif (is_file($errPage)) {
-            return  new Stream($errPage);
+            return new Stream($errPage);
         }
 
         return new Stream(__DIR__ . '/' . $pageName);
