@@ -152,7 +152,7 @@ class Application
             $appState,
             $twigTemplatingFactory
         );
-        $queue[] = new HeaderMiddleware($appState);
+        // $queue[] = new HeaderMiddleware($appState);
 
         return $queue;
     }
