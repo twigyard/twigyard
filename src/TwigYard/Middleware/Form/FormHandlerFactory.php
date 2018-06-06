@@ -6,13 +6,16 @@ use TwigYard\Component\AppState;
 use TwigYard\Component\MailerFactory;
 use TwigYard\Component\SiteLoggerFactory;
 use TwigYard\Component\TemplatingFactoryInterface;
+use TwigYard\Exception\InvalidSiteConfigException;
 use TwigYard\Middleware\Form\Exception\InvalidFormHandlerException;
+use TwigYard\Middleware\Form\Handler\ApiHandler;
 use TwigYard\Middleware\Form\Handler\EmailHandler;
 use TwigYard\Middleware\Form\Handler\HandlerInterface;
 use TwigYard\Middleware\Form\Handler\LogHandler;
 
 class FormHandlerFactory
 {
+    const TYPE_API = 'api';
     const TYPE_EMAIL = 'email';
     const TYPE_LOG = 'log';
 
@@ -57,11 +60,17 @@ class FormHandlerFactory
      * @param array $config
      * @param array $siteParameters
      * @throws InvalidFormHandlerException
+     * @throws InvalidSiteConfigException
      * @return HandlerInterface
      */
     public function build(array $config, array $siteParameters): HandlerInterface
     {
-        if ($config['type'] === self::TYPE_EMAIL) {
+        if ($config['type'] === self::TYPE_API) {
+            return new ApiHandler(
+                $config,
+                $this->appState
+            );
+        } elseif ($config['type'] === self::TYPE_EMAIL) {
             return new EmailHandler(
                 $config,
                 $this->mailerFactory->createMailer($siteParameters),
