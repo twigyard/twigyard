@@ -2,10 +2,8 @@
 
 namespace TwigYard\Middleware\Form\Handler;
 
-use GuzzleHttp\Exception\RequestException;
-use TwigYard\Component\AppState;
+use TwigYard\Component\HttpRequestSender;
 use TwigYard\Exception\InvalidSiteConfigException;
-use Zend\Diactoros\Request;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Response\RedirectResponse;
 
@@ -37,27 +35,27 @@ class ApiHandler implements HandlerInterface
     private $config;
 
     /**
-     * @var AppState
+     * @var HttpRequestSender
      */
-    private $appState;
+    private $httpRequestSender;
 
     /**
+     * ApiHandler constructor.
      * @param array $config
-     * @param AppState $appState
+     * @param HttpRequestSender $httpRequestSender
      * @throws InvalidSiteConfigException
      */
-    public function __construct(
-        array $config,
-        AppState $appState
-    ) {
+    public function __construct(array $config, HttpRequestSender $httpRequestSender)
+    {
         $this->config = $config;
-        $this->appState = $appState;
+        $this->httpRequestSender = $httpRequestSender;
 
         $this->validateConfig();
     }
 
     /**
      * @param array $formData
+     * @throws \HttpRequestException
      * @return Response
      */
     public function handle(array $formData)
@@ -89,17 +87,15 @@ class ApiHandler implements HandlerInterface
             }
         }
 
-        $response = (new \GuzzleHttp\Client())->request(
+        $response = $this->httpRequestSender->sendRequest(
             $this->config[self::CONFIG_METHOD],
             $this->config[self::CONFIG_URL],
-            [
-                'headers' => $this->config[self::CONFIG_HEADERS] ?: [],
-                'form_params' => $sendData,
-            ]
+            $sendData,
+            array_key_exists(self::CONFIG_HEADERS, $this->config) ? $this->config[self::CONFIG_HEADERS] : []
         );
 
         if (!in_array($response->getStatusCode(), [200, 201, 202, 203, 204])) {
-            throw new RequestException('Form API handler request failed.', new Request(), $response, null, $sendData);
+            throw new \Exception('Form API handler request failed.');
         }
 
         $responseBody = json_decode($response->getBody(), true);
@@ -111,10 +107,8 @@ class ApiHandler implements HandlerInterface
             $redirectUrlParam = $this->config[self::CONFIG_RESPONSE][self::CONFIG_RESPONSE_REDIRECT_URL_PARAM];
 
             if (!array_key_exists($redirectUrlParam, $responseBody)) {
-                throw new RequestException(
-                    sprintf('Form API handler request expected to receive parameters `%s`.', $redirectUrlParam),
-                    new Request(),
-                    $response
+                throw new \Exception(
+                    sprintf('Form API handler request expected to receive parameters `%s`.', $redirectUrlParam)
                 );
             }
 
@@ -332,7 +326,7 @@ class ApiHandler implements HandlerInterface
                     if (!is_string($redirectUrlParam) && !is_numeric($redirectUrlParam)) {
                         throw new InvalidSiteConfigException(
                             sprintf(
-                                'Form API handler option `%s.%s` is not set or is not of type string.',
+                                'Form API handler option `%s.%s` is not set or is not of type string or integer.',
                                 self::CONFIG_RESPONSE,
                                 self::CONFIG_RESPONSE_REDIRECT_URL_PARAM
                             )

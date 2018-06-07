@@ -3,6 +3,7 @@
 namespace TwigYard\Middleware\Form;
 
 use TwigYard\Component\AppState;
+use TwigYard\Component\HttpRequestSender;
 use TwigYard\Component\MailerFactory;
 use TwigYard\Component\SiteLoggerFactory;
 use TwigYard\Component\TemplatingFactoryInterface;
@@ -37,23 +38,30 @@ class FormHandlerFactory
      * @var SiteLoggerFactory
      */
     private $siteLoggerFactory;
+    /**
+     * @var HttpRequestSender
+     */
+    private $httpRequestSender;
 
     /**
      * @param AppState $appState
      * @param MailerFactory $mailerFactory
      * @param TemplatingFactoryInterface $templatingFactory
      * @param SiteLoggerFactory $siteLoggerFactory
+     * @param HttpRequestSender $httpRequestSender
      */
     public function __construct(
         AppState $appState,
         MailerFactory $mailerFactory,
         TemplatingFactoryInterface $templatingFactory,
-        SiteLoggerFactory $siteLoggerFactory
+        SiteLoggerFactory $siteLoggerFactory,
+        HttpRequestSender $httpRequestSender
     ) {
         $this->mailerFactory = $mailerFactory;
         $this->appState = $appState;
         $this->templatingFactory = $templatingFactory;
         $this->siteLoggerFactory = $siteLoggerFactory;
+        $this->httpRequestSender = $httpRequestSender;
     }
 
     /**
@@ -68,7 +76,7 @@ class FormHandlerFactory
         if ($config['type'] === self::TYPE_API) {
             return new ApiHandler(
                 $config,
-                $this->appState
+                $this->httpRequestSender
             );
         } elseif ($config['type'] === self::TYPE_EMAIL) {
             return new EmailHandler(

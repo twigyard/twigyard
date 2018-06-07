@@ -9,7 +9,6 @@ use TwigYard\Middleware\Error\ErrorMiddleware;
 use TwigYard\Middleware\Form\FormHandlerFactory;
 use TwigYard\Middleware\Form\FormMiddleware;
 use TwigYard\Middleware\Form\FormValidator;
-use TwigYard\Middleware\Header\HeaderMiddleware;
 use TwigYard\Middleware\Httpauth\HttpauthMiddleware;
 use TwigYard\Middleware\Locale\LocaleMiddleware;
 use TwigYard\Middleware\Redirect\RedirectMiddleware;
@@ -85,6 +84,7 @@ class Application
         $configCache = $this->container->get(ConfigCache::class);
         $curlDownloader = $this->container->get(CurlDownloader::class);
         $csrfTokenGenerator = $this->container->get(CsrfTokenGenerator::class);
+        $httpRequestSender = $this->container->get(HttpRequestSender::class);
         $translatorFactory = $this->container->get(TranslatorFactory::class);
         $siteTranslatorFactory = $this->container->get(SiteTranslatorFactory::class);
 
@@ -97,6 +97,7 @@ class Application
             || !$configCache instanceof ConfigCache
             || !$curlDownloader instanceof CurlDownloader
             || !$csrfTokenGenerator instanceof CsrfTokenGenerator
+            || !$httpRequestSender instanceof HttpRequestSender
             || !$translatorFactory instanceof TranslatorFactory
             || !$siteTranslatorFactory instanceof SiteTranslatorFactory
         ) {
@@ -108,7 +109,8 @@ class Application
             $appState,
             $mailerFactory,
             $twigTemplatingFactory,
-            $siteLoggerFactory
+            $siteLoggerFactory,
+            $httpRequestSender
         );
 
         $queue = [];

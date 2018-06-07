@@ -41,6 +41,17 @@ form:
 ```
 
 ### Handlers
+#### API
+Sends request with form data to the specified API endpoint. **If `response.redirect_url_param` is set, API handler must be the last handler in a queue because it immediately redirects to received URL.**
+
+option      | type      | required   | description
+------------|-----------|------------|------------
+url         | string    | ✓          | An url to which request is send.
+method      | string    | ✓          | A method using which request is send.
+data        | map       | ✓          | Keys in the map determine attributes that are send in a request, for example *firstName*, *lastName*, *email* and so on. Values of those keys accept string or map. If it is string or integer, value is directly mapped to the attribute. If it is the map, required `form_value` and optional `default` both accept string or integer. `form_value` maps form field to the attribute that is send in the request and `default` is used, if form field is not filled in.
+headers     | map       | ❌         | Keys in the map determine request headers and its string or integer values.
+response    | map       | ❌         | Accept only `redirect_url_param` that can be string or integer. `redirect_url_param` determines attribute in a response object that contains URL and should be used for redirection.
+
 #### Email
 Sends the form data to the specified email addresses.
 
@@ -77,6 +88,20 @@ form:
                     body: email/body.html.twig
             -   type: log
                 file: form.log
+            -   type: api
+                url: 'https://api.example.com/users'
+                method: POST
+                data:
+                    name:
+                        form_value: name
+                    email:
+                        form_value: email
+                        default: 'anonymous@example.com' # Value send when email is not filled
+                    formToken: notSoSecretFormToken
+                headers:
+                    apiToken: topSecretApiToken
+                # response:
+                #    redirect_url_param: redirectToUrlParam # Reads `redirectToUrlParam` attribute from response object and redirect to it
 ```
 ```html
     {# index.html.twig #}
