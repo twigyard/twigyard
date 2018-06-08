@@ -18,6 +18,8 @@ services:
             $cacheNamespace: '@=parameter("app.config").getCacheNamespaceConfig()'
             $cacheEnabled: '@=parameter("app.parameters")["cache_enabled"]'
 
+    TwigYard\Component\HttpRequestSender: ~
+
     TwigYard\Component\MailerMessageBuilder: ~
 
     # Component factories

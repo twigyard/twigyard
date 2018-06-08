@@ -3,7 +3,6 @@
 namespace TwigYard\Middleware\Form;
 
 use Symfony\Component\Translation\Translator;
-use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Mapping\Loader\AbstractLoader;
 use TwigYard\Component\ValidatorBuilderFactory;
 use TwigYard\Middleware\Form\Exception\ConstraintNotFoundException;

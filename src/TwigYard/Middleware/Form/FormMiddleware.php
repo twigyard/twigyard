@@ -161,7 +161,11 @@ class FormMiddleware
                         $this->appState->setForm($appFormData);
                         foreach ($formConf['handlers'] as $conf) {
                             $handler = $this->formHandlerFactory->build($conf, $this->appState->getSiteParameters());
-                            $handler->handle($formData);
+                            $response = $handler->handle($formData);
+
+                            if ($response) {
+                                return $response;
+                            }
                         }
 
                         return $this->getSubmitSuccessResponse(

@@ -65,7 +65,7 @@ class EmailHandler implements HandlerInterface
      * @param array $formData
      * @throws MissingAppStateAttributeException
      */
-    public function handle(array $formData): void
+    public function handle(array $formData)
     {
         $subjectContent = $this->renderTemplate($this->config['templates']['subject']);
         $bodyContent = $this->renderTemplate($this->config['templates']['body']);

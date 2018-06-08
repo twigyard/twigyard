@@ -33,7 +33,7 @@ class LogHandler implements HandlerInterface
     /**
      * @param array $formData
      */
-    public function handle(array $formData): void
+    public function handle(array $formData)
     {
         unset($formData['csrf_token']);
         $this->logger->addInfo('IP: ' . $this->appState->getRemoteIp() . ', FORM_DATA:', $formData);
