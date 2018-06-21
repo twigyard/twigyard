@@ -45,7 +45,7 @@ locale:
     default:
         key: cs
         name: cs_CZ
-    extra: { en: en_US, es: es_ES }
+    extra: { en: en_US, de: de_DE }
   
 data:
     contact: contact.yml
@@ -55,11 +55,11 @@ router:
     index:
         cs_CZ: /
         en_US: /
-        es_ES: /
+        de_DE: /
     product:
         cs_CZ: /zbozi/{product_id | products:manufacturer.id}
         en_US: /products/{product_id | products:manufacturer.id}
-        es_ES: /productos/{product_id | products:manufacturer.id}
+        de_DE: /produkte/{product_id | products:manufacturer.id}
  
 form:
     contact:
@@ -93,3 +93,7 @@ All site files except the site config and site parameters are to be located acco
 * data (For data yaml files used by the `data` middleware)
 * languages (For translation strings)
 * templates (The Twig templates)
+
+### Twig templates
+All sites can be written in template PHP engine Twig. For more information about <a href="https://twig.symfony.com/doc/2.x/templates.html" target="_blank">templates</a> or available functions and filters please read <a href="https://twig.symfony.com/doc/2.x" target="_blank">Twig documentation</a>.
+
