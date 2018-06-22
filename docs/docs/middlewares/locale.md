@@ -44,4 +44,4 @@ name           | type   | description
 locale         | string | The locale name used for the current request (i.e. en_US).
 
 #### Note
-It is possible return error pages according the locale. Add into `src/templates` new directories according locale (eg. `en_US`) and there keeps error pages.
+It is possible return localized error pages. Add locale specific directories into `src/templates` (eg. `en_US`) and put the error pages there.
