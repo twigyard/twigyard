@@ -95,5 +95,5 @@ All site files except the site config and site parameters are to be located acco
 * templates (The Twig templates)
 
 ### Twig templates
-All sites can be written in template PHP engine Twig. For more information about <a href="https://twig.symfony.com/doc/2.x/templates.html" target="_blank">templates</a> or available functions and filters please read <a href="https://twig.symfony.com/doc/2.x" target="_blank">Twig documentation</a>.
+TwigYard uses template engine for PHP &ndash; Twig. For more information about <a href="https://twig.symfony.com/doc/2.x/templates.html" target="_blank">templates</a> or available functions and filters please read <a href="https://twig.symfony.com/doc/2.x" target="_blank">Twig documentation</a>.
 
