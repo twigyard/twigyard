@@ -3,8 +3,11 @@ Sets the locale. For multilingual sites it parses the url and sets the locale ac
 
 * cs_CZ
 * en_US
+* de_DE
 
 ## Options
+
+N/A
 
 ###Single Language Sites
 For single language sites it accepts the locale string.
@@ -39,3 +42,6 @@ locale:
 name           | type   | description
 ---------------|--------|------------
 locale         | string | The locale name used for the current request (i.e. en_US).
+
+#### Note
+It is possible return localized error pages. Add locale specific directories into `src/templates` (eg. `en_US`) and put the error pages there.

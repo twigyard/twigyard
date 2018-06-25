@@ -75,7 +75,7 @@ Local configuration files must be created from the defaults. This is done by cop
 TwigYard can operate in two modes. One is for production and the other for development and staging.
 
 ### Production
-In this mode sites are accessible on their canonical domain. In this case set the `parent_domain` in `parameters.yml` to `~`. It is also recommended to remove all lines marked with `# remove on prdoduction` from the `.htaccess` file.   
+In this mode sites are accessible on their canonical domain. In this case set the `parent_domain` in `parameters.yml` to `~`. It is also recommended to remove all lines marked with `# remove on production` from the `.htaccess` file.   
 
 ### Dev / Staging
 If you decide to change the `parent_domain` in `parameters.yml`, you must also change it in the `.htaccess` file to ensure that routing works correctly.
