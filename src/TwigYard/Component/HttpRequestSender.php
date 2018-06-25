@@ -22,7 +22,7 @@ class HttpRequestSender
             $url,
             [
                 'headers' => $headers,
-                'form_params' => $data,
+                'json' => $data,
             ]
         );
     }
