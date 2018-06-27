@@ -1,4 +1,4 @@
-# Installation
+# Quick start
 The easiest way to install TwigYard is to use the example [application](https://github.com/twigyard/example-app). It handles all dependencies and configuration and it should work out of the box.
 
 In order to route the site static files correctly the application must be run by Apache2 webserver. If you would like to use some other webserver, please take a look at the `.htaccess` file and port the configuration to the webserver of your choice. 
