@@ -1,4 +1,4 @@
-# Sites
+# Core concepts
 Each site is represented by a folder in the sites directory. The name of the folder must be the canonical URL of the site. As the bare minimum TwigYard requires the `site.yml` file and the `src` folder to be present. 
 
 On the frontend side of things TwigYard is pretty technology agnostic. Type raw css, use grunt, gulp or whatever you like. You do not need to modify your devstack in any way. Within the site folder you are free to use any tools you like to as long as they generate the required files.
