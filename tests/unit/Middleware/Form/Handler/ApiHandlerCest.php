@@ -50,6 +50,22 @@ class ApiHandlerCest
                             'form_value' => 'email',
                             'default' => 'anonymous@example.com',
                         ],
+                        'fieldWithString' => [
+                            'format' => 'string',
+                            'form_value' => 'fieldWithString',
+                        ],
+                        'fieldWithInt' => [
+                            'format' => 'int',
+                            'form_value' => 'fieldWithInt',
+                        ],
+                        'fieldWithFloat' => [
+                            'format' => 'float',
+                            'form_value' => 'fieldWithFloat',
+                        ],
+                        'fieldWithBool' => [
+                            'format' => 'bool',
+                            'form_value' => 'fieldWithBool',
+                        ],
                         'apiToken' => 'notSoSecretFormToken',
                     ],
                     'headers' => [
