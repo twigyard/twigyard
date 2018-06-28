@@ -21,6 +21,11 @@ class ApiHandler implements HandlerInterface
     const CONFIG_METHOD_DELETE = 'DELETE';
 
     const CONFIG_DATA = 'data';
+    const CONFIG_DATA_FORMAT = 'format';
+    const CONFIG_DATA_FORMAT_STRING = 'string';
+    const CONFIG_DATA_FORMAT_INT = 'int';
+    const CONFIG_DATA_FORMAT_FLOAT = 'float';
+    const CONFIG_DATA_FORMAT_BOOL = 'bool';
     const CONFIG_DATA_FORM_VALUE = 'form_value';
     const CONFIG_DATA_DEFAULT = 'default';
 
@@ -82,6 +87,19 @@ class ApiHandler implements HandlerInterface
                                 $formValue
                             )
                         );
+                    }
+                }
+
+                if (array_key_exists(self::CONFIG_DATA_FORMAT, $dataValue)) {
+                    $dataFormat = $dataValue[self::CONFIG_DATA_FORMAT];
+
+                    if (self::CONFIG_DATA_FORMAT_INT === $dataFormat) {
+                        $sendData[$dataKey] = intval($sendData[$dataKey]);
+                    } elseif (self::CONFIG_DATA_FORMAT_FLOAT === $dataFormat) {
+                        $sendData[$dataKey] = floatval($sendData[$dataKey]);
+                    }
+                    if (self::CONFIG_DATA_FORMAT_BOOL === $dataFormat) {
+                        $sendData[$dataKey] = boolval($sendData[$dataKey]);
                     }
                 }
             }
@@ -200,9 +218,38 @@ class ApiHandler implements HandlerInterface
 
             foreach ($configData as $dataKey => $dataValue) {
                 if (is_array($dataValue)) {
+                    $supportedTypes = [
+                        self::CONFIG_DATA_FORMAT_STRING,
+                        self::CONFIG_DATA_FORMAT_INT,
+                        self::CONFIG_DATA_FORMAT_FLOAT,
+                        self::CONFIG_DATA_FORMAT_BOOL,
+                    ];
+
                     if (
-                        count($dataValue) === 1
-                        && array_key_exists(self::CONFIG_DATA_FORM_VALUE, $dataValue)
+                        array_key_exists(self::CONFIG_DATA_FORMAT, $this->config)
+                        && !in_array($this->config[self::CONFIG_DATA_FORMAT], $supportedTypes)
+                    ) {
+                        throw new InvalidSiteConfigException(
+                            sprintf(
+                                'Form API handler option `%s.%s.%s` is expecting one of [%s], `%s` given.',
+                                self::CONFIG_DATA,
+                                $dataKey,
+                                self::CONFIG_DATA_FORMAT,
+                                implode(', ', $supportedTypes),
+                                $this->config[self::CONFIG_DATA_FORMAT]
+                            )
+                        );
+                    }
+
+                    if (
+                        (
+                            count($dataValue) === 1
+                            && array_key_exists(self::CONFIG_DATA_FORM_VALUE, $dataValue)
+                        ) || (
+                            count($dataValue) === 2
+                            && array_key_exists(self::CONFIG_DATA_FORMAT, $dataValue)
+                            && array_key_exists(self::CONFIG_DATA_FORM_VALUE, $dataValue)
+                        )
                     ) {
                         $formValue = $dataValue[self::CONFIG_DATA_FORM_VALUE];
 
@@ -217,9 +264,16 @@ class ApiHandler implements HandlerInterface
                             );
                         }
                     } elseif (
-                        count($dataValue) === 2
-                        && array_key_exists(self::CONFIG_DATA_FORM_VALUE, $dataValue)
-                        && array_key_exists(self::CONFIG_DATA_DEFAULT, $dataValue)
+                        (
+                            count($dataValue) === 2
+                            && array_key_exists(self::CONFIG_DATA_FORM_VALUE, $dataValue)
+                            && array_key_exists(self::CONFIG_DATA_DEFAULT, $dataValue)
+                        ) || (
+                            count($dataValue) === 3
+                            && array_key_exists(self::CONFIG_DATA_FORMAT, $dataValue)
+                            && array_key_exists(self::CONFIG_DATA_FORM_VALUE, $dataValue)
+                            && array_key_exists(self::CONFIG_DATA_DEFAULT, $dataValue)
+                        )
                     ) {
                         $formValue = $dataValue[self::CONFIG_DATA_FORM_VALUE];
                         $defaultValue = $dataValue[self::CONFIG_DATA_DEFAULT];
