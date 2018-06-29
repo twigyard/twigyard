@@ -2,7 +2,7 @@
 site_name: 'TwigYard docs'
 site_author: 'VisionApps, s.r.o'
 site_description: 'A documentation for TwigYard'
-site_url: 'https://docs.twigyard.com'
+site_url: 'http://docs.twigyard.com'
 
 # Repository
 repo_url: 'https://github.com/twigyard/twigyard'
