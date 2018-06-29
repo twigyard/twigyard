@@ -1,3 +1,39 @@
-site_name: TwigYard docs
-theme: material
+# Project information
+site_name: 'TwigYard docs'
+site_author: 'VisionApps, s.r.o'
+site_description: 'A documentation for TwigYard'
+site_url: 'http://docs.twigyard.com'
+
+# Repository
+repo_url: 'https://github.com/twigyard/twigyard'
+repo_name: 'twigyard/twigyard'
+
+# Copyright
+copyright: 'Copyright &copy; 2016 - 2018 VisionApps, s.r.o.'
+
+# Configuration
+theme:
+  name: material
+  language: 'en'
+  favicon: 'favicon.ico'
+  logo: 'img/logo.png'
+  font:
+    text: 'Titillium Web'
+  palette:
+    primary: 'cyan'
+    accent: 'cyan'
+
+# Customization
+extra:
+  social:
+    - type: 'github'
+      link: 'https://github.com/twigyard'
+    - type: 'twitter'
+      link: 'https://twitter.com/visionappscz'
+    - type: 'linkedin'
+      link: 'https://www.linkedin.com/company/visionapps-s-r-o-/'
+    - type: 'facebook'
+      link: 'https://www.facebook.com/VisionAppsCZ'
+
+# Google Analytics
 google_analytics: ['UA-85289576-2', 'docs.twigyard.com']
