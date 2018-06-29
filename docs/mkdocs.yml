@@ -7,6 +7,7 @@ site_url: 'http://docs.twigyard.com'
 # Repository
 repo_url: 'https://github.com/twigyard/twigyard'
 repo_name: 'twigyard/twigyard'
+edit_uri: ''
 
 # Copyright
 copyright: 'Copyright &copy; 2016 - 2018 VisionApps, s.r.o.'
