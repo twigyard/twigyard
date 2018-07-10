@@ -1,36 +1,45 @@
-language: php
-
 os:
   - linux
+
+sudo: false
 
 git:
   depth: 1
 
-php:
-    - 7.1
-    - 7.2
-    - nightly
-
 matrix:
-  fast_finish: true
+  include:
+    - language: php
+      php: 7.1
+      before_install: .travis/php/before_install.sh
+      install: .travis/php/install.sh
+      before_script: .travis/php/before_script.sh
+      script: .travis/php/script.sh
+
+    - language: php
+      php: 7.2
+      before_install: .travis/php/before_install.sh
+      install: .travis/php/install.sh
+      before_script: .travis/php/before_script.sh
+      script: .travis/php/script.sh
+
+    - language: php
+      php: nightly
+      before_install: .travis/php/before_install.sh
+      install: .travis/php/install.sh
+      before_script: .travis/php/before_script.sh
+      script: .travis/php/script.sh
+
+    - language: python
+      python: 2.7
+      install: .travis/python/install.sh
+      script: .travis/python/script.sh
+
+    - language: python
+      python: 3.6
+      install: .travis/python/install.sh
+      script: .travis/python/script.sh
+
   allow_failures:
     - php: nightly
 
-
-sudo: false
-
-before_install: "phpenv config-rm xdebug.ini 2>/dev/null || :"
-
-install:
-  - composer install --no-interaction
-  - vendor/bin/codecept --version
-
-before_script:
-  - vendor/bin/codecept clean --no-interaction
-  - vendor/bin/codecept build --no-interaction
-
-script:
-  - find src tests %s -name "*.php" -print0 | xargs -0 -n1 -P8 php -l
-  - vendor/bin/phpcs --standard=.php_cs_ruleset.xml --encoding=utf-8 --ignore=tests/**/_bootstrap.php,tests/_support/*Tester.php src tests
-  - vendor/bin/php-cs-fixer fix --dry-run --diff --config .php_cs
-  - vendor/bin/codecept run --no-interaction
+  fast_finish: true

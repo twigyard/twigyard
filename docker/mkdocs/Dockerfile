@@ -5,9 +5,5 @@ RUN             pip install mkdocs-material
 RUN             mkdir /workspace
 RUN             useradd -s /bin/bash docker-container-user
 
-
 COPY            ./init-container.sh /root/init-container.sh
 WORKDIR         /workspace
-
-
-
