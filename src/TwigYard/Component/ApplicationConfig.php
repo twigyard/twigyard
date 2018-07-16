@@ -27,11 +27,6 @@ class ApplicationConfig
     /**
      * @var string
      */
-    private $defaultSiteParameters;
-
-    /**
-     * @var string
-     */
     private $sitesDir;
 
     /**
@@ -72,11 +67,6 @@ class ApplicationConfig
     /**
      * @var string
      */
-    private $siteParameters;
-
-    /**
-     * @var string
-     */
     private $error404PageName;
 
     /**
@@ -110,7 +100,6 @@ class ApplicationConfig
             'base_path' => self::TYPE_STRING,
             'config_dir' => self::TYPE_STRING,
             'global_parameters' => self::TYPE_STRING,
-            'default_site_parameters' => self::TYPE_STRING,
             'sites_dir' => self::TYPE_STRING,
             'config_cache_dir' => self::TYPE_STRING,
             'log_dir' => self::TYPE_STRING,
@@ -119,13 +108,12 @@ class ApplicationConfig
             'language_dir' => self::TYPE_STRING,
             'site_cache_dir' => self::TYPE_STRING,
             'template_dir' => self::TYPE_STRING,
-            'site_parameters' => self::TYPE_STRING,
             'error_404_page_name' => self::TYPE_STRING,
             'error_500_page_name' => self::TYPE_STRING,
             'image_cache_dir' => self::TYPE_STRING,
             'cache_namespace_config' => self::TYPE_STRING,
             'cache_namespace_assets' => self::TYPE_STRING,
-            ];
+        ];
 
         foreach ($mandatoryConfigKeys as $configKey => $keyType) {
             if (!array_key_exists($configKey, $config)) {
@@ -167,14 +155,6 @@ class ApplicationConfig
     public function getGlobalParameters(): string
     {
         return $this->globalParameters;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDefaultSiteParameters(): string
-    {
-        return $this->defaultSiteParameters;
     }
 
     /**
@@ -239,14 +219,6 @@ class ApplicationConfig
     public function getTemplateDir(): string
     {
         return $this->templateDir;
-    }
-
-    /**
-     * @return string
-     */
-    public function getSiteParameters(): string
-    {
-        return $this->siteParameters;
     }
 
     /**

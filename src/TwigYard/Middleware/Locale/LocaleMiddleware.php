@@ -43,8 +43,8 @@ class LocaleMiddleware implements MiddlewareInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (array_key_exists('locale', $this->appState->getConfig())) {
-            $conf = $this->appState->getConfig()['locale'];
+        if (array_key_exists('locale', $this->appState->getMiddlewareConfig())) {
+            $conf = $this->appState->getMiddlewareConfig()['locale'];
             if (is_array($conf)) {
                 if (!in_array($conf['default']['name'], $this->validLocales)) {
                     throw $this->getInvalidLocaleException();

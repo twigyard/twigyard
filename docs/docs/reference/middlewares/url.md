@@ -1,5 +1,6 @@
 # URL
-Parses the HTTP request URL and sets the appropriate site configuration for current request. If the request URL is listed among the `extra` addresses a 301 redirect to the canonical URL is made. If there is no site with the requested URL a response with 404 HTTP status code is returned. If the `ssl` option is set to `true` a 301 redirect to the same path over HTTPS is made.
+There are two isolated middlewares that read the 
+These two middlewares parse the HTTP request URL and sets the appropriate site configuration for current request. If the request URL is listed among the `extra` addresses a 301 redirect to the canonical URL is made. If there is no site with the requested URL a response with 404 HTTP status code is returned. If the `ssl` option is set to `true` a 301 redirect to the same path over HTTPS is made.
 
 ## Options
 option           | type   | required | description

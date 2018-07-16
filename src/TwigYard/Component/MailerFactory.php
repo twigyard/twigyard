@@ -5,44 +5,34 @@ namespace TwigYard\Component;
 class MailerFactory
 {
     /**
-     * @var array
-     */
-    private $defaultSiteParameters;
-
-    /**
      * @var MailerMessageBuilder
      */
     private $mailerMessageBuilder;
 
     /**
      * MailerFactory constructor.
-     * @param array $defaultSiteParameters
      * @param MailerMessageBuilder $mailerMessageBuilder
      */
-    public function __construct(array $defaultSiteParameters, MailerMessageBuilder $mailerMessageBuilder)
+    public function __construct(MailerMessageBuilder $mailerMessageBuilder)
     {
-        $this->defaultSiteParameters = $defaultSiteParameters;
         $this->mailerMessageBuilder = $mailerMessageBuilder;
     }
 
     /**
-     * @param array $siteParameters
+     * @param array $parameters
      * @return \TwigYard\Component\Mailer
      */
-    public function createMailer(array $siteParameters): Mailer
+    public function createMailer(array $parameters): Mailer
     {
-        $parameters = array_merge($this->defaultSiteParameters, $siteParameters);
-
-        if (!empty($parameters['mailer_smtp_host'])) {
+        if (!empty($parameters['smtp_host'])) {
             $transport = new \Swift_SmtpTransport(
-                $parameters['mailer_smtp_host'],
-                $parameters['mailer_smtp_port'],
-                $parameters['mailer_smtp_encryption']
+                $parameters['smtp_host'],
+                $parameters['smtp_port'],
+                $parameters['smtp_encryption'] ?? null
             );
-
             $transport
-                ->setUsername($parameters['mailer_smtp_user'])
-                ->setPassword($parameters['mailer_smtp_password']);
+                ->setUsername($parameters['smtp_user'] ?? null)
+                ->setPassword($parameters['smtp_password'] ?? null);
         }
 
         $mailer = new Mailer(

@@ -8,213 +8,59 @@ use Prophecy\Prophet;
 use Psr\Log\LoggerInterface;
 use TwigYard\Component\ConfigCache;
 use TwigYard\Component\LoggerFactory;
+use VirtualFileSystem\Exception\FileExistsException;
 use VirtualFileSystem\FileSystem;
 
 class ConfigCacheCest
 {
-    /**
-     * @param \UnitTester $I
-     */
-    public function ignoreMissingOrInvalidSiteYml(\UnitTester $I)
-    {
-        $prophet = new Prophet();
-        $fs = new FileSystem();
-        $fs->createDirectory('/sites/www.example.com', true);
-        file_put_contents($fs->path('/sites/www.example.com/site.yml'), 'Invalid yml content');
-        $fs->createDirectory('/sites/www.example2.com', true);
-        $cache = $prophet->prophesize(Cache::class);
-        $cache->load(new AnyValueToken(), new AnyValueToken())->will(function ($args) {
-            return $args[1]('/sites', 'site.yml');
-        });
-        $configCache = new ConfigCache($cache->reveal(), $this->getLoggerFactory($prophet)->reveal());
-        $configs = $configCache->getConfig($fs->path('/sites'), 'site.yml');
-        $I->assertEquals([], $configs);
-    }
 
     /**
      * @param \UnitTester $I
      */
-    public function ignoreYamlOnDuplicateCanonicalUrl(\UnitTester $I)
+    public function runTests(\UnitTester $I)
     {
-        $prophet = new Prophet();
-        $fs = new FileSystem();
-        $this->createExample($fs);
 
-        $fs->createDirectory('/sites/www.example2.com', true);
-        $config = <<<EOT
-url:
-    canonical: www.example1.com
-    extra: [ example2.com ]
-EOT;
-        file_put_contents($fs->path('/sites/www.example2.com/site.yml'), $config);
+        foreach ($this->getTestData() as $configVersion => $versionData) {
+            foreach ($versionData as $testData) {
+                $prophet = new Prophet();
+                $fs = new FileSystem();
+                foreach ($testData['configYamls'] as $configDir => $configYaml) {
+                    $this->createExample($fs, $configDir, $configYaml);
+                }
+                $cache = $prophet->prophesize(Cache::class);
+                $cache->load(new AnyValueToken(), new AnyValueToken())->will(function ($args) use ($fs) {
+                    return $args[1]($fs->path('/sites'), 'site.yml');
+                });
+                $configCache = new ConfigCache(
+                    $cache->reveal(),
+                    $this->getLoggerFactory($prophet)->reveal(),
+                    $fs->path('/sites'),
+                    'site.yml'
+                );
 
-        $cache = $prophet->prophesize(Cache::class);
-        $cache->load(new AnyValueToken(), new AnyValueToken())->will(function ($args) use ($fs) {
-            return $args[1]($fs->path('/sites'), 'site.yml');
-        });
-        $configCache = new ConfigCache($cache->reveal(), $this->getLoggerFactory($prophet)->reveal());
-        $configs = $configCache->getConfig($fs->path('/sites'), 'site.yml');
-        $I->assertEquals([
-            'www.example1.com' => ['url' => ['canonical' => 'www.example1.com', 'extra' => ['example1.com']]],
-            'example1.com' => ['url' => ['canonical' => 'www.example1.com', 'extra' => ['example1.com']]],
-        ], $configs);
-    }
-
-    /**
-     * @param \UnitTester $I
-     */
-    public function ignoreYamlOnDuplicateExtraUrl(\UnitTester $I)
-    {
-        $prophet = new Prophet();
-        $fs = new FileSystem();
-        $this->createExample($fs);
-
-        $fs->createDirectory('/sites/www.example2.com', true);
-        $config = <<<EOT
-url:
-    canonical: www.example2.com
-    extra: [ example1.com ]
-EOT;
-        file_put_contents($fs->path('/sites/www.example2.com/site.yml'), $config);
-
-        $cache = $prophet->prophesize(Cache::class);
-        $cache->load(new AnyValueToken(), new AnyValueToken())->will(function ($args) use ($fs) {
-            return $args[1]($fs->path('/sites'), 'site.yml');
-        });
-        $configCache = new ConfigCache($cache->reveal(), $this->getLoggerFactory($prophet)->reveal());
-        $configs = $configCache->getConfig($fs->path('/sites'), 'site.yml');
-        $I->assertEquals([
-            'www.example1.com' => ['url' => ['canonical' => 'www.example1.com', 'extra' => ['example1.com']]],
-            'example1.com' => ['url' => ['canonical' => 'www.example1.com', 'extra' => ['example1.com']]],
-        ], $configs);
-    }
-
-    /**
-     * @param \UnitTester $I
-     */
-    public function emptyExtraUrl(\UnitTester $I)
-    {
-        $prophet = new Prophet();
-        $fs = new FileSystem();
-
-        $fs->createDirectory('/sites/www.example.com', true);
-        $config = <<<EOT
-url:
-    canonical: www.example.com
-EOT;
-        file_put_contents($fs->path('/sites/www.example.com/site.yml'), $config);
-
-        $cache = $prophet->prophesize(Cache::class);
-        $cache->load(new AnyValueToken(), new AnyValueToken())->will(function ($args) use ($fs) {
-            return $args[1]($fs->path('/sites'), 'site.yml');
-        });
-        $configCache = new ConfigCache($cache->reveal(), $this->getLoggerFactory($prophet)->reveal());
-        $configs = $configCache->getConfig($fs->path('/sites'), 'site.yml');
-        $I->assertEquals([
-            'www.example.com' => ['url' => ['canonical' => 'www.example.com']],
-        ], $configs);
-    }
-
-    /**
-     * @param \UnitTester $I
-     */
-    public function prepareRedirectsMap(\UnitTester $I)
-    {
-        $prophet = new Prophet();
-        $fs = new FileSystem();
-        $fs->createDirectory('/sites/www.example1.com', true);
-
-        $config = <<<EOT
-url:
-    canonical: www.example1.com
-    extra: [ example1.com ]
-
-redirect:
-    url/old: url/new
-    url/old2: url/new2
-EOT;
-        file_put_contents($fs->path('/sites/www.example1.com/site.yml'), $config);
-
-        $cache = $prophet->prophesize(Cache::class);
-        $cache->load(new AnyValueToken(), new AnyValueToken())->will(function ($args) use ($fs) {
-            return $args[1]($fs->path('/sites'), 'site.yml');
-        });
-        $configCache = new ConfigCache($cache->reveal(), $this->getLoggerFactory($prophet)->reveal());
-        $configs = $configCache->getConfig($fs->path('/sites'), 'site.yml');
-        $I->assertEquals([
-            'www.example1.com' => [
-                'url' => ['canonical' => 'www.example1.com', 'extra' => ['example1.com']],
-                'redirect' => ['url/old' => 'url/new', 'url/old2' => 'url/new2'],
-            ],
-            'example1.com' => [
-                'url' => ['canonical' => 'www.example1.com', 'extra' => ['example1.com']],
-                'redirect' => ['url/old' => 'url/new', 'url/old2' => 'url/new2'],
-            ],
-        ], $configs);
-    }
-
-    /**
-     * @param \UnitTester $I
-     */
-    public function importSiteConfig(\UnitTester $I)
-    {
-        $prophet = new Prophet();
-        $fs = new FileSystem();
-
-        $fs->createDirectory('/sites/www.example1.com', true);
-        $config = <<<EOT
-url:
-    canonical: www.example1.com
-    extra: []
-mw:
-    config_key: parent_value
-    config_key2: parent_value2
-parent_mw:
-    config_key2: only_parent_value
-EOT;
-        file_put_contents($fs->path('/sites/www.example1.com/main.yml'), $config);
-        $config = <<<EOT
-imports:
-    - { resource: 'main.yml' }
-mw:
-    config_key: specific_value
-    config_key3: specific_value3
-specific_mw:
-    config_key3: only_specific_value
-EOT;
-        file_put_contents($fs->path('/sites/www.example1.com/specific.yml'), $config);
-
-        $cache = $prophet->prophesize(Cache::class);
-        $cache->load(new AnyValueToken(), new AnyValueToken())->will(function ($args) use ($fs) {
-            return $args[1]($fs->path('/sites'), 'specific.yml');
-        });
-        $configCache = new ConfigCache($cache->reveal(), $this->getLoggerFactory($prophet)->reveal());
-        $configs = $configCache->getConfig($fs->path('/sites'), 'specific.yml');
-        $I->assertEquals([
-            'www.example1.com' => [
-                'url' => ['canonical' => 'www.example1.com', 'extra' => []],
-                'mw' => [
-                    'config_key' => 'specific_value',
-                    'config_key2' => 'parent_value2',
-                    'config_key3' => 'specific_value3',
-                ],
-                'parent_mw' => ['config_key2' => 'only_parent_value'],
-                'specific_mw' => ['config_key3' => 'only_specific_value'], ],
-        ], $configs);
+                $I->assertEquals(
+                    $testData['configArray'],
+                    $configCache->getConfig(),
+                    $configVersion . ' ' . $testData['description']
+                );
+            }
+        }
     }
 
     /**
      * @param \VirtualFileSystem\FileSystem $fs
+     * @param null|string $dirName
+     * @param null|string $config
      */
-    private function createExample(FileSystem $fs)
+    private function createExample(FileSystem $fs, string $dirName, ?string $config): void
     {
-        $fs->createDirectory('/sites/www.example1.com', true);
-        $config = <<<EOT
-url:
-    canonical: www.example1.com
-    extra: [ example1.com ]
-EOT;
-        file_put_contents($fs->path('/sites/www.example1.com/site.yml'), $config);
+        try {
+            $fs->createDirectory($dirName, true);
+            if ($config !== null) {
+                file_put_contents($fs->path(($dirName ?: $dirName) . '/site.yml'), $config);
+            }
+        } catch (FileExistsException $e) {
+        }
     }
 
     /**
@@ -228,5 +74,172 @@ EOT;
         $loggerFactory->getLogger(new AnyValueToken())->willReturn($logger->reveal());
 
         return $loggerFactory;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTestData(): array
+    {
+        return [
+            'common' => [
+                [
+                    'description' => 'invalid yaml',
+                    'configYamls' => [
+                        '/sites/www.example.com' => 'Some invalid yaml',
+                    ],
+                    'configArray' => [],
+                ],
+                [
+                    'description' => 'ignore missing site.yml',
+                    'configYamls' => [
+                        '/sites/www.example.com' => null,
+                    ],
+                    'configArray' => [],
+                ],
+            ],
+            'version1' => [
+                [
+                    'description' => 'empty extra url',
+                    'configYamls' => [
+                        '/sites/www.example.com' => "url:\n  canonical: www.example.com",
+                    ],
+                    'configArray' => ['www.example.com' => [
+                        'version' => 1,
+                        'url' => ['canonical' => 'www.example.com']
+                    ]],
+                ],
+                [
+                    'description' => 'ignore yaml on double canonical url',
+                    'configYamls' => [
+                        '/sites/www.example1.com' => "url:\n  canonical: www.example1.com",
+                        '/sites/www.example2.com' => "url:\n  canonical: www.example1.com",
+                    ],
+                    'configArray' => ['www.example1.com' => [
+                        'version' => 1,
+                        'url' => ['canonical' => 'www.example1.com']
+                    ]],
+                ],
+                [
+                    'description' => 'ignore yaml on double extra url',
+                    'configYamls' => [
+                        '/sites/www.example1.com' => "url:\n  canonical: www.example1.com\n  extra: [example1.com]",
+                        '/sites/www.example2.com' => "url:\n  canonical: www.example2.com\n  extra: [example1.com]",
+                    ],
+                    'configArray' => [
+                        'www.example1.com' => [
+                            'version' => 1,
+                            'url' => ['canonical' => 'www.example1.com', 'extra' => ['example1.com']]
+                        ],
+                        'example1.com' => [
+                            'version' => 1,
+                            'url' => ['canonical' => 'www.example1.com', 'extra' => ['example1.com']]
+                        ],
+                    ],
+                ],
+                [
+                    'description' => 'loads config',
+                    'configYamls' => [
+                        '/sites/www.example1.com' =>
+                            "parameters:\n  test_param: test_param_val\nurl:\n  canonical: www.example1.com\n  extra: ['%test_param%']",
+                        '/sites/www.example2.com' => "url:\n  canonical: www.example2.com\n  extra: [example2.com]",
+                    ],
+                    'configArray' => [
+                        'www.example1.com' => [
+                            'version' => 1,
+                            'url' => ['canonical' => 'www.example1.com', 'extra' => ['test_param_val']],
+                            'parameters' => ['test_param' => 'test_param_val'],
+                        ],
+                        'test_param_val' => [
+                            'version' => 1,
+                            'url' => ['canonical' => 'www.example1.com', 'extra' => ['test_param_val']],
+                            'parameters' => ['test_param' => 'test_param_val'],
+                        ],
+                        'www.example2.com' => [
+                            'version' => 1,
+                            'url' => ['canonical' => 'www.example2.com', 'extra' => ['example2.com']]
+                        ],
+                        'example2.com' => [
+                            'version' => 1,
+                            'url' => ['canonical' => 'www.example2.com', 'extra' => ['example2.com']]
+                        ],
+                    ],
+                ],
+            ],
+            'version2' => [
+                [
+                    'description' => 'empty extra url',
+                    'configYamls' => [
+                        '/sites/www.example.com' => "version: 2\nmiddlewares:\n  url:\n    canonical: www.example.com",
+                    ],
+                    'configArray' => ['www.example.com' => [
+                        'version' => 2,
+                        'middlewares' => ['url' => ['canonical' => 'www.example.com']]
+                    ]],
+                ],
+                [
+                    'description' => 'ignore yaml on double canonical url',
+                    'configYamls' => [
+                        '/sites/www.example1.com' =>
+                            "version: 2\nmiddlewares:\n  url:\n    canonical: www.example1.com",
+                        '/sites/www.example2.com' =>
+                            "version: 2\nmiddlewares:\n  url:\n    canonical: www.example1.com",
+                    ],
+                    'configArray' => ['www.example1.com' => [
+                        'version' => 2,
+                        'middlewares' => ['url' => ['canonical' => 'www.example1.com']]
+                    ]],
+                ],
+                [
+                    'description' => 'ignore yaml on double extra url',
+                    'configYamls' => [
+                        '/sites/www.example1.com' =>
+                            "version: 2\nmiddlewares:\n  url:\n    canonical: www.example1.com\n    extra: [example1.com]",
+                    ],
+                    'configArray' => [
+                        'www.example1.com' => [
+                            'version' => 2,
+                            'middlewares' => [
+                                'url' => ['canonical' => 'www.example1.com', 'extra' => ['example1.com']]
+                            ],
+                        ],
+                        'example1.com' => [
+                            'version' => 2,
+                            'middlewares' => [
+                                'url' => ['canonical' => 'www.example1.com', 'extra' => ['example1.com']]
+                            ],
+                        ],
+                    ],
+                ],
+                [
+                    'description' => 'loads config',
+                    'configYamls' => [
+                        '/sites/www.example1.com' =>
+                            "parameters:\n  test_param: test_param_val\nversion: 2\nmiddlewares:\n  url:\n    canonical: www.example1.com\n    extra: ['%test_param%']",
+                        '/sites/www.example2.com' => "version: 2\nmiddlewares:\n  url:\n    canonical: www.example2.com\n    extra: [example2.com]",
+                    ],
+                    'configArray' => [
+                        'www.example1.com' => [
+                            'version' => 2,
+                            'middlewares' => ['url' => ['canonical' => 'www.example1.com', 'extra' => ['test_param_val']]],
+                            'parameters' => ['test_param' => 'test_param_val'],
+                        ],
+                        'test_param_val' => [
+                            'version' => 2,
+                            'middlewares' => ['url' => ['canonical' => 'www.example1.com', 'extra' => ['test_param_val']]],
+                            'parameters' => ['test_param' => 'test_param_val'],
+                        ],
+                        'www.example2.com' => [
+                            'version' => 2,
+                            'middlewares' => ['url' => ['canonical' => 'www.example2.com', 'extra' => ['example2.com']]],
+                        ],
+                        'example2.com' => [
+                            'version' => 2,
+                            'middlewares' => ['url' => ['canonical' => 'www.example2.com', 'extra' => ['example2.com']]],
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 }

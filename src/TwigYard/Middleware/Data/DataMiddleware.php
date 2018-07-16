@@ -62,8 +62,8 @@ class DataMiddleware implements MiddlewareInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (array_key_exists('data', $this->appState->getConfig())) {
-            $conf = $this->appState->getConfig()['data'];
+        if (array_key_exists('data', $this->appState->getMiddlewareConfig())) {
+            $conf = $this->appState->getMiddlewareConfig()['data'];
             $data = [];
             foreach ($conf as $var => $source) {
                 if (!is_array($source)) {

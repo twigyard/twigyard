@@ -66,12 +66,11 @@ class FormHandlerFactory
 
     /**
      * @param array $config
-     * @param array $siteParameters
      * @throws InvalidFormHandlerException
      * @throws InvalidSiteConfigException
      * @return HandlerInterface
      */
-    public function build(array $config, array $siteParameters): HandlerInterface
+    public function build(array $config): HandlerInterface
     {
         if ($config['type'] === self::TYPE_API) {
             return new ApiHandler(
@@ -81,7 +80,7 @@ class FormHandlerFactory
         } elseif ($config['type'] === self::TYPE_EMAIL) {
             return new EmailHandler(
                 $config,
-                $this->mailerFactory->createMailer($siteParameters),
+                $this->mailerFactory->createMailer($this->appState->getComponentConfig()['mailer']),
                 $this->templatingFactory,
                 $this->appState
             );

@@ -42,8 +42,8 @@ class RendererMiddleware implements MiddlewareInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (array_key_exists('renderer', $this->appState->getConfig())) {
-            $conf = $this->appState->getConfig()['renderer'];
+        if (array_key_exists('renderer', $this->appState->getMiddlewareConfig())) {
+            $conf = $this->appState->getMiddlewareConfig()['renderer'];
             $templating = $this->templatingFactory->createTemplating($this->appState);
             $localeSubDir = $this->appState->isSingleLanguage() ? '' : $this->appState->getLocale() . '/';
 

@@ -33,8 +33,8 @@ class RouterMiddleware implements MiddlewareInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (array_key_exists('router', $this->appState->getConfig())) {
-            $conf = $this->appState->getConfig()['router'];
+        if (array_key_exists('router', $this->appState->getMiddlewareConfig())) {
+            $conf = $this->appState->getMiddlewareConfig()['router'];
             $activePage = $this->getActivePage($request, $conf);
             if (!$activePage) {
                 return (new Response())->withStatus(404);

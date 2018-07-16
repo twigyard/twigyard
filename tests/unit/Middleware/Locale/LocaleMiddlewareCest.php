@@ -93,7 +93,7 @@ class LocaleMiddlewareCest
     {
         $prophet = new Prophet();
         $appStateProph = $prophet->prophesize(AppState::class);
-        $appStateProph->getConfig()->willReturn([]);
+        $appStateProph->getMiddlewareConfig()->willReturn([]);
 
         $mw = new LocaleMiddleware($appStateProph->reveal(), ['cs' => 'cs_CZ']);
         $response = $mw(new ServerRequest(), new Response(), function () {
@@ -133,7 +133,7 @@ class LocaleMiddlewareCest
     {
         $prophet = $prophet ? $prophet : new Prophet();
         $appStateProph = $prophet->prophesize(AppState::class);
-        $appStateProph->getConfig()->willReturn($config);
+        $appStateProph->getMiddlewareConfig()->willReturn($config);
         $appStateProph->setLocale('cs_CZ')->shouldBeCalled();
         $appStateProph->isSingleLanguage()->willReturn(false);
         if ($isMultiLang) {

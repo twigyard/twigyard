@@ -4,7 +4,6 @@ namespace Unit\Middleware\Tracking;
 
 use Prophecy\Argument\Token\AnyValueToken;
 use Prophecy\Prophet;
-use Psr\Http\Message\ServerRequestInterface;
 use TwigYard\Component\AppState;
 use TwigYard\Middleware\Tracking\TrackingMiddleware;
 use Zend\Diactoros\Response;
@@ -19,7 +18,7 @@ class TrackingMiddlewareCest
     {
         $prophet = new Prophet();
         $appStateProph = $prophet->prophesize(AppState::class);
-        $appStateProph->getConfig()->willReturn([]);
+        $appStateProph->getMiddlewareConfig()->willReturn([]);
 
         $mw = new TrackingMiddleware($appStateProph->reveal(), true);
         $response = $mw(new ServerRequest(), new Response(), function () {
@@ -38,7 +37,7 @@ class TrackingMiddlewareCest
         $callBackCalled = $mw(
             new ServerRequest(),
             new Response(),
-            function (ServerRequestInterface $request, Response $response) use ($prophet, $I) {
+            function () use ($prophet, $I) {
                 $prophet->checkPredictions();
 
                 return true;
@@ -54,7 +53,7 @@ class TrackingMiddlewareCest
         $callBackCalled = $mw(
             new ServerRequest(),
             new Response(),
-            function (ServerRequestInterface $request, Response $response) use ($prophet, $I) {
+            function () use ($prophet, $I) {
                 $prophet->checkPredictions();
 
                 return true;
@@ -65,13 +64,13 @@ class TrackingMiddlewareCest
 
     /**
      * @param Prophet $prophet
-     * @return \Middleware\Tracking\TrackingMiddleware
+     * @return TrackingMiddleware
      */
-    private function getMw(Prophet $prophet = null, $trackingEnabled = true)
+    private function getMw(Prophet $prophet = null, $trackingEnabled = true): TrackingMiddleware
     {
         $prophet = $prophet ? $prophet : new Prophet();
         $appStateProph = $prophet->prophesize(AppState::class);
-        $appStateProph->getConfig()->willReturn(['tracking' => ['account_id' => 'ABC-456-7789']]);
+        $appStateProph->getMiddlewareConfig()->willReturn(['tracking' => ['account_id' => 'ABC-456-7789']]);
         if ($trackingEnabled) {
             $appStateProph->setTrackingIds(['account_id' => 'ABC-456-7789'])->shouldBeCalled();
         } else {

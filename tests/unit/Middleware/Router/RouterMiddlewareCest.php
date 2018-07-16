@@ -18,7 +18,7 @@ class RouterMiddlewareCest
     {
         $prophet = new Prophet();
         $appStateProph = $prophet->prophesize(AppState::class);
-        $appStateProph->getConfig()->willReturn([]);
+        $appStateProph->getMiddlewareConfig()->willReturn([]);
 
         $mw = new RouterMiddleware($appStateProph->reveal());
         $response = $mw(new ServerRequest(), new Response(), function () {
@@ -240,7 +240,7 @@ class RouterMiddlewareCest
     {
         $prophet = $prophet ? $prophet : new Prophet();
         $appStateProph = $prophet->prophesize(AppState::class);
-        $appStateProph->getConfig()->willReturn($config);
+        $appStateProph->getMiddlewareConfig()->willReturn($config);
         $appStateProph->getLocale()->willReturn('cs_CZ');
         $appStateProph->getLocaleMap()->willReturn(['cs_CZ' => 'cs']);
         $appStateProph->isSingleLanguage()->willReturn(false);
@@ -269,7 +269,7 @@ class RouterMiddlewareCest
     {
         $prophet = $prophet ? $prophet : new Prophet();
         $appStateProph = $prophet->prophesize(AppState::class);
-        $appStateProph->getConfig()->willReturn($config);
+        $appStateProph->getMiddlewareConfig()->willReturn($config);
         $appStateProph->getLocale()->willReturn('cs_CZ');
         $appStateProph->getLocaleMap()->willReturn(['cs_CZ' => '']);
         $appStateProph->isSingleLanguage()->willReturn(true);
