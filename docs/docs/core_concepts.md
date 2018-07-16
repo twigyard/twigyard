@@ -9,11 +9,11 @@ TwigYard requires that each site has a main config file whose name is defined in
 The `site.yml` has two versions. The now deprecated version 1 functions as the fallback if no version is specified. See the middleware reference for supported configuration options.
 
 ### Substitution
-Some data needed in the `site.yml` file might be to sensitive to be commited to VCS. These secrets can be defined in a file `parameters.yml` which can be kept out of version control. Data from this file can then be included in the`site.yml` via the `%param_name%` syntax. All the parameters to be substituted must be defined in the `parameters.yml` as a flat map under top level `parameters` key. The file must be manually included in the `site.yml`. 
+Some data needed in the `site.yml` file might be too sensitive to be commited to VCS. These secrets can be defined in a file `parameters.yml` which can be kept out of version control. Data from this file can be used in the `site.yml` via the `%param_name%` syntax. All parameters to be substituted must be defined in the `parameters.yml` as a flat map under top level `parameters` key. The file must be manually included in the `site.yml`. 
  
 ### Composition
-The `site.yml` can include other files to make the configuration more flexible. For example it allows the config to be broken up into multiple files for better readability.
-```
+The `site.yml` can include other files to make the configuration more flexible. For example it allows the config to be divided into multiple files for better readability.
+```yml
 # site.yml
 
 ...
@@ -23,11 +23,11 @@ imports:
 ```
 
 ### Overloading
-Imports also make it possible to have the site behave differently on different environments. On a staging instance, for example, we might prefer to use different configuration. Typically we need to protect the site by httpauth. This can be solved by creating a separate `site_staging.yml` which imports the production `site.yml` and set the staging instance to use this is the main config file.
+Imports make it possible to have the site behave differently between environments. On a staging instance, for example, we might prefer to use a different configuration then on production. Typically we need to protect the site by httpauth. This can be solved by creating a separate `site_staging.yml` which imports the production `site.yml` and set the staging instance to use this is the main config file. This way we can overload any configuration in `site.yml`.
 
 
 **Example**
-```
+```yml
 # parameters.yml
 
 parameters:
@@ -35,9 +35,10 @@ parameters:
     mailing_smtp_port: 1025
 ```
 
-```
+```yml
 # site_staging.yml
 
+version: 2
 middlewares:
     httpauth:
         username: user
@@ -47,7 +48,7 @@ imports:
     - { resource: 'site.yml' }
 ```
           
-```
+```yml
 # site.yml
 
 version: 2
@@ -81,7 +82,6 @@ middlewares:
             cs_CZ: /zbozi/{product_id | products:manufacturer.id}
             en_US: /products/{product_id | products:manufacturer.id}
             de_DE: /produkte/{product_id | products:manufacturer.id}
-
     form:
         contact:
             handlers:
@@ -99,7 +99,6 @@ middlewares:
                 name: { type: string, min_length: 3, max_length: 100 }
                 email: { type: email, required: true }
                 message: { type: string, min_length: 10, max_length: 1000, required: true }
-
     renderer:
         index: index.html.twig
         product: product.html.twig

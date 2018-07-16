@@ -13,13 +13,11 @@ use VirtualFileSystem\FileSystem;
 
 class ConfigCacheCest
 {
-
     /**
      * @param \UnitTester $I
      */
     public function runTests(\UnitTester $I)
     {
-
         foreach ($this->getTestData() as $configVersion => $versionData) {
             foreach ($versionData as $testData) {
                 $prophet = new Prophet();
@@ -91,6 +89,13 @@ class ConfigCacheCest
                     'configArray' => [],
                 ],
                 [
+                    'description' => 'invalid config version',
+                    'configYamls' => [
+                        '/sites/www.example.com' => "version: 999\nurl:\n  canonical: www.example.com",
+                    ],
+                    'configArray' => [],
+                ],
+                [
                     'description' => 'ignore missing site.yml',
                     'configYamls' => [
                         '/sites/www.example.com' => null,
@@ -106,7 +111,7 @@ class ConfigCacheCest
                     ],
                     'configArray' => ['www.example.com' => [
                         'version' => 1,
-                        'url' => ['canonical' => 'www.example.com']
+                        'url' => ['canonical' => 'www.example.com'],
                     ]],
                 ],
                 [
@@ -117,7 +122,7 @@ class ConfigCacheCest
                     ],
                     'configArray' => ['www.example1.com' => [
                         'version' => 1,
-                        'url' => ['canonical' => 'www.example1.com']
+                        'url' => ['canonical' => 'www.example1.com'],
                     ]],
                 ],
                 [
@@ -129,19 +134,18 @@ class ConfigCacheCest
                     'configArray' => [
                         'www.example1.com' => [
                             'version' => 1,
-                            'url' => ['canonical' => 'www.example1.com', 'extra' => ['example1.com']]
+                            'url' => ['canonical' => 'www.example1.com', 'extra' => ['example1.com']],
                         ],
                         'example1.com' => [
                             'version' => 1,
-                            'url' => ['canonical' => 'www.example1.com', 'extra' => ['example1.com']]
+                            'url' => ['canonical' => 'www.example1.com', 'extra' => ['example1.com']],
                         ],
                     ],
                 ],
                 [
                     'description' => 'loads config',
                     'configYamls' => [
-                        '/sites/www.example1.com' =>
-                            "parameters:\n  test_param: test_param_val\nurl:\n  canonical: www.example1.com\n  extra: ['%test_param%']",
+                        '/sites/www.example1.com' => "parameters:\n  test_param: test_param_val\nurl:\n  canonical: www.example1.com\n  extra: ['%test_param%']",
                         '/sites/www.example2.com' => "url:\n  canonical: www.example2.com\n  extra: [example2.com]",
                     ],
                     'configArray' => [
@@ -157,11 +161,11 @@ class ConfigCacheCest
                         ],
                         'www.example2.com' => [
                             'version' => 1,
-                            'url' => ['canonical' => 'www.example2.com', 'extra' => ['example2.com']]
+                            'url' => ['canonical' => 'www.example2.com', 'extra' => ['example2.com']],
                         ],
                         'example2.com' => [
                             'version' => 1,
-                            'url' => ['canonical' => 'www.example2.com', 'extra' => ['example2.com']]
+                            'url' => ['canonical' => 'www.example2.com', 'extra' => ['example2.com']],
                         ],
                     ],
                 ],
@@ -174,39 +178,36 @@ class ConfigCacheCest
                     ],
                     'configArray' => ['www.example.com' => [
                         'version' => 2,
-                        'middlewares' => ['url' => ['canonical' => 'www.example.com']]
+                        'middlewares' => ['url' => ['canonical' => 'www.example.com']],
                     ]],
                 ],
                 [
                     'description' => 'ignore yaml on double canonical url',
                     'configYamls' => [
-                        '/sites/www.example1.com' =>
-                            "version: 2\nmiddlewares:\n  url:\n    canonical: www.example1.com",
-                        '/sites/www.example2.com' =>
-                            "version: 2\nmiddlewares:\n  url:\n    canonical: www.example1.com",
+                        '/sites/www.example1.com' => "version: 2\nmiddlewares:\n  url:\n    canonical: www.example1.com",
+                        '/sites/www.example2.com' => "version: 2\nmiddlewares:\n  url:\n    canonical: www.example1.com",
                     ],
                     'configArray' => ['www.example1.com' => [
                         'version' => 2,
-                        'middlewares' => ['url' => ['canonical' => 'www.example1.com']]
+                        'middlewares' => ['url' => ['canonical' => 'www.example1.com']],
                     ]],
                 ],
                 [
                     'description' => 'ignore yaml on double extra url',
                     'configYamls' => [
-                        '/sites/www.example1.com' =>
-                            "version: 2\nmiddlewares:\n  url:\n    canonical: www.example1.com\n    extra: [example1.com]",
+                        '/sites/www.example1.com' => "version: 2\nmiddlewares:\n  url:\n    canonical: www.example1.com\n    extra: [example1.com]",
                     ],
                     'configArray' => [
                         'www.example1.com' => [
                             'version' => 2,
                             'middlewares' => [
-                                'url' => ['canonical' => 'www.example1.com', 'extra' => ['example1.com']]
+                                'url' => ['canonical' => 'www.example1.com', 'extra' => ['example1.com']],
                             ],
                         ],
                         'example1.com' => [
                             'version' => 2,
                             'middlewares' => [
-                                'url' => ['canonical' => 'www.example1.com', 'extra' => ['example1.com']]
+                                'url' => ['canonical' => 'www.example1.com', 'extra' => ['example1.com']],
                             ],
                         ],
                     ],
@@ -214,28 +215,35 @@ class ConfigCacheCest
                 [
                     'description' => 'loads config',
                     'configYamls' => [
-                        '/sites/www.example1.com' =>
-                            "parameters:\n  test_param: test_param_val\nversion: 2\nmiddlewares:\n  url:\n    canonical: www.example1.com\n    extra: ['%test_param%']",
+                        '/sites/www.example1.com' => "parameters:\n  test_param: test_param_val\nversion: 2\nmiddlewares:\n  url:\n    canonical: www.example1.com\n    extra: ['%test_param%']",
                         '/sites/www.example2.com' => "version: 2\nmiddlewares:\n  url:\n    canonical: www.example2.com\n    extra: [example2.com]",
                     ],
                     'configArray' => [
                         'www.example1.com' => [
                             'version' => 2,
-                            'middlewares' => ['url' => ['canonical' => 'www.example1.com', 'extra' => ['test_param_val']]],
+                            'middlewares' => [
+                                'url' => ['canonical' => 'www.example1.com', 'extra' => ['test_param_val']],
+                            ],
                             'parameters' => ['test_param' => 'test_param_val'],
                         ],
                         'test_param_val' => [
                             'version' => 2,
-                            'middlewares' => ['url' => ['canonical' => 'www.example1.com', 'extra' => ['test_param_val']]],
+                            'middlewares' => [
+                                'url' => ['canonical' => 'www.example1.com', 'extra' => ['test_param_val']],
+                            ],
                             'parameters' => ['test_param' => 'test_param_val'],
                         ],
                         'www.example2.com' => [
                             'version' => 2,
-                            'middlewares' => ['url' => ['canonical' => 'www.example2.com', 'extra' => ['example2.com']]],
+                            'middlewares' => [
+                                'url' => ['canonical' => 'www.example2.com', 'extra' => ['example2.com']],
+                            ],
                         ],
                         'example2.com' => [
                             'version' => 2,
-                            'middlewares' => ['url' => ['canonical' => 'www.example2.com', 'extra' => ['example2.com']]],
+                            'middlewares' => [
+                                'url' => ['canonical' => 'www.example2.com', 'extra' => ['example2.com']],
+                            ],
                         ],
                     ],
                 ],
