@@ -67,7 +67,6 @@ class ConfigCache implements ConfigCacheInterface
                         $logger->error($e->getMessage());
                         continue;
                     } catch (ParseException $e) {
-                        var_dump($e->getMessage());
                         $logger->error($e->getMessage());
                         continue;
                     } catch (InvalidSiteConfigException $e) {

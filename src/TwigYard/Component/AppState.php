@@ -371,7 +371,7 @@ class AppState
     {
         return [
             'middlewareConfig' => $this->middlewareConfig,
-            'componentconfig' => $this->componentConfig,
+            'componentConfig' => $this->componentConfig,
             'locale' => $this->locale,
             'page' => $this->page,
             'urlParams' => $this->urlParams,

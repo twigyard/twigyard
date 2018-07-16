@@ -6,10 +6,10 @@ On the frontend side of things TwigYard is pretty technology agnostic. Type raw 
 ## site.yml
 TwigYard requires that each site has a main config file whose name is defined in the instance wide `parameters.yml` file. While the name can be anything, it is recommended to name it `site.yml` if possible. For simplicity we will refer to this main site config as `site.yml` in this manual.
 
-The `site.yml` has two versions. The now deprecated version 1 also functions as the fallback if no version is specified. See the middleware reference for supported configuration options.
+The `site.yml` has two versions. The now deprecated version 1 functions as the fallback if no version is specified. See the middleware reference for supported configuration options.
 
 ### Substitution
-Some data needed in the `site.yml` file might be to sensitive to be commited to VCS. In such case these can be defined in a file `parameters.yml` which can be kept out of version control. Data from this file can then be included in the`site.yml` via the `%param_name%` convention. All the parameters to be substituted must be defined in the `parameters.yml` as a flat map under top level `parameters` key. The file must be manually included in the `site.yml`. 
+Some data needed in the `site.yml` file might be to sensitive to be commited to VCS. These secrets can be defined in a file `parameters.yml` which can be kept out of version control. Data from this file can then be included in the`site.yml` via the `%param_name%` syntax. All the parameters to be substituted must be defined in the `parameters.yml` as a flat map under top level `parameters` key. The file must be manually included in the `site.yml`. 
  
 ### Composition
 The `site.yml` can include other files to make the configuration more flexible. For example it allows the config to be broken up into multiple files for better readability.
@@ -23,7 +23,7 @@ imports:
 ```
 
 ### Overloading
-Imports also make it possible to have the site behave differently on different environments. If, for example, we would like to have a staging instance where the site must be protected by httpauth header, we would have the following in `site_staging.yml` and set the instance to use this is the main config file.
+Imports also make it possible to have the site behave differently on different environments. On a staging instance, for example, we might prefer to use different configuration. Typically we need to protect the site by httpauth. This can be solved by creating a separate `site_staging.yml` which imports the production `site.yml` and set the staging instance to use this is the main config file.
 
 
 **Example**
