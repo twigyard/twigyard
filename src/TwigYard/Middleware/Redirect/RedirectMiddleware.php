@@ -31,8 +31,8 @@ class RedirectMiddleware implements MiddlewareInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (array_key_exists('redirect', $this->appState->getConfig())) {
-            $conf = $this->appState->getConfig()['redirect'];
+        if (array_key_exists('redirect', $this->appState->getMiddlewareConfig())) {
+            $conf = $this->appState->getMiddlewareConfig()['redirect'];
             if (isset($conf[$request->getUri()->getPath()])) {
                 return (new Response())
                     ->withHeader('Location', $conf[$request->getUri()->getPath()])

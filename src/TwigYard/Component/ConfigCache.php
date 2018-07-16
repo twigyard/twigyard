@@ -5,6 +5,7 @@ namespace TwigYard\Component;
 use Nette\Caching\Cache;
 use Symfony\Component\Config\Exception\FileLoaderLoadException;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 use Symfony\Component\Yaml\Exception\ParseException;
 use TwigYard\Exception\InvalidSiteConfigException;
 
@@ -23,33 +24,45 @@ class ConfigCache implements ConfigCacheInterface
     private $loggerFactory;
 
     /**
+     * @var string
+     */
+    private $sitesDir;
+
+    /**
+     * @var string
+     */
+    private $siteConfig;
+
+    /**
      * ConfigCache constructor.
      * @param Cache $cache
      * @param LoggerFactory $loggerFactory
+     * @param string $sitesDir
+     * @param string $siteConfig
      */
-    public function __construct(Cache $cache, LoggerFactory $loggerFactory)
+    public function __construct(Cache $cache, LoggerFactory $loggerFactory, string $sitesDir, string $siteConfig)
     {
         $this->cache = $cache;
         $this->loggerFactory = $loggerFactory;
+        $this->sitesDir = $sitesDir;
+        $this->siteConfig = $siteConfig;
     }
 
     /**
-     * @param string $sitesDir
-     * @param string $siteConfig
      * @return array
      */
-    public function getConfig(string $sitesDir, string $siteConfig): array
+    public function getConfig(): array
     {
         $logger = $this->loggerFactory->getLogger(self::LOGGER_CHANNEL);
 
-        return $this->cache->load($sitesDir, function () use ($sitesDir, $siteConfig, $logger) {
-            $siteDirs = scandir($sitesDir);
+        return $this->cache->load($this->sitesDir, function () use ($logger) {
+            $siteDirs = scandir($this->sitesDir);
             $configs = [];
             foreach ($siteDirs as $dirName) {
-                $dirPath = $sitesDir . '/' . $dirName;
+                $dirPath = $this->sitesDir . '/' . $dirName;
                 if (is_dir($dirPath) && $dirName !== '.' && $dirName !== '..') {
                     try {
-                        $config = (new YamlConfigFileLoader(new FileLocator($dirPath)))->load($siteConfig);
+                        $config = (new YamlConfigFileLoader(new FileLocator($dirPath)))->load($this->siteConfig);
                     } catch (FileLoaderLoadException $e) {
                         $logger->error($e->getMessage());
                         continue;
@@ -63,18 +76,38 @@ class ConfigCache implements ConfigCacheInterface
                         $logger->error($e->getMessage());
                         continue;
                     }
-                    if (!isset($config['url']['canonical']) || isset($configs[$config['url']['canonical']])) {
+
+                    if (isset($config['parameters'])) {
+                        $paramBag = new ParameterBag($config['parameters']);
+                        $config = $paramBag->resolveValue($config);
+                    }
+
+                    if (!isset($config['version']) || $config['version'] === 1) {
+                        if (!isset($config['url'])) {
+                            continue;
+                        }
+                        $urlConf = $config['url'];
+                        $config['version'] = 1;
+                    } elseif ($config['version'] === 2) {
+                        if (!isset($config['middlewares']['url'])) {
+                            continue;
+                        }
+                        $urlConf = $config['middlewares']['url'];
+                    }
+
+                    if (!isset($urlConf['canonical']) || isset($configs[$urlConf['canonical']])) {
                         continue;
                     }
+
                     $backupConfigs = $configs;
-                    $configs[$config['url']['canonical']] = $config;
-                    if (isset($config['url']['extra'])) {
-                        foreach ($config['url']['extra'] as $url) {
+                    $configs[$urlConf['canonical']] = $config;
+                    if (isset($urlConf['extra'])) {
+                        foreach ($urlConf['extra'] as $url) {
                             if (isset($configs[$url])) {
                                 $configs = $backupConfigs;
                                 continue 2;
                             }
-                            $configs[$url] = &$configs[$config['url']['canonical']];
+                            $configs[$url] = &$configs[$urlConf['canonical']];
                         }
                     }
                 }

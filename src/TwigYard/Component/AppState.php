@@ -9,7 +9,12 @@ class AppState
     /**
      * @var array
      */
-    private $config;
+    private $middlewareConfig;
+
+    /**
+     * @var array
+     */
+    private $componentConfig;
 
     /**
      * @var array
@@ -62,14 +67,14 @@ class AppState
     private $siteDir;
 
     /**
+     * @var string
+     */
+    private $host;
+
+    /**
      * @var string[]
      */
     private $trackingIds;
-
-    /**
-     * @var array
-     */
-    private $siteParameters;
 
     /**
      * @var string
@@ -77,20 +82,34 @@ class AppState
     private $remoteIp;
 
     /**
+     * @var string
+     */
+    private $sitesDir;
+
+    /**
+     * AppState constructor.
+     * @param string $sitesDir
+     */
+    public function __construct(string $sitesDir)
+    {
+        $this->sitesDir = $sitesDir;
+    }
+
+    /**
      * @return array
      */
-    public function getConfig(): array
+    public function getMiddlewareConfig(): array
     {
-        return $this->config;
+        return $this->middlewareConfig;
     }
 
     /**
      * @param array $config
      * @return AppState
      */
-    public function setConfig(array $config): AppState
+    public function setMiddlewareConfig(array $config): AppState
     {
-        $this->config = $config;
+        $this->middlewareConfig = $config;
 
         return $this;
     }
@@ -176,18 +195,7 @@ class AppState
      */
     public function getSiteDir(): string
     {
-        return $this->siteDir;
-    }
-
-    /**
-     * @param string $siteDir
-     * @return AppState
-     */
-    public function setSiteDir(string $siteDir): AppState
-    {
-        $this->siteDir = $siteDir;
-
-        return $this;
+        return $this->sitesDir . '/' . $this->getHost();
     }
 
     /**
@@ -264,7 +272,7 @@ class AppState
      */
     public function getUrl(): string
     {
-        return $this->config['url']['canonical'];
+        return $this->middlewareConfig['url']['canonical'];
     }
 
     /**
@@ -319,25 +327,6 @@ class AppState
     }
 
     /**
-     * @return array
-     */
-    public function getSiteParameters(): array
-    {
-        return $this->siteParameters ?: [];
-    }
-
-    /**
-     * @param array $siteParameters
-     * @return AppState
-     */
-    public function setSiteParameters(array $siteParameters): AppState
-    {
-        $this->siteParameters = $siteParameters;
-
-        return $this;
-    }
-
-    /**
      * @return string
      */
     public function getRemoteIp(): string
@@ -381,11 +370,50 @@ class AppState
     public function dumpContext(): array
     {
         return [
-            'config' => $this->config,
+            'middlewareConfig' => $this->middlewareConfig,
+            'componentConfig' => $this->componentConfig,
             'locale' => $this->locale,
             'page' => $this->page,
             'urlParams' => $this->urlParams,
             'sitesDir' => $this->siteDir,
         ];
+    }
+
+    /**
+     * @return array
+     */
+    public function getComponentConfig(): array
+    {
+        return $this->componentConfig;
+    }
+
+    /**
+     * @param array $componentConfig
+     * @return AppState
+     */
+    public function setComponentConfig(array $componentConfig): AppState
+    {
+        $this->componentConfig = $componentConfig;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHost(): string
+    {
+        return $this->host;
+    }
+
+    /**
+     * @param string $host
+     * @return AppState
+     */
+    public function setHost(string $host): AppState
+    {
+        $this->host = $host;
+
+        return $this;
     }
 }

@@ -162,7 +162,7 @@ class HeaderMiddlewareCest
     {
         $prophet = $prophet ? $prophet : new Prophet();
         $appStateProph = $prophet->prophesize(AppState::class);
-        $appStateProph->getConfig()->willReturn($config);
+        $appStateProph->getMiddlewareConfig()->willReturn($config);
         $appStateProph->getScheme()->willReturn($scheme);
 
         return new HeaderMiddleware($appStateProph->reveal());

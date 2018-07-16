@@ -4,6 +4,7 @@ namespace TwigYard\Component;
 
 use Relay\RelayBuilder;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use TwigYard\Middleware\Config\ConfigMiddleware;
 use TwigYard\Middleware\Data\DataMiddleware;
 use TwigYard\Middleware\Error\ErrorMiddleware;
 use TwigYard\Middleware\Form\FormHandlerFactory;
@@ -72,7 +73,7 @@ class Application
      */
     private function getQueue(): array
     {
-        $appState = new AppState();
+        $appState = new AppState($this->appRoot . '/' . $this->config->getSitesDir());
 
         $globalParameters = $this->container->getParameter('app.parameters');
 
@@ -122,14 +123,17 @@ class Application
             $this->config->getError404PageName(),
             $this->config->getError500PageName()
         );
-        $queue[] = new UrlMiddleware(
+        $queue[] = new ConfigMiddleware(
             $appState,
             $configCache,
             $this->appRoot . '/' . $this->config->getSitesDir(),
             $globalParameters['site_config'],
-            $this->config->getSiteParameters(),
-            $globalParameters['parent_domain'],
-            !empty($globalParameters['ssl_allowed'])
+            $globalParameters['parent_domain']
+        );
+        $queue[] = new UrlMiddleware(
+            $appState,
+            !empty($globalParameters['ssl_allowed']),
+            $globalParameters['parent_domain']
         );
         $queue[] = new RedirectMiddleware($appState);
         $queue[] = new HttpauthMiddleware($appState);

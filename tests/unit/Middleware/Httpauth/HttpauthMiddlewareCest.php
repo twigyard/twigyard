@@ -77,7 +77,7 @@ class HttpauthMiddlewareCest
     {
         $prophet = new Prophet();
         $appStateProph = $prophet->prophesize(AppState::class);
-        $appStateProph->getConfig()->willReturn([]);
+        $appStateProph->getMiddlewareConfig()->willReturn([]);
         $mw = new HttpauthMiddleware($appStateProph->reveal(), 'data');
         $response = $mw(new ServerRequest(), new Response(), function () use ($I) {
             return true;
@@ -112,7 +112,7 @@ class HttpauthMiddlewareCest
     {
         $prophet = new Prophet();
         $appStateProph = $prophet->prophesize(AppState::class);
-        $appStateProph->getConfig()->willReturn(['httpauth' => [
+        $appStateProph->getMiddlewareConfig()->willReturn(['httpauth' => [
             'username' => 'user',
             'password' => 'pass',
             'exclude_ip_addresses' => $excludeIpAddresses,

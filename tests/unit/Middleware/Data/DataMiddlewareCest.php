@@ -67,7 +67,7 @@ class DataMiddlewareCest
     {
         $prophet = new Prophet();
         $appStateProph = $prophet->prophesize(AppState::class);
-        $appStateProph->getConfig()->willReturn([]);
+        $appStateProph->getMiddlewareConfig()->willReturn([]);
         $curlDownloader = $prophet->prophesize(CurlDownloader::class);
 
         $mw = new DataMiddleware($appStateProph->reveal(), 'data', $curlDownloader->reveal());
@@ -84,7 +84,7 @@ class DataMiddlewareCest
     {
         $prophet = new Prophet();
         $appStateProph = $prophet->prophesize(AppState::class);
-        $appStateProph->getConfig()->willReturn(['data' => [
+        $appStateProph->getMiddlewareConfig()->willReturn(['data' => [
             'dataSet' => [
                 'type' => 'http',
                 'format' => 'json',
@@ -113,7 +113,7 @@ class DataMiddlewareCest
         $I->seeExceptionThrown(CannotAccessRemoteSourceException::class, function () {
             $prophet = new Prophet();
             $appStateProph = $prophet->prophesize(AppState::class);
-            $appStateProph->getConfig()->willReturn(['data' => [
+            $appStateProph->getMiddlewareConfig()->willReturn(['data' => [
                 'urlDataSet' => [
                     'type' => 'http',
                     'format' => 'json',
@@ -139,7 +139,7 @@ class DataMiddlewareCest
         $I->seeExceptionThrown(InvalidDataTypeException::class, function () {
             $prophet = new Prophet();
             $appStateProph = $prophet->prophesize(AppState::class);
-            $appStateProph->getConfig()->willReturn(['data' => [
+            $appStateProph->getMiddlewareConfig()->willReturn(['data' => [
                 'urlDataSet' => [
                     'type' => 'invalid_type',
                     'format' => 'json',
@@ -160,7 +160,7 @@ class DataMiddlewareCest
         $I->seeExceptionThrown(InvalidDataFormatException::class, function () {
             $prophet = new Prophet();
             $appStateProph = $prophet->prophesize(AppState::class);
-            $appStateProph->getConfig()->willReturn(['data' => [
+            $appStateProph->getMiddlewareConfig()->willReturn(['data' => [
                 'urlDataSet' => [
                     'type' => 'http',
                     'format' => 'json',
@@ -222,7 +222,7 @@ class DataMiddlewareCest
 
         if ($appState === null) {
             $appStateProph = $prophet->prophesize(AppState::class);
-            $appStateProph->getConfig()->willReturn(['data' => ['dataSet' => 'dataSet.yml']]);
+            $appStateProph->getMiddlewareConfig()->willReturn(['data' => ['dataSet' => 'dataSet.yml']]);
             $appStateProph->getSiteDir()->willReturn($fs->path('/sites/www.example.com'));
             $appStateProph->setData(['dataSet' => ['var' => 'value']])->shouldBeCalled();
             $appState = $appStateProph->reveal();
