@@ -31,12 +31,12 @@ class ContainerFactory
     }
 
     /**
+     * @throws \Exception
      * @return ContainerBuilder
      */
     public function createContainer(): ContainerBuilder
     {
         $parameters = $this->getGlobalParameters();
-        $defaultSiteParameters = $this->getDefaultSiteParameters();
 
         $containerBuilder = new ContainerBuilder();
         $loader = new YamlFileLoader($containerBuilder, new FileLocator(__DIR__));
@@ -45,7 +45,6 @@ class ContainerFactory
         $containerBuilder->setParameter('app.root', $this->appRoot);
         $containerBuilder->setParameter('app.config', $this->appConfig);
         $containerBuilder->setParameter('app.parameters', $parameters);
-        $containerBuilder->setParameter('app.site_parameters', $defaultSiteParameters);
 
         $containerBuilder->compile();
 
@@ -60,20 +59,6 @@ class ContainerFactory
         return Yaml::parse(
             file_get_contents(
                 $this->appRoot . '/' . $this->appConfig->getConfigDir() . '/' . $this->appConfig->getGlobalParameters()
-            )
-        )['parameters'];
-    }
-
-    /**
-     * @return array
-     */
-    private function getDefaultSiteParameters(): array
-    {
-        return Yaml::parse(
-            file_get_contents(
-                $this->appRoot . '/' .
-                $this->appConfig->getConfigDir() . '/' .
-                $this->appConfig->getDefaultSiteParameters()
             )
         )['parameters'];
     }

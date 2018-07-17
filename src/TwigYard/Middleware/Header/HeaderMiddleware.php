@@ -47,7 +47,7 @@ class HeaderMiddleware implements MiddlewareInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $config = $this->appState->getConfig();
+        $config = $this->appState->getMiddlewareConfig();
         $headers = self::HEADER_DEFAULT_PARAMS;
 
         if ($this->appState->getScheme() === 'https') {

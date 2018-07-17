@@ -37,8 +37,8 @@ class TrackingMiddleware implements MiddlewareInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if ($this->enableTracking && array_key_exists('tracking', $this->appState->getConfig())) {
-            $trackingIds = $this->appState->getConfig()['tracking'];
+        if ($this->enableTracking && array_key_exists('tracking', $this->appState->getMiddlewareConfig())) {
+            $trackingIds = $this->appState->getMiddlewareConfig()['tracking'];
             $this->appState->setTrackingIds($trackingIds);
         }
 

@@ -31,8 +31,8 @@ class HttpauthMiddleware implements MiddlewareInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (array_key_exists('httpauth', $this->appState->getConfig())) {
-            $conf = $this->appState->getConfig()['httpauth'];
+        if (array_key_exists('httpauth', $this->appState->getMiddlewareConfig())) {
+            $conf = $this->appState->getMiddlewareConfig()['httpauth'];
             $username = '';
             $password = '';
             $authParams = isset($request->getQueryParams()['httpauth']) ? $request->getQueryParams()['httpauth'] : null;

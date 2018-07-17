@@ -21,7 +21,7 @@ class RendererMiddlewareCest
     {
         $prophet = new Prophet();
         $appStateProph = $prophet->prophesize(AppState::class);
-        $appStateProph->getConfig()->willReturn([]);
+        $appStateProph->getMiddlewareConfig()->willReturn([]);
 
         $mw = new RendererMiddleware(
             $appStateProph->reveal(),
@@ -95,14 +95,16 @@ class RendererMiddlewareCest
 
     /**
      * @param \Prophecy\Prophet $prophet
-     * @param \Component\TemplatingFactoryInterface $templatingFactory
-     * @return \Middleware\Locale\LocaleMiddleware
+     * @param TemplatingFactoryInterface|null $templatingFactory
+     * @return RendererMiddleware
      */
-    private function getMwMultilang(Prophet $prophet = null, TemplatingFactoryInterface $templatingFactory = null)
-    {
+    private function getMwMultilang(
+        Prophet $prophet = null,
+        TemplatingFactoryInterface $templatingFactory = null
+    ): RendererMiddleware {
         $prophet = $prophet ? $prophet : new Prophet();
         $appStateProph = $prophet->prophesize(AppState::class);
-        $appStateProph->getConfig()->willReturn(['renderer' => ['index' => 'index.html.twig']]);
+        $appStateProph->getMiddlewareConfig()->willReturn(['renderer' => ['index' => 'index.html.twig']]);
         $appStateProph->getSiteDir()->willReturn('www.example.com');
         $appStateProph->getRouteMap()->willReturn([]);
         $appStateProph->getLocale()->willReturn('cs_CZ');
@@ -119,13 +121,13 @@ class RendererMiddlewareCest
 
     /**
      * @param \Prophecy\Prophet $prophet
-     * @return \TwigYard\Middleware\Locale\LocaleMiddleware
+     * @return RendererMiddleware
      */
-    private function getMwSinglelang(Prophet $prophet = null)
+    private function getMwSinglelang(Prophet $prophet = null): RendererMiddleware
     {
         $prophet = $prophet ? $prophet : new Prophet();
         $appStateProph = $prophet->prophesize(AppState::class);
-        $appStateProph->getConfig()->willReturn(['renderer' => ['index' => 'index.html.twig']]);
+        $appStateProph->getMiddlewareConfig()->willReturn(['renderer' => ['index' => 'index.html.twig']]);
         $appStateProph->getSiteDir()->willReturn('www.example.com');
         $appStateProph->getRouteMap()->willReturn([]);
         $appStateProph->isSingleLanguage()->willReturn(true);

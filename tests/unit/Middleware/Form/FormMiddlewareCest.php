@@ -32,7 +32,7 @@ class FormMiddlewareCest
     {
         $prophet = new Prophet();
         $appState = $prophet->prophesize(AppState::class);
-        $appState->getConfig()->willReturn([
+        $appState->getMiddlewareConfig()->willReturn([
             'form' => ['form1' => ['handlers' => [['logHandlerConfig', 'type' => 'log']]]],
         ]);
         $fs = new FileSystem();
@@ -53,7 +53,7 @@ class FormMiddlewareCest
     {
         $prophet = new Prophet();
         $appState = $prophet->prophesize(AppState::class);
-        $appState->getConfig()->willReturn(['form' => ['invalid-form-name!' => ['handlers' => [['logHandlerConfig', 'type' => 'log']],
+        $appState->getMiddlewareConfig()->willReturn(['form' => ['invalid-form-name!' => ['handlers' => [['logHandlerConfig', 'type' => 'log']],
         ]]]);
         $appState->getScheme()->willReturn('http');
         $csrfTokenGenerator = $prophet->prophesize(CsrfTokenGenerator::class);
@@ -90,7 +90,7 @@ class FormMiddlewareCest
     {
         $prophet = new Prophet();
         $appState = $prophet->prophesize(AppState::class);
-        $appState->getConfig()->willReturn(['form' => ['valid_form_n4m3' => ['handlers' => [['logHandlerConfig', 'type' => 'log']],
+        $appState->getMiddlewareConfig()->willReturn(['form' => ['valid_form_n4m3' => ['handlers' => [['logHandlerConfig', 'type' => 'log']],
         ]]]);
         $appState->getScheme()->willReturn('http');
         $appState->setForm(['valid_form_n4m3' => [
@@ -132,7 +132,7 @@ class FormMiddlewareCest
     {
         $prophet = new Prophet();
         $appState = $prophet->prophesize(AppState::class);
-        $appState->getConfig()->willReturn([]);
+        $appState->getMiddlewareConfig()->willReturn([]);
         $appState->getScheme()->willReturn('http');
         $csrfTokenGenerator = $prophet->prophesize(CsrfTokenGenerator::class);
         $formValidator = $prophet->prophesize(FormValidator::class);
@@ -168,8 +168,7 @@ class FormMiddlewareCest
         $appState->setForm(new TypeToken('array'))->shouldBeCalled();
         $appState->getScheme()->willReturn('http');
         $appState->getLocale()->willReturn('en');
-        $appState->getSiteParameters()->willReturn([]);
-        $appState->getConfig()->willReturn([
+        $appState->getMiddlewareConfig()->willReturn([
             'form' => [
                 'form1' => [
                     'success_flash_message' => 'flash_message',
@@ -376,7 +375,7 @@ class FormMiddlewareCest
             $config['form']['form1']['success_flash_message'] = $confParams['success_flash_message'];
         }
 
-        $appState->getConfig()->willReturn($config);
+        $appState->getMiddlewareConfig()->willReturn($config);
         $csrfTokenGenerator = $prophet->prophesize(CsrfTokenGenerator::class);
         $csrfTokenGenerator->generateToken()->willReturn('token');
         $formValidator = $formValidator ? $formValidator : $prophet->prophesize(FormValidator::class);
@@ -413,8 +412,8 @@ class FormMiddlewareCest
         $logHandler->handle(new TypeToken('array'))->shouldBeCalled();
 
         $handlerFactory = $prophet->prophesize(FormHandlerFactory::class);
-        $handlerFactory->build(['emailHandlerConfig', 'type' => 'email'], [])->willReturn($emailHandler->reveal());
-        $handlerFactory->build(['logHandlerConfig', 'type' => 'log'], [])->willReturn($logHandler->reveal());
+        $handlerFactory->build(['emailHandlerConfig', 'type' => 'email'])->willReturn($emailHandler->reveal());
+        $handlerFactory->build(['logHandlerConfig', 'type' => 'log'])->willReturn($logHandler->reveal());
 
         return $handlerFactory;
     }
@@ -427,7 +426,6 @@ class FormMiddlewareCest
     {
         $appState = $prophet->prophesize(AppState::class);
         $appState->getForm()->willReturn(['form1' => ['data' => ['csrf_token' => 'token']]]);
-        $appState->getSiteParameters()->willReturn([]);
 
         return $appState;
     }

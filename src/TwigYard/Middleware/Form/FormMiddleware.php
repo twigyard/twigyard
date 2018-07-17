@@ -103,13 +103,13 @@ class FormMiddleware
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (!isset($this->appState->getConfig()['form'])) {
+        if (!isset($this->appState->getMiddlewareConfig()['form'])) {
             return $next($request, $response);
         }
 
         $appFormData = [];
         $csrfToken = $this->csrfTokenGenerator->generateToken();
-        foreach ($this->appState->getConfig()['form'] as $formName => $formConf) {
+        foreach ($this->appState->getMiddlewareConfig()['form'] as $formName => $formConf) {
             foreach ($formConf['handlers'] as $handler) {
                 if ($handler['type'] === FormHandlerFactory::TYPE_LOG) {
                     if (!file_exists($this->appState->getSiteDir() . '/' . $this->logDir)) {
@@ -139,7 +139,7 @@ class FormMiddleware
         }
 
         if (strtolower($request->getMethod()) === 'post') {
-            foreach ($this->appState->getConfig()['form'] as $formName => $formConf) {
+            foreach ($this->appState->getMiddlewareConfig()['form'] as $formName => $formConf) {
                 if (isset($request->getParsedBody()[$formName])) {
                     $formData = $request->getParsedBody()[$formName];
                     $appFormData[$formName]['data'] = $formData;
@@ -159,8 +159,8 @@ class FormMiddleware
                         $translator
                     )) {
                         $this->appState->setForm($appFormData);
-                        foreach ($formConf['handlers'] as $conf) {
-                            $handler = $this->formHandlerFactory->build($conf, $this->appState->getSiteParameters());
+                        foreach ($formConf['handlers'] as $handlerConf) {
+                            $handler = $this->formHandlerFactory->build($handlerConf);
                             $response = $handler->handle($formData);
 
                             if ($response) {

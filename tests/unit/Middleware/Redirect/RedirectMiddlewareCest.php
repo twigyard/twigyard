@@ -19,7 +19,7 @@ class RedirectMiddlewareCest
     {
         $prophet = new Prophet();
         $appStateProph = $prophet->prophesize(AppState::class);
-        $appStateProph->getConfig()->willReturn([]);
+        $appStateProph->getMiddlewareConfig()->willReturn([]);
 
         $mw = new RedirectMiddleware($appStateProph->reveal());
         $response = $mw(new ServerRequest(), new Response(), function () {
@@ -77,13 +77,13 @@ class RedirectMiddlewareCest
 
     /**
      * @param \Prophecy\Prophet $prophet
-     * @return \Middleware\Locale\LocaleMiddleware
+     * @return RedirectMiddleware
      */
-    private function getMw(Prophet $prophet = null)
+    private function getMw(Prophet $prophet = null): RedirectMiddleware
     {
         $prophet = $prophet ? $prophet : new Prophet();
         $appStateProph = $prophet->prophesize(AppState::class);
-        $appStateProph->getConfig()->willReturn(['redirect' => ['/url/old' => '/url/new']]);
+        $appStateProph->getMiddlewareConfig()->willReturn(['redirect' => ['/url/old' => '/url/new']]);
 
         return new RedirectMiddleware($appStateProph->reveal());
     }

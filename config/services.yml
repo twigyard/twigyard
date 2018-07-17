@@ -17,6 +17,8 @@ services:
             $cacheDir: '@=parameter("app.config").getConfigCacheDir()'
             $cacheNamespace: '@=parameter("app.config").getCacheNamespaceConfig()'
             $cacheEnabled: '@=parameter("app.parameters")["cache_enabled"]'
+            $sitesDir: '@=parameter("app.config").getSitesDir()'
+            $siteConfig: '@=parameter("app.parameters")["site_config"]'
 
     TwigYard\Component\HttpRequestSender: ~
 
@@ -45,12 +47,9 @@ services:
             $logglyToken: '@=parameter("app.parameters")["loggly_token"]'
             $logglyTags: '@=parameter("app.parameters")["loggly_tags"]'
 
-    TwigYard\Component\MailerFactory:
-        arguments:
-            $defaultSiteParameters: '@=parameter("app.site_parameters")'
+    TwigYard\Component\MailerFactory: ~
 
     TwigYard\Component\SiteLoggerFactory:
-        arguments:
         arguments:
             $logDir: '@=parameter("app.config").getLogDir()'
 
