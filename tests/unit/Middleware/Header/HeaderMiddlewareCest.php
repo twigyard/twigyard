@@ -27,7 +27,7 @@ class HeaderMiddlewareCest
             function (ServerRequestInterface $request, Response $response) use ($I) {
                 $I->assertEquals(
                     [
-                        'Content-Security-Policy' => ['default-src \'self\';'],
+                        'Content-Security-Policy' => ['default-src * \'unsafe-inline\' \'unsafe-eval\';'],
                         'Referrer-Policy' => ['strict-origin'],
                         'X-Content-Type-Options' => ['nosniff'],
                     ],
@@ -54,7 +54,7 @@ class HeaderMiddlewareCest
             function (ServerRequestInterface $request, Response $response) use ($I) {
                 $I->assertEquals(
                     [
-                        'Content-Security-Policy' => ['default-src https:;'],
+                        'Content-Security-Policy' => ['default-src https: \'unsafe-inline\' \'unsafe-eval\';'],
                         'Referrer-Policy' => ['strict-origin'],
                         'X-Content-Type-Options' => ['nosniff'],
                     ],

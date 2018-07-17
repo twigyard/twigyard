@@ -19,8 +19,8 @@ These HTTP headers are injected to HTTP response when `header` attribute is not 
 header:
     'Content-Security-Policy':
         'default-src':
-            - "'self'"     # default value for HTTP
-            - "https:"     # default value for HTTPS
+            - "* 'unsafe-inline' 'unsafe-eval'"          # default value for HTTP
+            - "https: 'unsafe-inline' 'unsafe-eval'"     # default value for HTTPS
     'Referrer-Policy': strict-origin
     'X-Content-Type-Options': nosniff
 ```
