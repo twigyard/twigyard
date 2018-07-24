@@ -24,6 +24,7 @@ class FormHandlerFactory
      * @var MailerFactory
      */
     private $mailerFactory;
+
     /**
      * @var AppState
      */
@@ -38,6 +39,7 @@ class FormHandlerFactory
      * @var SiteLoggerFactory
      */
     private $siteLoggerFactory;
+
     /**
      * @var HttpRequestSender
      */
