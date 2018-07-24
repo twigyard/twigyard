@@ -99,6 +99,7 @@ class FormMiddleware
      * @throws InvalidFormNameException
      * @throws LogDirectoryNotWritableException
      * @throws MissingAppStateAttributeException
+     * @throws \TwigYard\Exception\InvalidSiteConfigException
      * @return ResponseInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
@@ -200,8 +201,12 @@ class FormMiddleware
      * @throws MissingAppStateAttributeException
      * @return ResponseInterface
      */
-    private function getSubmitSuccessResponse(string $formName, array $formConf, string $path, Translator $translator): ResponseInterface
-    {
+    private function getSubmitSuccessResponse(
+        string $formName,
+        array $formConf,
+        string $path,
+        Translator $translator
+    ): ResponseInterface {
         $response = (new Response())
             ->withStatus(302)
             ->withHeader('Location', sprintf(
@@ -249,8 +254,11 @@ class FormMiddleware
      * @param string|null $flashMessageType
      * @return ResponseInterface
      */
-    private function setFlashMessageCookie(ResponseInterface $response, ?string $flashMessage = null, ?string $flashMessageType = null): ResponseInterface
-    {
+    private function setFlashMessageCookie(
+        ResponseInterface $response,
+        ?string $flashMessage = null,
+        ?string $flashMessageType = null
+    ): ResponseInterface {
         $cookie = SetCookie::create(self::FLASH_MESSAGE_COOKIE_NAME)
             ->withValue($flashMessage)
             ->withExpires((new \DateTime())->modify(sprintf('+%d seconds', self::FLASH_MESSAGE_COOKIE_TTL)))

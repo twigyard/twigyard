@@ -5,9 +5,9 @@
     <rule ref="Generic.PHP.ForbiddenFunctions">
         <properties>
             <property
-                    name="forbiddenFunctions"
-                    type="array"
-                    value="var_dump=>null,dump=>null,echo=>null,print=>null,eval=>null,die=>null,phpinfo=>null"
+                name="forbiddenFunctions"
+                type="array"
+                value="var_dump=>null,dump=>null,echo=>null,print=>null,eval=>null,die=>null,phpinfo=>null"
             />
         </properties>
     </rule>

@@ -87,8 +87,12 @@ class LoggerFactory
      * @param array|null $logglyTags
      * @throws InvalidApplicationConfigException
      */
-    private function checkValidity(?bool $logRotationEnabled, ?int $maxFiles, ?string $logglyToken, ?array $logglyTags): void
-    {
+    private function checkValidity(
+        ?bool $logRotationEnabled,
+        ?int $maxFiles,
+        ?string $logglyToken,
+        ?array $logglyTags
+    ): void {
         if (isset($logRotationEnabled) && !isset($maxFiles)) {
             throw new InvalidApplicationConfigException(
                 'If there is log_rotation_enabled defined in the configuration, log_max_files has to be defined too.'
@@ -116,6 +120,7 @@ class LoggerFactory
 
     /**
      * @param string|null $channelName
+     * @throws \Exception
      * @return LoggerInterface
      */
     public function getLogger(?string $channelName): LoggerInterface
