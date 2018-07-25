@@ -31,7 +31,7 @@ class MailerFactory
                 $parameters['smtp_encryption'] ?? null
             );
             $transport
-                ->setUsername($parameters['smtp_user'] ?? null)
+                ->setUsername($parameters['smtp_username'] ?? null)
                 ->setPassword($parameters['smtp_password'] ?? null);
         }
 
