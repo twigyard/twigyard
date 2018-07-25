@@ -82,21 +82,28 @@ class ConfigCacheCest
         return [
             'common' => [
                 [
-                    'description' => 'invalid yaml',
+                    'description' => 'ignores invalid site.yml',
                     'configYamls' => [
                         '/sites/www.example.com' => 'Some invalid yaml',
                     ],
                     'configArray' => [],
                 ],
                 [
-                    'description' => 'invalid config version',
+                    'description' => 'ignores site.yml with invalid config version',
                     'configYamls' => [
                         '/sites/www.example.com' => "version: 999\nurl:\n  canonical: www.example.com",
                     ],
                     'configArray' => [],
                 ],
                 [
-                    'description' => 'ignore missing site.yml',
+                    'description' => 'ignores site.yml with missing parameter',
+                    'configYamls' => [
+                        '/sites/www.example.com' => "url: '%test_param%'\nparameters: []",
+                    ],
+                    'configArray' => [],
+                ],
+                [
+                    'description' => 'ignores missing site.yml',
                     'configYamls' => [
                         '/sites/www.example.com' => null,
                     ],
@@ -145,19 +152,19 @@ class ConfigCacheCest
                 [
                     'description' => 'loads config',
                     'configYamls' => [
-                        '/sites/www.example1.com' => "parameters:\n  test_param: test_param_val\nurl:\n  canonical: www.example1.com\n  extra: ['%test_param%']",
+                        '/sites/www.example1.com' => "parameters:\n  test_param: example1.com\nurl:\n  canonical: www.example1.com\n  extra: ['%test_param%']",
                         '/sites/www.example2.com' => "url:\n  canonical: www.example2.com\n  extra: [example2.com]",
                     ],
                     'configArray' => [
                         'www.example1.com' => [
                             'version' => 1,
-                            'url' => ['canonical' => 'www.example1.com', 'extra' => ['test_param_val']],
-                            'parameters' => ['test_param' => 'test_param_val'],
+                            'url' => ['canonical' => 'www.example1.com', 'extra' => ['example1.com']],
+                            'parameters' => ['test_param' => 'example1.com'],
                         ],
-                        'test_param_val' => [
+                        'example1.com' => [
                             'version' => 1,
-                            'url' => ['canonical' => 'www.example1.com', 'extra' => ['test_param_val']],
-                            'parameters' => ['test_param' => 'test_param_val'],
+                            'url' => ['canonical' => 'www.example1.com', 'extra' => ['example1.com']],
+                            'parameters' => ['test_param' => 'example1.com'],
                         ],
                         'www.example2.com' => [
                             'version' => 1,

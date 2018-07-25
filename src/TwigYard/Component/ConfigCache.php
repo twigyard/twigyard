@@ -5,6 +5,7 @@ namespace TwigYard\Component;
 use Nette\Caching\Cache;
 use Symfony\Component\Config\Exception\FileLoaderLoadException;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 use Symfony\Component\Yaml\Exception\ParseException;
 use TwigYard\Exception\InvalidSiteConfigException;
@@ -49,6 +50,7 @@ class ConfigCache implements ConfigCacheInterface
     }
 
     /**
+     * @throws \Exception
      * @return array
      */
     public function getConfig(): array
@@ -78,8 +80,13 @@ class ConfigCache implements ConfigCacheInterface
                     }
 
                     if (isset($config['parameters'])) {
-                        $paramBag = new ParameterBag($config['parameters']);
-                        $config = $paramBag->resolveValue($config);
+                        try {
+                            $paramBag = new ParameterBag($config['parameters']);
+                            $config = $paramBag->resolveValue($config);
+                        } catch (ParameterNotFoundException $e) {
+                            $logger->error($e->getMessage());
+                            continue;
+                        }
                     }
 
                     if (!isset($config['version']) || $config['version'] === 1) {

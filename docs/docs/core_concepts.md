@@ -57,6 +57,9 @@ componets:
     mailer:
         smtp_host: "%mailer_smtp_host%"
         smtp_port: "%mailer_smtp_port%"
+        smtp_encryption: "%mailer_smtp_encryption%"
+        smtp_username: "%mailer_smtp_username%"
+        smtp_password: "%mailer_smtp_password%"
 
 middlewares:
     url:

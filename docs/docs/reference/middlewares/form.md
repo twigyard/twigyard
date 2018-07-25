@@ -53,7 +53,7 @@ headers     | map       | ❌         | Keys in the map determine request header
 response    | map       | ❌         | Accept only `redirect_url_param` that can be string or integer. `redirect_url_param` determines attribute in a response object that contains URL and should be used for redirection.
 
 #### Email
-Sends the form data to the specified email addresses.
+Sends the form data to the specified email addresses. Note that in order to use this handler, the [mailer component](/reference/components/mailer) must be configured.
 
 option      | type      | required   | description
 ------------|-----------|------------|------------    
