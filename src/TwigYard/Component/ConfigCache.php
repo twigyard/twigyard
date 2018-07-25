@@ -50,8 +50,8 @@ class ConfigCache implements ConfigCacheInterface
     }
 
     /**
-     * @return array
      * @throws \Exception
+     * @return array
      */
     public function getConfig(): array
     {
