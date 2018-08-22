@@ -90,7 +90,7 @@ Sends request with form data to the specified API endpoint. **If `response.redir
                                         <ul>
                                             <li><code>type</code> defines the type, that is <code>datetime</code></li>
                                             <li><code>in</code> datetime format passed in from the form, uses <a href="https://secure.php.net/manual/en/function.date.php" target="_blank">PHP date format</a></li>
-                                            <li><code>out</code> datetime format send to the API, uses <a href="https://secure.php.net/manual/en/function.date.php" target="_blank">PHP date format</a></li>
+                                            <li><code>out</code> datetime format sent to the API, uses <a href="https://secure.php.net/manual/en/function.date.php" target="_blank">PHP date format</a></li>
                                         </ul>
                                     </li>
                                 </ul>
