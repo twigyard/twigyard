@@ -44,14 +44,75 @@ form:
 #### API
 Sends request with form data to the specified API endpoint. **If `response.redirect_url_param` is set, API handler must be the last handler in a queue because it immediately redirects to received URL.**
 
-option      | type      | required   | description
-------------|-----------|------------|------------
-url         | string    | ✓          | An url to which request is send.
-method      | string    | ✓          | A method using which request is send.
-data        | map       | ✓          | Keys in the map determine attributes that are send in a request, for example *firstName*, *lastName*, *email* and so on. Values of those keys accept string or map. If it is string or integer, value is directly mapped to the attribute. If it is the map, required `form_value` and optional `default` both accept string or integer. `form_value` maps form field to the attribute that is send in the request and `default` is used, if form field is not filled in. By default, everything is send as string but you can use `format` that accepts `string` (default), `int`, `float` and `bool` that converts it to the entered data type. Special format `datetime` is supported, but you have to use object with `type`, `in` and `out` attributes instead of string representation (`format: datetime`). `type` accepts same values as `format`, `in` accepts PHP datetime format of form field value and `out` accepts PHP datetime format of value which is send over API.
-headers     | map       | ❌         | Keys in the map determine request headers and its string or integer values.
-response    | map       | ❌         | Accept only `redirect_url_param` that can be string or integer. `redirect_url_param` determines attribute in a response object that contains URL and should be used for redirection.
-
+<table>
+    <thead>
+        <tr>
+            <td>option</td>
+            <td>type</td>
+            <td>required</td>
+            <td>description</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>url</td>
+            <td>string</td>
+            <td> ✓ </td>
+            <td>An url to which request is send.</td>
+        </tr>
+        <tr>
+            <td>method</td>
+            <td>string</td>
+            <td> ✓ </td>
+            <td>A method using which request is send.</td>
+        </tr>
+        <tr>
+            <td>data</td>
+            <td>map</td>
+            <td> ✓ </td>
+            <td>
+                Keys in the map determine attributes that are send to the API. Supported value types are:
+                <ul>
+                    <li><strong>string:</strong> value defines attribute name in the form data</li>
+                    <li><strong>map:</strong>
+                        <ul>
+                            <li><code>form_value</code> Required,  defines attribute name in the form data</li>
+                            <li><code>default</code> Optional, defines default data to be send if no data came from the form</li>
+                            <li>
+                                <code>format</code> By default, everything is send as it came from the HTML form, that is as string. This optional directive can be used to convert data to the desired type. It accepts either string where value determines the desired type or map where the desired type is determined through the <code>type</code> directive.
+                                <ul>
+                                    <li><code>string</code> default</li>
+                                    <li><code>int</code></li>
+                                    <li><code>float</code></li>
+                                    <li><code>bool</code></li>
+                                    <li>
+                                        <code>datetime`</code> must be defined as map
+                                        <ul>
+                                            <li><code>type</code> defines the type, that is <code>datetime</code></li>
+                                            <li><code>in</code> datetime format passed in from the form, uses <a href="https://secure.php.net/manual/en/function.date.php" target="_blank">PHP date format</a></li>
+                                            <li><code>out</code> datetime format send to the API, uses <a href="https://secure.php.net/manual/en/function.date.php" target="_blank">PHP date format</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>headers</td>
+            <td>map</td>
+            <td> ❌ </td>
+            <td>Keys in the map determine request headers and its string or integer values.</td>
+        </tr>
+        <tr>
+            <td>response</td>
+            <td>map</td>
+            <td> ❌ </td>
+            <td>Accept only `redirect_url_param` that can be string or integer. `redirect_url_param` determines attribute in a response object that contains URL and should be used for redirection.</td>
+        </tr>
+    </tbody>
+</table>
 #### Email
 Sends the form data to the specified email addresses. Note that in order to use this handler, the [mailer component](/reference/components/mailer) must be configured.
 
