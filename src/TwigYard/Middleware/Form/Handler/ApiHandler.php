@@ -22,10 +22,14 @@ class ApiHandler implements HandlerInterface
 
     const CONFIG_DATA = 'data';
     const CONFIG_DATA_FORMAT = 'format';
+    const CONFIG_DATA_FORMAT_TYPE = 'type';
+    const CONFIG_DATA_FORMAT_IN = 'in';
+    const CONFIG_DATA_FORMAT_OUT = 'out';
     const CONFIG_DATA_FORMAT_STRING = 'string';
     const CONFIG_DATA_FORMAT_INT = 'int';
     const CONFIG_DATA_FORMAT_FLOAT = 'float';
     const CONFIG_DATA_FORMAT_BOOL = 'bool';
+    const CONFIG_DATA_FORMAT_DATETIME = 'datetime';
     const CONFIG_DATA_FORM_VALUE = 'form_value';
     const CONFIG_DATA_DEFAULT = 'default';
 
@@ -90,16 +94,51 @@ class ApiHandler implements HandlerInterface
                     }
                 }
 
-                if (array_key_exists(self::CONFIG_DATA_FORMAT, $dataValue)) {
+                if (
+                    array_key_exists(self::CONFIG_DATA_FORMAT, $dataValue)
+                    && is_string($dataValue[self::CONFIG_DATA_FORMAT])
+                ) {
                     $dataFormat = $dataValue[self::CONFIG_DATA_FORMAT];
 
                     if (self::CONFIG_DATA_FORMAT_INT === $dataFormat) {
                         $sendData[$dataKey] = intval($sendData[$dataKey]);
                     } elseif (self::CONFIG_DATA_FORMAT_FLOAT === $dataFormat) {
                         $sendData[$dataKey] = floatval($sendData[$dataKey]);
-                    }
-                    if (self::CONFIG_DATA_FORMAT_BOOL === $dataFormat) {
+                    } elseif (self::CONFIG_DATA_FORMAT_BOOL === $dataFormat) {
                         $sendData[$dataKey] = boolval($sendData[$dataKey]);
+                    }
+                }
+
+                if (
+                    array_key_exists(self::CONFIG_DATA_FORMAT, $dataValue)
+                    && is_array($dataValue[self::CONFIG_DATA_FORMAT])
+                ) {
+                    $dataFormat = $dataValue[self::CONFIG_DATA_FORMAT][self::CONFIG_DATA_FORMAT_TYPE];
+                    $dataFormatIn = $dataValue[self::CONFIG_DATA_FORMAT][self::CONFIG_DATA_FORMAT_IN];
+                    $dataFormatOut = $dataValue[self::CONFIG_DATA_FORMAT][self::CONFIG_DATA_FORMAT_OUT];
+
+                    if (self::CONFIG_DATA_FORMAT_INT === $dataFormat) {
+                        $sendData[$dataKey] = intval($sendData[$dataKey]);
+                    } elseif (self::CONFIG_DATA_FORMAT_FLOAT === $dataFormat) {
+                        $sendData[$dataKey] = floatval($sendData[$dataKey]);
+                    } elseif (self::CONFIG_DATA_FORMAT_BOOL === $dataFormat) {
+                        $sendData[$dataKey] = boolval($sendData[$dataKey]);
+                    } elseif (self::CONFIG_DATA_FORMAT_DATETIME === $dataFormat) {
+                        $dateTime = \DateTime::createFromFormat($dataFormatIn, $sendData[$dataKey]);
+
+                        if ($dateTime === false) {
+                            throw new \InvalidArgumentException(
+                                sprintf(
+                                    'Form API handler is unable to convert form value `%s` of field `%s` from `%s` to `%s`.',
+                                    $sendData[$dataKey],
+                                    $dataKey,
+                                    $dataFormatIn,
+                                    $dataFormatOut
+                                )
+                            );
+                        }
+
+                        $sendData[$dataKey] = $dateTime->format($dataFormatOut);
                     }
                 }
             }
@@ -224,10 +263,15 @@ class ApiHandler implements HandlerInterface
                         self::CONFIG_DATA_FORMAT_FLOAT,
                         self::CONFIG_DATA_FORMAT_BOOL,
                     ];
+                    $supportedTypesExt = array_merge(
+                        $supportedTypes,
+                        [self::CONFIG_DATA_FORMAT_DATETIME]
+                    );
 
                     if (
-                        array_key_exists(self::CONFIG_DATA_FORMAT, $this->config)
-                        && !in_array($this->config[self::CONFIG_DATA_FORMAT], $supportedTypes)
+                        array_key_exists(self::CONFIG_DATA_FORMAT, $dataValue)
+                        && is_string($dataValue[self::CONFIG_DATA_FORMAT])
+                        && !in_array($dataValue[self::CONFIG_DATA_FORMAT], $supportedTypes)
                     ) {
                         throw new InvalidSiteConfigException(
                             sprintf(
@@ -236,9 +280,71 @@ class ApiHandler implements HandlerInterface
                                 $dataKey,
                                 self::CONFIG_DATA_FORMAT,
                                 implode(', ', $supportedTypes),
-                                $this->config[self::CONFIG_DATA_FORMAT]
+                                $dataValue[self::CONFIG_DATA_FORMAT]
                             )
                         );
+                    }
+
+                    if (
+                        array_key_exists(self::CONFIG_DATA_FORMAT, $dataValue)
+                        && is_array($dataValue[self::CONFIG_DATA_FORMAT])
+                    ) {
+                        $dataFormat = $dataValue[self::CONFIG_DATA_FORMAT];
+
+                        if (
+                            array_key_exists(self::CONFIG_DATA_FORMAT_TYPE, $dataFormat)
+                            && !in_array($dataFormat[self::CONFIG_DATA_FORMAT_TYPE], $supportedTypesExt)
+                        ) {
+                            throw new InvalidSiteConfigException(
+                                sprintf(
+                                    'Form API handler option `%s.%s.%s.%s` is expecting one of [%s], `%s` given.',
+                                    self::CONFIG_DATA,
+                                    $dataKey,
+                                    self::CONFIG_DATA_FORMAT,
+                                    self::CONFIG_DATA_FORMAT_TYPE,
+                                    implode(', ', $supportedTypesExt),
+                                    $dataFormat[self::CONFIG_DATA_FORMAT_TYPE]
+                                )
+                            );
+                        }
+
+                        if (
+                            array_key_exists(self::CONFIG_DATA_FORMAT_TYPE, $dataFormat)
+                            && $dataFormat[self::CONFIG_DATA_FORMAT_TYPE] === self::CONFIG_DATA_FORMAT_DATETIME
+                            && (
+                                !array_key_exists(self::CONFIG_DATA_FORMAT_IN, $dataFormat)
+                                || !is_string($dataFormat[self::CONFIG_DATA_FORMAT_IN])
+                            )
+                        ) {
+                            throw new InvalidSiteConfigException(
+                                sprintf(
+                                    'Form API handler option `%s.%s.%s.%s` is not set or is not of types string',
+                                    self::CONFIG_DATA,
+                                    $dataKey,
+                                    self::CONFIG_DATA_FORMAT,
+                                    self::CONFIG_DATA_FORMAT_IN
+                                )
+                            );
+                        }
+
+                        if (
+                            array_key_exists(self::CONFIG_DATA_FORMAT_TYPE, $dataFormat)
+                            && $dataFormat[self::CONFIG_DATA_FORMAT_TYPE] === self::CONFIG_DATA_FORMAT_DATETIME
+                            && (
+                                !array_key_exists(self::CONFIG_DATA_FORMAT_OUT, $dataFormat)
+                                || !is_string($dataFormat[self::CONFIG_DATA_FORMAT_OUT])
+                            )
+                        ) {
+                            throw new InvalidSiteConfigException(
+                                sprintf(
+                                    'Form API handler option `%s.%s.%s.%s` is not set or is not of types string',
+                                    self::CONFIG_DATA,
+                                    $dataKey,
+                                    self::CONFIG_DATA_FORMAT,
+                                    self::CONFIG_DATA_FORMAT_OUT
+                                )
+                            );
+                        }
                     }
 
                     if (

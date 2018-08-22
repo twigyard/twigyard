@@ -48,7 +48,7 @@ option      | type      | required   | description
 ------------|-----------|------------|------------
 url         | string    | ✓          | An url to which request is send.
 method      | string    | ✓          | A method using which request is send.
-data        | map       | ✓          | Keys in the map determine attributes that are send in a request, for example *firstName*, *lastName*, *email* and so on. Values of those keys accept string or map. If it is string or integer, value is directly mapped to the attribute. If it is the map, required `form_value` and optional `default` both accept string or integer. `form_value` maps form field to the attribute that is send in the request and `default` is used, if form field is not filled in. By default, everything is send as string but you can use `format` that accepts `string` (default), `int`, `float` and `bool` that converts it to the entered data type.
+data        | map       | ✓          | Keys in the map determine attributes that are send in a request, for example *firstName*, *lastName*, *email* and so on. Values of those keys accept string or map. If it is string or integer, value is directly mapped to the attribute. If it is the map, required `form_value` and optional `default` both accept string or integer. `form_value` maps form field to the attribute that is send in the request and `default` is used, if form field is not filled in. By default, everything is send as string but you can use `format` that accepts `string` (default), `int`, `float` and `bool` that converts it to the entered data type. Special format `datetime` is supported, but you have to use object with `type`, `in` and `out` attributes instead of string representation (`format: datetime`). `type` accepts same values as `format`, `in` accepts PHP datetime format of form field value and `out` accepts PHP datetime format of value which is send over API.
 headers     | map       | ❌         | Keys in the map determine request headers and its string or integer values.
 response    | map       | ❌         | Accept only `redirect_url_param` that can be string or integer. `redirect_url_param` determines attribute in a response object that contains URL and should be used for redirection.
 
@@ -95,6 +95,12 @@ form:
                     name:
                         form_value: name
                         format: string # Default format
+                    date:
+                        form_value: date
+                        format:
+                            type: datetime # Format
+                            in: 'd.m.Y H:i' # Input format, e.g. datetime value in form field
+                            out: 'Y-m-d H:i:s' # Output format, e.g. datetime send over API
                     email:
                         form_value: email
                         default: 'anonymous@example.com' # Value send when email is not filled
