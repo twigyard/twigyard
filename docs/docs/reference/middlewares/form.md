@@ -44,14 +44,75 @@ form:
 #### API
 Sends request with form data to the specified API endpoint. **If `response.redirect_url_param` is set, API handler must be the last handler in a queue because it immediately redirects to received URL.**
 
-option      | type      | required   | description
-------------|-----------|------------|------------
-url         | string    | ✓          | An url to which request is send.
-method      | string    | ✓          | A method using which request is send.
-data        | map       | ✓          | Keys in the map determine attributes that are send in a request, for example *firstName*, *lastName*, *email* and so on. Values of those keys accept string or map. If it is string or integer, value is directly mapped to the attribute. If it is the map, required `form_value` and optional `default` both accept string or integer. `form_value` maps form field to the attribute that is send in the request and `default` is used, if form field is not filled in. By default, everything is send as string but you can use `format` that accepts `string` (default), `int`, `float` and `bool` that converts it to the entered data type.
-headers     | map       | ❌         | Keys in the map determine request headers and its string or integer values.
-response    | map       | ❌         | Accept only `redirect_url_param` that can be string or integer. `redirect_url_param` determines attribute in a response object that contains URL and should be used for redirection.
-
+<table>
+    <thead>
+        <tr>
+            <td>option</td>
+            <td>type</td>
+            <td>required</td>
+            <td>description</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>url</td>
+            <td>string</td>
+            <td> ✓ </td>
+            <td>URL to which request is sent</td>
+        </tr>
+        <tr>
+            <td>method</td>
+            <td>string</td>
+            <td> ✓ </td>
+            <td>HTTP method used to send the request</td>
+        </tr>
+        <tr>
+            <td>data</td>
+            <td>map</td>
+            <td> ✓ </td>
+            <td>
+                Keys in the map determine attributes that are sent to the API. Supported value types are:
+                <ul>
+                    <li><strong>string:</strong> value defines attribute name in the form data</li>
+                    <li><strong>map:</strong>
+                        <ul>
+                            <li><code>form_value</code> required, defines attribute name in the form data</li>
+                            <li><code>default</code> optional, defines default data to be sent if no data came from the form</li>
+                            <li>
+                                <code>format</code> By default, everything is sent as it came from the HTML form, that is as string. This optional directive can be used to convert data to the desired type. It accepts either string where value determines the desired type or map where the desired type is determined through the <code>type</code> directive.
+                                <ul>
+                                    <li><strong>string</strong> default</li>
+                                    <li><strong>int</strong></li>
+                                    <li><strong>float</strong></li>
+                                    <li><strong>bool</strong></li>
+                                    <li>
+                                        <strong>datetime</strong> must be defined as map:
+                                        <ul>
+                                            <li><code>type</code> defines the type, that is <code>datetime</code></li>
+                                            <li><code>in</code> datetime format passed in from the form, uses <a href="https://secure.php.net/manual/en/function.date.php" target="_blank">PHP date format</a></li>
+                                            <li><code>out</code> datetime format sent to the API, uses <a href="https://secure.php.net/manual/en/function.date.php" target="_blank">PHP date format</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>headers</td>
+            <td>map</td>
+            <td> ❌ </td>
+            <td>Keys in the map determine request headers and its string or integer values.</td>
+        </tr>
+        <tr>
+            <td>response</td>
+            <td>map</td>
+            <td> ❌ </td>
+            <td>Accepts only `redirect_url_param` string directive. `redirect_url_param` determines attribute in a response object that contains URL and should be used for redirection.</td>
+        </tr>
+    </tbody>
+</table>
 #### Email
 Sends the form data to the specified email addresses. Note that in order to use this handler, the [mailer component](/reference/components/mailer) must be configured.
 
@@ -95,6 +156,12 @@ form:
                     name:
                         form_value: name
                         format: string # Default format
+                    birthday:
+                        form_value: date_of_birth
+                        format:
+                            type: datetime # Format
+                            in: 'd.m.Y H:i' # Input format, e.g. datetime value in form field
+                            out: 'Y-m-d H:i:s' # Output format, e.g. datetime send over API
                     email:
                         form_value: email
                         default: 'anonymous@example.com' # Value send when email is not filled
@@ -122,6 +189,15 @@ form:
             {% if form.contact.errors.name|length > 0 %}
                 <ul>
                     {% for error in form.contact.errors.name %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            
+            <input type="text" name="contact[birthday]" value="{{ form.contact.data.birthday }}" />
+            {% if form.contact.errors.birthday|length > 0 %}
+                <ul>
+                    {% for error in form.contact.errors.birthday %}
                         <li>{{ error }}</li>
                     {% endfor %}
                 </ul>

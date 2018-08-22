@@ -54,17 +54,49 @@ class ApiHandlerCest
                             'format' => 'string',
                             'form_value' => 'fieldWithString',
                         ],
+                        'fieldWithStringExt' => [
+                            'format' => [
+                                'type' => 'string',
+                            ],
+                            'form_value' => 'fieldWithStringExt',
+                        ],
                         'fieldWithInt' => [
                             'format' => 'int',
                             'form_value' => 'fieldWithInt',
+                        ],
+                        'fieldWithIntExt' => [
+                            'format' => [
+                                'type' => 'int',
+                            ],
+                            'form_value' => 'fieldWithIntExt',
                         ],
                         'fieldWithFloat' => [
                             'format' => 'float',
                             'form_value' => 'fieldWithFloat',
                         ],
+                        'fieldWithFloatExt' => [
+                            'format' => [
+                                'type' => 'float',
+                            ],
+                            'form_value' => 'fieldWithFloatExt',
+                        ],
                         'fieldWithBool' => [
                             'format' => 'bool',
                             'form_value' => 'fieldWithBool',
+                        ],
+                        'fieldWithBoolExt' => [
+                            'format' => [
+                                'type' => 'bool',
+                            ],
+                            'form_value' => 'fieldWithBoolExt',
+                        ],
+                        'fieldWithDateTimeExt' => [
+                            'format' => [
+                                'type' => 'datetime',
+                                'in' => 'd.m.Y H:i',
+                                'out' => 'Y-m-d H:i:s',
+                            ],
+                            'form_value' => 'fieldWithDateTimeExt',
                         ],
                         'apiToken' => 'notSoSecretFormToken',
                     ],
@@ -98,12 +130,23 @@ class ApiHandlerCest
                         'form_value' => 'email',
                         'default' => 'anonymous@example.com',
                     ],
+                    'fieldWithDateTimeExt' => [
+                        'format' => [
+                            'type' => 'datetime',
+                            'in' => 'd.m.Y H:i',
+                            'out' => 'Y-m-d H:i:s',
+                        ],
+                        'form_value' => 'fieldWithDateTimeExt',
+                    ],
                 ],
             ],
             $this->getHttpRequestSender($prophet, [])
         );
 
-        $response = $apiHandler->handle(['name' => 'Jan Novak']);
+        $response = $apiHandler->handle([
+            'name' => 'Jan Novak',
+            'fieldWithDateTimeExt' => '24.12.2018 12:00',
+        ]);
         $I->assertEquals(null, $response);
     }
 
