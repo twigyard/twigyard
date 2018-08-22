@@ -58,35 +58,35 @@ Sends request with form data to the specified API endpoint. **If `response.redir
             <td>url</td>
             <td>string</td>
             <td> ✓ </td>
-            <td>An url to which request is send.</td>
+            <td>URL to which request is sent</td>
         </tr>
         <tr>
             <td>method</td>
             <td>string</td>
             <td> ✓ </td>
-            <td>A method using which request is send.</td>
+            <td>HTTP method used to send the request</td>
         </tr>
         <tr>
             <td>data</td>
             <td>map</td>
             <td> ✓ </td>
             <td>
-                Keys in the map determine attributes that are send to the API. Supported value types are:
+                Keys in the map determine attributes that are sent to the API. Supported value types are:
                 <ul>
                     <li><strong>string:</strong> value defines attribute name in the form data</li>
                     <li><strong>map:</strong>
                         <ul>
-                            <li><code>form_value</code> Required,  defines attribute name in the form data</li>
-                            <li><code>default</code> Optional, defines default data to be send if no data came from the form</li>
+                            <li><code>form_value</code> required, defines attribute name in the form data</li>
+                            <li><code>default</code> optional, defines default data to be sent if no data came from the form</li>
                             <li>
-                                <code>format</code> By default, everything is send as it came from the HTML form, that is as string. This optional directive can be used to convert data to the desired type. It accepts either string where value determines the desired type or map where the desired type is determined through the <code>type</code> directive.
+                                <code>format</code> By default, everything is sent as it came from the HTML form, that is as string. This optional directive can be used to convert data to the desired type. It accepts either string where value determines the desired type or map where the desired type is determined through the <code>type</code> directive.
                                 <ul>
-                                    <li><code>string</code> default</li>
-                                    <li><code>int</code></li>
-                                    <li><code>float</code></li>
-                                    <li><code>bool</code></li>
+                                    <li><strong>string</strong> default</li>
+                                    <li><strong>int</strong></li>
+                                    <li><strong>float</strong></li>
+                                    <li><strong>bool</strong></li>
                                     <li>
-                                        <code>datetime`</code> must be defined as map
+                                        <strong>datetime</strong> must be defined as map:
                                         <ul>
                                             <li><code>type</code> defines the type, that is <code>datetime</code></li>
                                             <li><code>in</code> datetime format passed in from the form, uses <a href="https://secure.php.net/manual/en/function.date.php" target="_blank">PHP date format</a></li>
@@ -109,7 +109,7 @@ Sends request with form data to the specified API endpoint. **If `response.redir
             <td>response</td>
             <td>map</td>
             <td> ❌ </td>
-            <td>Accept only `redirect_url_param` that can be string or integer. `redirect_url_param` determines attribute in a response object that contains URL and should be used for redirection.</td>
+            <td>Accept only `redirect_url_param` string directive. `redirect_url_param` determines attribute in a response object that contains URL and should be used for redirection.</td>
         </tr>
     </tbody>
 </table>
@@ -156,8 +156,8 @@ form:
                     name:
                         form_value: name
                         format: string # Default format
-                    date:
-                        form_value: date
+                    birthday:
+                        form_value: date_of_birth
                         format:
                             type: datetime # Format
                             in: 'd.m.Y H:i' # Input format, e.g. datetime value in form field
@@ -189,6 +189,15 @@ form:
             {% if form.contact.errors.name|length > 0 %}
                 <ul>
                     {% for error in form.contact.errors.name %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            
+            <input type="text" name="contact[birthday]" value="{{ form.contact.data.birthday }}" />
+            {% if form.contact.errors.birthday|length > 0 %}
+                <ul>
+                    {% for error in form.contact.errors.birthday %}
                         <li>{{ error }}</li>
                     {% endfor %}
                 </ul>
