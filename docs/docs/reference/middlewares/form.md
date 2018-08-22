@@ -109,7 +109,7 @@ Sends request with form data to the specified API endpoint. **If `response.redir
             <td>response</td>
             <td>map</td>
             <td> ❌ </td>
-            <td>Accept only `redirect_url_param` string directive. `redirect_url_param` determines attribute in a response object that contains URL and should be used for redirection.</td>
+            <td>Accepts only `redirect_url_param` string directive. `redirect_url_param` determines attribute in a response object that contains URL and should be used for redirection.</td>
         </tr>
     </tbody>
 </table>
