@@ -68,7 +68,7 @@ class FormValidator
         $validator = $this->validatorFactory->createValidator($translator);
         foreach ($formFields as $fieldName => $constraints) {
             $newErrors = $validator->validate(
-                !empty($formData[$fieldName]) ? $formData[$fieldName] : null,
+                isset($formData[$fieldName]) ? $formData[$fieldName] : null,
                 $this->parseNodes($formFields[$fieldName])
             );
 
