@@ -23,6 +23,13 @@ matrix:
       script: .travis/php/script.sh
 
     - language: php
+      php: 7.3
+      before_install: .travis/php/before_install.sh
+      install: .travis/php/install.sh
+      before_script: .travis/php/before_script.sh
+      script: .travis/php/script.sh
+
+    - language: php
       php: nightly
       before_install: .travis/php/before_install.sh
       install: .travis/php/install.sh
