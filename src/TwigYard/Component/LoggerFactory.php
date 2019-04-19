@@ -56,7 +56,7 @@ class LoggerFactory
      * @param string $logOnLevel
      * @param bool $logRotationEnabled
      * @param int|null $maxFiles
-     * @param null|string $logglyToken
+     * @param string|null $logglyToken
      * @param array|null $logglyTags
      * @throws InvalidApplicationConfigException
      */

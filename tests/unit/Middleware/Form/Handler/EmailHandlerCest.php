@@ -5,6 +5,7 @@ namespace Unit\Middleware\Form\Handler;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Prophecy\Prophet;
+use Twig\Error\LoaderError;
 use TwigYard\Component\AppState;
 use TwigYard\Component\Mailer;
 use TwigYard\Component\MailerMessageBuilder;
@@ -146,10 +147,10 @@ class EmailHandlerCest
         $localeSubDir = 'cs_CZ/';
         $templating = $prophet->prophesize()->willImplement(TemplatingInterface::class);
         $templating->render($localeSubDir . 'subject.tpl')->willThrow(
-            new \Twig_Error_Loader(sprintf('Template "%s" is not defined.', $localeSubDir . 'subject.tpl'))
+            new LoaderError(sprintf('Template "%s" is not defined.', $localeSubDir . 'subject.tpl'))
         );
         $templating->render($localeSubDir . 'body.tpl')->willThrow(
-            new \Twig_Error_Loader(sprintf('Template "%s" is not defined.', $localeSubDir . 'body.tpl'))
+            new LoaderError(sprintf('Template "%s" is not defined.', $localeSubDir . 'body.tpl'))
         );
         $templating->render('subject.tpl')->willReturn('subject text');
         $templating->render('body.tpl')->willReturn('body text');

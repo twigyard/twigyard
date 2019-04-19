@@ -16,7 +16,7 @@ class UrlMiddleware implements MiddlewareInterface
     private $appState;
 
     /**
-     * @var null|string
+     * @var string|null
      */
     private $parentDomain;
 
@@ -29,7 +29,7 @@ class UrlMiddleware implements MiddlewareInterface
      * UrlMiddleware constructor.
      * @param AppState $appState
      * @param bool $sslAllowed
-     * @param null|string $parentDomain
+     * @param string|null $parentDomain
      */
     public function __construct(
         AppState $appState,
