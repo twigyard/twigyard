@@ -47,15 +47,15 @@ class ConfigCacheCest
 
     /**
      * @param \VirtualFileSystem\FileSystem $fs
-     * @param null|string $dirName
-     * @param null|string $config
+     * @param string|null $dirName
+     * @param string|null $config
      */
     private function createExample(FileSystem $fs, string $dirName, ?string $config): void
     {
         try {
             $fs->createDirectory($dirName, true);
             if ($config !== null) {
-                file_put_contents($fs->path(($dirName ?: $dirName) . '/site.yml'), $config);
+                file_put_contents($fs->path($dirName . '/site.yml'), $config);
             }
         } catch (FileExistsException $e) {
         }
