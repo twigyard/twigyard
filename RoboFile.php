@@ -64,6 +64,8 @@ class RoboFile extends Tasks
             ->args(self::SRC_DIR)
             ->args('-c', 'phpstan.neon')
             ->args('--level', 7)
+            ->args('--memory-limit', '3G')
+            ->args('--debug')
             ->run();
     }
 

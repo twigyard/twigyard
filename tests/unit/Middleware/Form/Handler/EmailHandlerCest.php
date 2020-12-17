@@ -55,9 +55,6 @@ class EmailHandlerCest
         $prophet->checkPredictions();
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function testWithRecipients(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -79,9 +76,6 @@ class EmailHandlerCest
         $prophet->checkPredictions();
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function testWithNoRecipients(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -173,7 +167,6 @@ class EmailHandlerCest
     }
 
     /**
-     * @param Prophet $prophet
      * @return \Prophecy\Prophecy\ObjectProphecy
      */
     private function getMessageBuilder(Prophet $prophet)
@@ -187,8 +180,6 @@ class EmailHandlerCest
     }
 
     /**
-     * @param Prophet $prophet
-     * @param \Prophecy\Prophecy\ObjectProphecy $messageBuilder
      * @return \Prophecy\Prophecy\ObjectProphecy
      */
     private function getMailer(Prophet $prophet, ObjectProphecy $messageBuilder)
@@ -215,7 +206,6 @@ class EmailHandlerCest
     }
 
     /**
-     * @param Prophet $prophet
      * @param string $localeSubDir
      * @return \Prophecy\Prophecy\ObjectProphecy
      */

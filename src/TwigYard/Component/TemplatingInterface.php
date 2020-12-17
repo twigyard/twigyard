@@ -6,13 +6,6 @@ interface TemplatingInterface
 {
     /**
      * TemplatingInterface constructor.
-     * @param AppState $appState
-     * @param string $templateDir
-     * @param string $assetDir
-     * @param TemplatingClosureFactory $tplClosureFactory
-     * @param SiteTranslatorFactory $siteTranslatorFactory
-     * @param array $options
-     * @param string|null $parentDomain
      */
     public function __construct(
         AppState $appState,
@@ -24,9 +17,5 @@ interface TemplatingInterface
         ?string $parentDomain
     );
 
-    /**
-     * @param string $templateName
-     * @return string
-     */
     public function render(string $templateName): string;
 }

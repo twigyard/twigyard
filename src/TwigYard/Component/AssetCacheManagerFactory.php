@@ -26,16 +26,12 @@ class AssetCacheManagerFactory
 
     /**
      * AssetManagerFactory constructor.
-     * @param string $cacheNamespace
      */
     public function __construct(string $cacheNamespace)
     {
         $this->cacheNamespace = $cacheNamespace;
     }
 
-    /**
-     * @return AssetCacheManager
-     */
     public function createAssetCacheManager(): AssetCacheManager
     {
         if ($this->cacheDir) {
@@ -56,17 +52,11 @@ class AssetCacheManagerFactory
         return new AssetCacheManager($cache, $this->assetDir);
     }
 
-    /**
-     * @param string $assetDir
-     */
     public function setAssetDir(string $assetDir): void
     {
         $this->assetDir = $assetDir;
     }
 
-    /**
-     * @param string|null $cacheDir
-     */
     public function setCacheDir(?string $cacheDir): void
     {
         $this->cacheDir = $cacheDir;

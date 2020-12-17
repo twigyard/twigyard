@@ -51,13 +51,7 @@ class LoggerFactory
 
     /**
      * LoggerFactory constructor.
-     * @param string $appRoot
-     * @param string $logDir
-     * @param string $logOnLevel
      * @param bool $logRotationEnabled
-     * @param int|null $maxFiles
-     * @param string|null $logglyToken
-     * @param array|null $logglyTags
      * @throws InvalidApplicationConfigException
      */
     public function __construct(
@@ -81,10 +75,6 @@ class LoggerFactory
     }
 
     /**
-     * @param bool|null $logRotationEnabled
-     * @param int|null $maxFiles
-     * @param string|null $logglyToken
-     * @param array|null $logglyTags
      * @throws InvalidApplicationConfigException
      */
     private function checkValidity(
@@ -94,34 +84,24 @@ class LoggerFactory
         ?array $logglyTags
     ): void {
         if (isset($logRotationEnabled) && !isset($maxFiles)) {
-            throw new InvalidApplicationConfigException(
-                'If there is log_rotation_enabled defined in the configuration, log_max_files has to be defined too.'
-            );
+            throw new InvalidApplicationConfigException('If there is log_rotation_enabled defined in the configuration, log_max_files has to be defined too.');
         }
 
         if (isset($maxFiles) && !isset($logRotationEnabled)) {
-            throw new InvalidApplicationConfigException(
-                'If there is log_max_files defined in the configuration, log_rotation_enabled has to be defined too.'
-            );
+            throw new InvalidApplicationConfigException('If there is log_max_files defined in the configuration, log_rotation_enabled has to be defined too.');
         }
 
         if (isset($logglyToken) && !isset($logglyTags)) {
-            throw new InvalidApplicationConfigException(
-                'If there is loggly_token defined in the configuration, loggly_tags has to be defined too.'
-            );
+            throw new InvalidApplicationConfigException('If there is loggly_token defined in the configuration, loggly_tags has to be defined too.');
         }
 
         if (isset($logglyTags) && !isset($logglyToken)) {
-            throw new InvalidApplicationConfigException(
-                'If there is loggly_tags defined in the configuration, loggly_token has to be defined too.'
-            );
+            throw new InvalidApplicationConfigException('If there is loggly_tags defined in the configuration, loggly_token has to be defined too.');
         }
     }
 
     /**
-     * @param string|null $channelName
      * @throws \Exception
-     * @return LoggerInterface
      */
     public function getLogger(?string $channelName): LoggerInterface
     {

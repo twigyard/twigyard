@@ -21,8 +21,6 @@ class Mailer
 
     /**
      * Mailer constructor.
-     * @param \Swift_Mailer $swiftMailer
-     * @param MailerMessageBuilder $mailerMessageBuilder
      */
     public function __construct(\Swift_Mailer $swiftMailer, MailerMessageBuilder $mailerMessageBuilder)
     {
@@ -39,9 +37,6 @@ class Mailer
         return $this->mailerMessageBuilder;
     }
 
-    /**
-     * @param MailerMessageBuilder $messageBuilder
-     */
     public function send(MailerMessageBuilder $messageBuilder): void
     {
         $message = $messageBuilder->getMessage();
@@ -54,9 +49,6 @@ class Mailer
         $this->swiftMailer->send($message);
     }
 
-    /**
-     * @param string|null $email
-     */
     public function setDebugRecipient(?string $email): void
     {
         $this->debugRecipient = $email;

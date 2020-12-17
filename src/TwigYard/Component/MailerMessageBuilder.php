@@ -21,7 +21,6 @@ class MailerMessageBuilder
     }
 
     /**
-     * @param string $body
      * @return $this
      */
     public function setBody(string $body): MailerMessageBuilder
@@ -33,7 +32,6 @@ class MailerMessageBuilder
     }
 
     /**
-     * @param string $subject
      * @return $this
      */
     public function setSubject(string $subject): MailerMessageBuilder
@@ -44,7 +42,6 @@ class MailerMessageBuilder
     }
 
     /**
-     * @param array $toAddresses
      * @return $this
      */
     public function setTo(array $toAddresses): MailerMessageBuilder
@@ -55,7 +52,6 @@ class MailerMessageBuilder
     }
 
     /**
-     * @param array $fromArray
      * @return $this
      */
     public function setFrom(array $fromArray): MailerMessageBuilder
@@ -66,7 +62,6 @@ class MailerMessageBuilder
     }
 
     /**
-     * @param array $bccAddresses
      * @return $this
      */
     public function setBcc(array $bccAddresses): MailerMessageBuilder
@@ -76,9 +71,6 @@ class MailerMessageBuilder
         return $this;
     }
 
-    /**
-     * @return Swift_Message
-     */
     public function getMessage(): Swift_Message
     {
         return $this->message;

@@ -88,25 +88,17 @@ class AppState
 
     /**
      * AppState constructor.
-     * @param string $sitesDir
      */
     public function __construct(string $sitesDir)
     {
         $this->sitesDir = $sitesDir;
     }
 
-    /**
-     * @return array
-     */
     public function getMiddlewareConfig(): array
     {
         return $this->middlewareConfig;
     }
 
-    /**
-     * @param array $config
-     * @return AppState
-     */
     public function setMiddlewareConfig(array $config): AppState
     {
         $this->middlewareConfig = $config;
@@ -114,18 +106,11 @@ class AppState
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getData(): array
     {
         return $this->data ?: [];
     }
 
-    /**
-     * @param array $data
-     * @return AppState
-     */
     public function setData(array $data): AppState
     {
         $this->data = $data;
@@ -133,18 +118,11 @@ class AppState
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getLocale(): string
     {
         return $this->locale;
     }
 
-    /**
-     * @param string $locale
-     * @return AppState
-     */
     public function setLocale(string $locale): AppState
     {
         $this->locale = $locale;
@@ -152,18 +130,11 @@ class AppState
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getPage(): string
     {
         return $this->page;
     }
 
-    /**
-     * @param string $page
-     * @return AppState
-     */
     public function setPage(string $page): AppState
     {
         $this->page = $page;
@@ -171,18 +142,11 @@ class AppState
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getRouteMap(): array
     {
         return $this->routeMap;
     }
 
-    /**
-     * @param array $routeMap
-     * @return AppState
-     */
     public function setRouteMap(array $routeMap): AppState
     {
         $this->routeMap = $routeMap;
@@ -190,26 +154,16 @@ class AppState
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getSiteDir(): string
     {
         return $this->sitesDir . '/' . $this->getHost();
     }
 
-    /**
-     * @return array
-     */
     public function getLocaleMap(): array
     {
         return $this->localeMap;
     }
 
-    /**
-     * @param array $localeMap
-     * @return AppState
-     */
     public function setLocaleMap(array $localeMap): AppState
     {
         $this->localeMap = $localeMap;
@@ -217,18 +171,11 @@ class AppState
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getUrlParams(): array
     {
         return $this->urlParams ?: [];
     }
 
-    /**
-     * @param array $urlParams
-     * @return AppState
-     */
     public function setUrlParams(array $urlParams): AppState
     {
         $this->urlParams = $urlParams;
@@ -236,11 +183,6 @@ class AppState
         return $this;
     }
 
-    /**
-     * @param string $name
-     * @param string $urlParam
-     * @return AppState
-     */
     public function addUrlParam(string $name, string $urlParam): AppState
     {
         $this->urlParams[$name] = $urlParam;
@@ -248,18 +190,11 @@ class AppState
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getForm(): array
     {
         return $this->form ?: [];
     }
 
-    /**
-     * @param array $form
-     * @return AppState
-     */
     public function setForm(array $form): AppState
     {
         $this->form = $form;
@@ -267,9 +202,6 @@ class AppState
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getUrl(): string
     {
         return $this->middlewareConfig['url']['canonical'];
@@ -277,7 +209,6 @@ class AppState
 
     /**
      * @throws MissingAppStateAttributeException
-     * @return bool
      */
     public function isSingleLanguage(): bool
     {
@@ -307,18 +238,11 @@ class AppState
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getScheme(): string
     {
         return $this->scheme;
     }
 
-    /**
-     * @param string $scheme
-     * @return AppState
-     */
     public function setScheme(string $scheme): AppState
     {
         $this->scheme = $scheme;
@@ -326,18 +250,11 @@ class AppState
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getRemoteIp(): string
     {
         return $this->remoteIp;
     }
 
-    /**
-     * @param string $remoteIp
-     * @return AppState
-     */
     public function setRemoteIp(string $remoteIp): AppState
     {
         $this->remoteIp = $remoteIp;
@@ -345,18 +262,11 @@ class AppState
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getLanguageCode(): string
     {
         return $this->languageCode;
     }
 
-    /**
-     * @param string $languageCode
-     * @return AppState
-     */
     public function setLanguageCode(string $languageCode): AppState
     {
         $this->languageCode = $languageCode;
@@ -364,9 +274,6 @@ class AppState
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function dumpContext(): array
     {
         return [
@@ -379,18 +286,11 @@ class AppState
         ];
     }
 
-    /**
-     * @return array
-     */
     public function getComponentConfig(): array
     {
         return $this->componentConfig;
     }
 
-    /**
-     * @param array $componentConfig
-     * @return AppState
-     */
     public function setComponentConfig(array $componentConfig): AppState
     {
         $this->componentConfig = $componentConfig;
@@ -398,18 +298,11 @@ class AppState
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getHost(): string
     {
         return $this->host;
     }
 
-    /**
-     * @param string $host
-     * @return AppState
-     */
     public function setHost(string $host): AppState
     {
         $this->host = $host;

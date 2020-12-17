@@ -16,9 +16,6 @@ use Zend\Diactoros\ServerRequest;
 
 class DataMiddlewareCest
 {
-    /**
-     * @param \UnitTester $I
-     */
     public function parsesDataYamlIfDefined(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -32,9 +29,6 @@ class DataMiddlewareCest
         $I->assertTrue($callBackCalled);
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function exceptionOnMissingDataYml(\UnitTester $I)
     {
         $I->seeExceptionThrown(InvalidSiteConfigException::class, function () {
@@ -45,9 +39,6 @@ class DataMiddlewareCest
         });
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function exceptionOnInvalidDataYml(\UnitTester $I)
     {
         $I->seeExceptionThrown(InvalidDataFormatException::class, function () {
@@ -60,9 +51,6 @@ class DataMiddlewareCest
         });
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function noErrorOnConfigMissing(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -77,9 +65,6 @@ class DataMiddlewareCest
         $I->assertTrue($response);
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function parseJsonDataFromUrl(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -105,9 +90,6 @@ class DataMiddlewareCest
         $I->assertTrue($response);
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function exceptionOnMissingJsonDataFromUrl(\UnitTester $I)
     {
         $I->seeExceptionThrown(CannotAccessRemoteSourceException::class, function () {
@@ -152,9 +134,6 @@ class DataMiddlewareCest
         });
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function exceptionOnInvalidJsonDataFromUrl(\UnitTester $I)
     {
         $I->seeExceptionThrown(InvalidDataFormatException::class, function () {
@@ -193,7 +172,6 @@ class DataMiddlewareCest
     /**
      * @param string $url
      * @param string $content
-     * @param \Prophecy\Prophet|null $prophet
      * @return \TwigYard\Component\CurlDownloader
      */
     private function getCurlDownloader($url, $content, Prophet $prophet = null)
@@ -206,10 +184,6 @@ class DataMiddlewareCest
     }
 
     /**
-     * @param \VirtualFileSystem\FileSystem $fs
-     * @param \TwigYard\Component\CurlDownloader|null $curlDownloader
-     * @param \Prophecy\Prophet|null $prophet
-     * @param \TwigYard\Component\AppState|null $appState
      * @return \TwigYard\Middleware\Data\DataMiddleware
      */
     private function getMw(

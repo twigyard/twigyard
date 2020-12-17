@@ -45,13 +45,6 @@ class FormHandlerFactory
      */
     private $httpRequestSender;
 
-    /**
-     * @param AppState $appState
-     * @param MailerFactory $mailerFactory
-     * @param TemplatingFactoryInterface $templatingFactory
-     * @param SiteLoggerFactory $siteLoggerFactory
-     * @param HttpRequestSender $httpRequestSender
-     */
     public function __construct(
         AppState $appState,
         MailerFactory $mailerFactory,
@@ -67,10 +60,8 @@ class FormHandlerFactory
     }
 
     /**
-     * @param array $config
      * @throws InvalidFormHandlerException
      * @throws InvalidSiteConfigException
-     * @return HandlerInterface
      */
     public function build(array $config): HandlerInterface
     {

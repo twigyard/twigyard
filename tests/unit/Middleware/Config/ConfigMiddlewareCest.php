@@ -19,7 +19,6 @@ use Zend\Diactoros\ServerRequest;
 class ConfigMiddlewareCest
 {
     /**
-     * @param \UnitTester $I
      * @throws InvalidSiteConfigException
      */
     public function configVersion2Valid(\UnitTester $I)
@@ -44,7 +43,6 @@ class ConfigMiddlewareCest
     }
 
     /**
-     * @param \UnitTester $I
      * @throws InvalidSiteConfigException
      */
     public function configVersion1Valid(\UnitTester $I)
@@ -63,7 +61,6 @@ class ConfigMiddlewareCest
     }
 
     /**
-     * @param \UnitTester $I
      * @throws InvalidSiteConfigException
      */
     public function return404OnNoSiteDir(\UnitTester $I)
@@ -124,9 +121,6 @@ class ConfigMiddlewareCest
         $prophet->checkPredictions();
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function errorIfInvalidSiteYml(\UnitTester $I)
     {
         $fs = new FileSystem();
@@ -140,14 +134,13 @@ class ConfigMiddlewareCest
         $configCache = $configCacheProph;
 
         $mw = $this->getMw($fs, $configCache, $prophet, null, $appStateProph);
-        $I->expectException(InvalidSiteConfigException::class, function () use ($mw) {
+        $I->expectThrowable(InvalidSiteConfigException::class, function () use ($mw) {
             $mw($this->getRequest('http', 'www.example.com'), new Response(), function () {
             });
         });
     }
 
     /**
-     * @param \UnitTester $I
      * @throws InvalidSiteConfigException
      */
     public function allowSubdomainAccessIfDefined(\UnitTester $I)
@@ -165,7 +158,6 @@ class ConfigMiddlewareCest
     }
 
     /**
-     * @param \UnitTester $I
      * @throws InvalidSiteConfigException
      */
     public function disallowSubdomainAccessIfNotDefined(\UnitTester $I)
@@ -210,11 +202,8 @@ class ConfigMiddlewareCest
     }
 
     /**
-     * @param \VirtualFileSystem\FileSystem $fs
      * @param \TwigYard\Component\ConfigCacheInterface $configCache
-     * @param \Prophecy\Prophet|null $prophet
      * @param string $devDomain
-     * @param ObjectProphecy|null $appStateProph
      * @return ConfigMiddleware
      */
     private function getMw(
@@ -238,7 +227,6 @@ class ConfigMiddlewareCest
     }
 
     /**
-     * @param Prophet $prophet
      * @return mixed
      */
     private function getVersion1ConfigCacheProphecy(Prophet $prophet): ObjectProphecy
@@ -255,7 +243,6 @@ class ConfigMiddlewareCest
     }
 
     /**
-     * @param Prophet $prophet
      * @return mixed
      */
     private function getVersion2ConfigCacheProphecy(Prophet $prophet): ObjectProphecy
@@ -279,12 +266,6 @@ class ConfigMiddlewareCest
         return $configCacheProph;
     }
 
-    /**
-     * @param Prophet $prophet
-     * @param FileSystem $fs
-     * @param array|null $componentConfig
-     * @return ObjectProphecy
-     */
     private function getAppStateProphecy(
         Prophet $prophet,
         FileSystem $fs,

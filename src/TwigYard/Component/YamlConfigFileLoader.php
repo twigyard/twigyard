@@ -3,7 +3,7 @@
 namespace TwigYard\Component;
 
 use Symfony\Component\Config\Exception\FileLoaderImportCircularReferenceException;
-use Symfony\Component\Config\Exception\FileLoaderLoadException;
+use Symfony\Component\Config\Exception\LoaderLoadException;
 use Symfony\Component\Config\Loader\FileLoader;
 use Symfony\Component\Yaml\Yaml;
 use TwigYard\Exception\InvalidSiteConfigException;
@@ -14,11 +14,11 @@ class YamlConfigFileLoader extends FileLoader
      * @param mixed $resource
      * @param null $type
      * @throws FileLoaderImportCircularReferenceException
-     * @throws FileLoaderLoadException
+     * @throws LoaderLoadException
      * @throws InvalidSiteConfigException
      * @return array
      */
-    public function load($resource, $type = null)
+    public function load($resource, string $type = null)
     {
         $path = $this->locator->locate($resource);
         $content = $this->loadFile($path);
@@ -35,30 +35,32 @@ class YamlConfigFileLoader extends FileLoader
     /**
      * {@inheritdoc}
      */
-    public function supports($resource, $type = null): bool
+    public function supports($resource, string $type = null): bool
     {
         return is_string($resource) && in_array(pathinfo($resource, PATHINFO_EXTENSION), ['yml', 'yaml'], true);
     }
 
     /**
-     * @param string $file
      * @throws InvalidSiteConfigException
      * @return mixed
      */
     protected function loadFile(string $file)
     {
         if (!file_exists($file)) {
-            throw new InvalidSiteConfigException(sprintf('The file "%s" is not valid.', $file));
+            throw new InvalidSiteConfigException(sprintf('The file "%s" does not exist.', $file));
         }
 
-        return Yaml::parse(file_get_contents($file));
+        $fileContent = file_get_contents($file);
+        if (!$fileContent) {
+            throw new InvalidSiteConfigException(sprintf('The file "%s" is empty.', $file));
+        }
+
+        return Yaml::parse($fileContent);
     }
 
     /**
-     * @param array $content
-     * @param string $file
      * @throws FileLoaderImportCircularReferenceException
-     * @throws FileLoaderLoadException
+     * @throws LoaderLoadException
      * @throws InvalidSiteConfigException
      */
     private function parseImports(array &$content, string $file): void
@@ -68,17 +70,13 @@ class YamlConfigFileLoader extends FileLoader
         }
 
         if (!is_array($content['imports'])) {
-            throw new InvalidSiteConfigException(
-                sprintf('The "imports" key should contain an array in %s. Check your YAML syntax.', $file)
-            );
+            throw new InvalidSiteConfigException(sprintf('The "imports" key should contain an array in %s. Check your YAML syntax.', $file));
         }
 
         $defaultDirectory = dirname($file);
         foreach ($content['imports'] as $import) {
             if (!is_array($import)) {
-                throw new InvalidSiteConfigException(
-                    sprintf('The values in the "imports" key should be arrays in %s. Check your YAML syntax.', $file)
-                );
+                throw new InvalidSiteConfigException(sprintf('The values in the "imports" key should be arrays in %s. Check your YAML syntax.', $file));
             }
 
             $this->setCurrentDir($defaultDirectory);

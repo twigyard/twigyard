@@ -64,13 +64,6 @@ class FormMiddleware
 
     /**
      * FormMiddleware constructor.
-     * @param AppState $appState
-     * @param CsrfTokenGenerator $csrfTokenGenerator
-     * @param FormValidator $formValidator
-     * @param FormHandlerFactory $formHandlerFactory
-     * @param TranslatorFactory $translatorFactory
-     * @param SiteTranslatorFactory $siteTranslatorFactory
-     * @param string $logDir
      */
     public function __construct(
         AppState $appState,
@@ -91,16 +84,13 @@ class FormMiddleware
     }
 
     /**
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @param callable $next
      * @throws Exception\ConstraintNotFoundException
      * @throws Exception\InvalidFormHandlerException
      * @throws InvalidFormNameException
      * @throws LogDirectoryNotWritableException
      * @throws MissingAppStateAttributeException
      * @throws \TwigYard\Exception\InvalidSiteConfigException
-     * @return ResponseInterface
+     * @return ResponseInterface|void
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
@@ -141,7 +131,7 @@ class FormMiddleware
 
         if (strtolower($request->getMethod()) === 'post') {
             foreach ($this->appState->getMiddlewareConfig()['form'] as $formName => $formConf) {
-                if (isset($request->getParsedBody()[$formName])) {
+                if (is_array($request->getParsedBody()) && isset($request->getParsedBody()[$formName])) {
                     $formData = $request->getParsedBody()[$formName];
                     $appFormData[$formName]['data'] = $formData;
                     $appFormData[$formName]['data']['csrf_token'] = $csrfToken;
@@ -194,12 +184,7 @@ class FormMiddleware
     }
 
     /**
-     * @param string $formName
-     * @param array $formConf
-     * @param string $path
-     * @param Translator $translator
      * @throws MissingAppStateAttributeException
-     * @return ResponseInterface
      */
     private function getSubmitSuccessResponse(
         string $formName,
@@ -230,10 +215,6 @@ class FormMiddleware
         return $this->setFlashMessageCookie($response, $message, FormValidator::FLASH_MESSAGE_TYPE_SUCCESS);
     }
 
-    /**
-     * @param string $csrfToken
-     * @return SetCookie
-     */
     private function getCsrfCookie(string $csrfToken): SetCookie
     {
         $csrfCookie = SetCookie::create(self::CSRF_COOKIE_NAME)
@@ -248,12 +229,6 @@ class FormMiddleware
         return $csrfCookie;
     }
 
-    /**
-     * @param ResponseInterface $response
-     * @param string|null $flashMessage
-     * @param string|null $flashMessageType
-     * @return ResponseInterface
-     */
     private function setFlashMessageCookie(
         ResponseInterface $response,
         ?string $flashMessage = null,

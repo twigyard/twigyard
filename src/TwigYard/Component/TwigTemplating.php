@@ -31,13 +31,6 @@ class TwigTemplating implements TemplatingInterface
 
     /**
      * TwigTemplating constructor.
-     * @param AppState $appState
-     * @param string $templateDir
-     * @param string $assetDir
-     * @param TemplatingClosureFactory $tplClosureFactory
-     * @param SiteTranslatorFactory $siteTranslatorFactory
-     * @param array $options
-     * @param string|null $parentDomain
      */
     public function __construct(
         AppState $appState,
@@ -88,9 +81,7 @@ class TwigTemplating implements TemplatingInterface
     }
 
     /**
-     * @param string $templateName
      * @throws \Exception
-     * @return string
      */
     public function render(string $templateName): string
     {

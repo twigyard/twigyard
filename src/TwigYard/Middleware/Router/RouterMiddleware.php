@@ -16,18 +16,12 @@ class RouterMiddleware implements MiddlewareInterface
      */
     private $appState;
 
-    /**
-     * @param AppState $appState
-     */
     public function __construct(AppState $appState)
     {
         $this->appState = $appState;
     }
 
     /**
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @param callable $next
      * @throws MissingAppStateAttributeException
      * @return ResponseInterface
      */
@@ -48,8 +42,6 @@ class RouterMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @param ServerRequestInterface $request
-     * @param array $conf
      * @throws MissingAppStateAttributeException
      * @return int|string|null
      */
@@ -105,9 +97,7 @@ class RouterMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @param array $conf
      * @throws MissingAppStateAttributeException
-     * @return array
      */
     private function getRouteMap(array $conf): array
     {

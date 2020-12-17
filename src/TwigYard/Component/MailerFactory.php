@@ -11,7 +11,6 @@ class MailerFactory
 
     /**
      * MailerFactory constructor.
-     * @param MailerMessageBuilder $mailerMessageBuilder
      */
     public function __construct(MailerMessageBuilder $mailerMessageBuilder)
     {
@@ -19,7 +18,6 @@ class MailerFactory
     }
 
     /**
-     * @param array $parameters
      * @return \TwigYard\Component\Mailer
      */
     public function createMailer(array $parameters): Mailer

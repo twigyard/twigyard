@@ -40,7 +40,6 @@ class FormValidator
 
     /**
      * FormValidator constructor.
-     * @param ValidatorBuilderFactory $validatorFactory
      */
     public function __construct(ValidatorBuilderFactory $validatorFactory)
     {
@@ -49,12 +48,7 @@ class FormValidator
     }
 
     /**
-     * @param array $formFields
-     * @param array $formData
-     * @param string $csrfValue
-     * @param Translator $translator
      * @throws ConstraintNotFoundException
-     * @return bool
      */
     public function validate(array $formFields, array $formData, string $csrfValue, Translator $translator): bool
     {
@@ -91,34 +85,23 @@ class FormValidator
         return true;
     }
 
-    /**
-     * @return array
-     */
     public function getErrors(): array
     {
         return $this->errors;
     }
 
-    /**
-     * @return string
-     */
     public function getFlashMessage(): string
     {
         return $this->flashMessage;
     }
 
-    /**
-     * @return string
-     */
     public function getFlashMessageType(): string
     {
         return $this->flashMessageType;
     }
 
     /**
-     * @param array $nodes
      * @throws ConstraintNotFoundException
-     * @return array
      */
     private function parseNodes(array $nodes): array
     {
@@ -146,7 +129,6 @@ class FormValidator
     }
 
     /**
-     * @param string $name
      * @param mixed $options
      * @throws ConstraintNotFoundException
      * @return mixed
@@ -161,8 +143,6 @@ class FormValidator
             }
         }
 
-        throw new ConstraintNotFoundException(
-            printf('The constraint %s was not found at any defined namespace.', $name)
-        );
+        throw new ConstraintNotFoundException(sprintf('The constraint %s was not found at any defined namespace.', $name));
     }
 }

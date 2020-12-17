@@ -24,8 +24,6 @@ class SiteTranslatorFactory
 
     /**
      * FormLoggerFactory constructor.
-     * @param string|null $cacheDir
-     * @param string $languageResourcesDir
      */
     public function __construct(string $languageResourcesDir, ?string $cacheDir)
     {
@@ -33,11 +31,6 @@ class SiteTranslatorFactory
         $this->languageResourcesDir = $languageResourcesDir;
     }
 
-    /**
-     * @param string $siteDir
-     * @param string $locale
-     * @return Translator
-     */
     public function getTranslator(string $siteDir, string $locale): Translator
     {
         $translator = new Translator(

@@ -91,7 +91,6 @@ class ApplicationConfig
 
     /**
      * ApplicationConfig constructor.
-     * @param array $config
      * @throws InvalidApplicationConfigException
      */
     public function __construct(array $config)
@@ -133,157 +132,97 @@ class ApplicationConfig
         }
     }
 
-    /**
-     * @return string
-     */
     public function getBasePath(): string
     {
         return $this->basePath ?: '';
     }
 
-    /**
-     * @return string
-     */
     public function getConfigDir(): string
     {
         return $this->configDir;
     }
 
-    /**
-     * @return string
-     */
     public function getGlobalParameters(): string
     {
         return $this->globalParameters;
     }
 
-    /**
-     * @return string
-     */
     public function getSitesDir(): string
     {
         return $this->sitesDir;
     }
 
-    /**
-     * @return string
-     */
     public function getConfigCacheDir(): string
     {
         return $this->configCacheDir;
     }
 
-    /**
-     * @return string
-     */
     public function getLogDir(): string
     {
         return $this->logDir;
     }
 
-    /**
-     * @return string
-     */
     public function getAssetDir(): string
     {
         return $this->assetDir;
     }
 
-    /**
-     * @return string
-     */
     public function getDataDir(): string
     {
         return $this->dataDir;
     }
 
-    /**
-     * @return string
-     */
     public function getLanguageDir(): string
     {
         return $this->languageDir;
     }
 
-    /**
-     * @return string
-     */
     public function getSiteCacheDir(): string
     {
         return $this->siteCacheDir;
     }
 
-    /**
-     * @return string
-     */
     public function getTemplateDir(): string
     {
         return $this->templateDir;
     }
 
-    /**
-     * @return string
-     */
     public function getError404PageName(): string
     {
         return $this->error404PageName;
     }
 
-    /**
-     * @return string
-     */
     public function getError500PageName(): string
     {
         return $this->error500PageName;
     }
 
-    /**
-     * @return string
-     */
     public function getImageCacheDir(): string
     {
         return $this->imageCacheDir;
     }
 
-    /**
-     * @return string
-     */
     public function getCacheNamespaceConfig(): string
     {
         return $this->cacheNamespaceConfig;
     }
 
-    /**
-     * @return string
-     */
     public function getCacheNamespaceAssets(): string
     {
         return $this->cacheNamespaceAssets;
     }
 
-    /**
-     * @param string $index
-     * @return string
-     */
     private function convertIndexToProperty(string $index): string
     {
         return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $index))));
     }
 
-    /**
-     * @param string $index
-     * @param array $value
-     */
-    private function setArray(string $index, array $value)
+    private function setArray(string $index, array $value): void
     {
         $this->{$this->convertIndexToProperty($index)} = $value;
     }
 
-    /**
-     * @param string $index
-     * @param string|null $value
-     */
-    private function setString(string $index, ?string $value)
+    private function setString(string $index, ?string $value): void
     {
         $this->{$this->convertIndexToProperty($index)} = $value;
     }

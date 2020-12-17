@@ -15,9 +15,6 @@ class ErrorMiddlewareCest
 {
     const TEST_DIR = '/tmp/twigyard';
 
-    /**
-     * @param \UnitTester $I
-     */
     public function testGlobal500(\UnitTester $I)
     {
         $this->rmTestDir();
@@ -26,15 +23,9 @@ class ErrorMiddlewareCest
             throw new \Exception();
         });
         $I->assertEquals(500, $response->getStatusCode());
-        $I->assertEquals(
-            file_get_contents('src/TwigYard/Middleware/Error/500.html'),
-            $response->getBody()->getContents()
-        );
+        $I->assertStringEqualsFile('src/TwigYard/Middleware/Error/500.html', $response->getBody()->getContents());
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function testGlobal404(\UnitTester $I)
     {
         $this->rmTestDir();
@@ -43,15 +34,9 @@ class ErrorMiddlewareCest
             return (new Response())->withStatus(404);
         });
         $I->assertEquals(404, $response->getStatusCode());
-        $I->assertEquals(
-            file_get_contents('src/TwigYard/Middleware/Error/404.html'),
-            $response->getBody()->getContents()
-        );
+        $I->assertStringEqualsFile('src/TwigYard/Middleware/Error/404.html', $response->getBody()->getContents());
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function testLocalizedSite404(\UnitTester $I)
     {
         $this->rmTestDir();
@@ -68,9 +53,6 @@ class ErrorMiddlewareCest
         $this->rmTestDir();
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function testSite404(\UnitTester $I)
     {
         $this->rmTestDir();

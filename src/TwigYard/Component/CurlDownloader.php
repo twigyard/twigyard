@@ -9,9 +9,7 @@ class CurlDownloader
     const HTTP_STATUS_OK = 200;
 
     /**
-     * @param string $url
      * @throws CannotAccessRemoteSourceException
-     * @return string
      */
     public function loadRemoteContent(string $url): string
     {
@@ -33,6 +31,6 @@ class CurlDownloader
             throw new CannotAccessRemoteSourceException($error);
         }
 
-        return $data;
+        return (string) $data; // cast to string to satisfy phpstan
     }
 }

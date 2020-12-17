@@ -21,8 +21,6 @@ class ContainerFactory
 
     /**
      * ContainerFactory constructor.
-     * @param string $appRoot
-     * @param ApplicationConfig $appConfig
      */
     public function __construct(string $appRoot, ApplicationConfig $appConfig)
     {
@@ -32,7 +30,6 @@ class ContainerFactory
 
     /**
      * @throws \Exception
-     * @return ContainerBuilder
      */
     public function createContainer(): ContainerBuilder
     {
@@ -51,15 +48,12 @@ class ContainerFactory
         return $containerBuilder;
     }
 
-    /**
-     * @return array
-     */
     private function getGlobalParameters(): array
     {
-        return Yaml::parse(
-            file_get_contents(
-                $this->appRoot . '/' . $this->appConfig->getConfigDir() . '/' . $this->appConfig->getGlobalParameters()
-            )
-        )['parameters'];
+        $fileContents = file_get_contents(
+            $this->appRoot . '/' . $this->appConfig->getConfigDir() . '/' . $this->appConfig->getGlobalParameters()
+        );
+
+        return $fileContents ? Yaml::parse($fileContents)['parameters'] : [];
     }
 }

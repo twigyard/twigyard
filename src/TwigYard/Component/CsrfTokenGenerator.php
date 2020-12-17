@@ -4,11 +4,13 @@ namespace TwigYard\Component;
 
 class CsrfTokenGenerator
 {
-    /**
-     * @return string
-     */
     public function generateToken(): string
     {
-        return base64_encode(openssl_random_pseudo_bytes(30));
+        $bytes = openssl_random_pseudo_bytes(30);
+        if (!$bytes) {
+            throw new \Exception('Bytes could not be generated');
+        }
+
+        return base64_encode($bytes);
     }
 }

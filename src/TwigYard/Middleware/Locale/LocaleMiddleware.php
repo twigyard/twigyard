@@ -24,8 +24,6 @@ class LocaleMiddleware implements MiddlewareInterface
 
     /**
      * LocaleMiddleware constructor.
-     * @param AppState $appState
-     * @param array $validLocales
      */
     public function __construct(AppState $appState, array $validLocales)
     {
@@ -34,9 +32,6 @@ class LocaleMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @param callable $next
      * @throws InvalidSiteConfigException
      * @throws MissingAppStateAttributeException
      * @return ResponseInterface
@@ -66,7 +61,7 @@ class LocaleMiddleware implements MiddlewareInterface
                 }
                 $this->appState->setLocale(array_flip($localeMap)[$langCode]);
                 $this->appState->setLocaleMap($localeMap);
-                if (!$this->appState->isSingleLanguage()) {
+                if (!$this->appState->isSingleLanguage() && $langCode) {
                     $this->appState->setLanguageCode($langCode);
                 }
                 $request = $request->withUri($request->getUri()->withPath($newPath));
@@ -82,9 +77,6 @@ class LocaleMiddleware implements MiddlewareInterface
         return $next($request, $response);
     }
 
-    /**
-     * @return InvalidSiteConfigException
-     */
     private function getInvalidLocaleException(): InvalidSiteConfigException
     {
         return new InvalidSiteConfigException(
