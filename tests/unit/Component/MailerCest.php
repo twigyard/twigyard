@@ -10,9 +10,6 @@ use TwigYard\Component\MailerMessageBuilder;
 
 class MailerCest
 {
-    /**
-     * @param \UnitTester $I
-     */
     public function testDebugRecipient(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -32,9 +29,6 @@ class MailerCest
         $prophet->checkPredictions();
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function testProductionRecipient(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -54,7 +48,6 @@ class MailerCest
     }
 
     /**
-     * @param \Prophecy\Prophet $prophet
      * @return \Prophecy\Prophecy\ObjectProphecy
      */
     private function getSwiftMailer(Prophet $prophet)
@@ -66,8 +59,6 @@ class MailerCest
     }
 
     /**
-     * @param \Prophecy\Prophet $prophet
-     * @param \Prophecy\Prophecy\ObjectProphecy $messageProph
      * @return \Prophecy\Prophecy\ObjectProphecy
      */
     private function getMessageBuilderProph(Prophet $prophet, ObjectProphecy $messageProph)

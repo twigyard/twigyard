@@ -11,9 +11,6 @@ use Zend\Diactoros\Uri;
 
 class RouterMiddlewareCest
 {
-    /**
-     * @param \UnitTester $I
-     */
     public function noErrorOnConfigMissing(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -27,9 +24,6 @@ class RouterMiddlewareCest
         $I->assertTrue($response);
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function return404onUnmatchedUrlMultilang(\UnitTester $I)
     {
         $request = (new ServerRequest())->withUri((new Uri('/invalidPage')));
@@ -39,9 +33,6 @@ class RouterMiddlewareCest
         $I->assertEquals($response->getStatusCode(), 404);
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function return404onUnmatchedUrlSinglelang(\UnitTester $I)
     {
         $request = (new ServerRequest())->withUri((new Uri('/invalidPage')));
@@ -51,9 +42,6 @@ class RouterMiddlewareCest
         $I->assertEquals($response->getStatusCode(), 404);
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function correctUrlParamsNoValidateMultilang(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -70,9 +58,6 @@ class RouterMiddlewareCest
         $I->assertTrue($callBackCalled);
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function correctUrlParamsNoValidateSinglelang(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -86,9 +71,6 @@ class RouterMiddlewareCest
         $I->assertTrue($callBackCalled);
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function correctUrlParamsValidateMultilang(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -106,9 +88,6 @@ class RouterMiddlewareCest
         $I->assertTrue($callBackCalled);
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function correctUrlParamsValidateSinglelang(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -126,9 +105,6 @@ class RouterMiddlewareCest
         $I->assertTrue($callBackCalled);
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function return404onInvalidUrlParamMultilang(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -143,9 +119,6 @@ class RouterMiddlewareCest
         $I->assertEquals($response->getStatusCode(), 404);
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function return404onInvalidUrlParamSinglelang(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -160,9 +133,6 @@ class RouterMiddlewareCest
         $I->assertEquals($response->getStatusCode(), 404);
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function return404onNonExistentDataFileMultilang(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -177,9 +147,6 @@ class RouterMiddlewareCest
         $I->assertEquals($response->getStatusCode(), 404);
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function return404onNonExistentDataFileSinglelang(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -194,9 +161,6 @@ class RouterMiddlewareCest
         $I->assertEquals($response->getStatusCode(), 404);
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function no404onNonStringDataFileParamMultiLang(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -213,9 +177,6 @@ class RouterMiddlewareCest
         $I->assertTrue($response);
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function no404onNonStringDataFileParamSingleLang(\UnitTester $I)
     {
         $prophet = new Prophet();

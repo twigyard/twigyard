@@ -2,6 +2,7 @@
 
 namespace TwigYard\Unit\Component;
 
+use Codeception\Stub\Expected;
 use Codeception\Util\Stub;
 use Gregwar\Image\Image;
 use Prophecy\Prophet;
@@ -13,9 +14,6 @@ use TwigYard\Exception\InvalidRouteException;
 
 class TemplatingClosureCest
 {
-    /**
-     * @param \UnitTester $I
-     */
     public function assetClosure(\UnitTester $I)
     {
         $factory = new TemplatingClosureFactory(
@@ -27,9 +25,6 @@ class TemplatingClosureCest
         $I->assertEquals('/base/assets/styles.css?v=1234567890', $closure('assets/styles.css'));
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function pathClosure(\UnitTester $I)
     {
         $factory = new TemplatingClosureFactory(
@@ -41,9 +36,6 @@ class TemplatingClosureCest
         $I->assertEquals('/cs/page', $closure('page'));
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function pathClosureRedirectToIndex(\UnitTester $I)
     {
         $factory = new TemplatingClosureFactory(
@@ -55,9 +47,6 @@ class TemplatingClosureCest
         $I->assertEquals('/en/index', $closure('page'));
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function pathClosureExceptionOnNonExistantPage(\UnitTester $I)
     {
         $I->seeExceptionThrown(InvalidRouteException::class, function () {
@@ -71,9 +60,6 @@ class TemplatingClosureCest
         });
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function pathClosureForceLocale(\UnitTester $I)
     {
         $factory = new TemplatingClosureFactory(
@@ -85,9 +71,6 @@ class TemplatingClosureCest
         $I->assertEquals('/en/index', $closure('index', [], 'en_US'));
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function pathClosureSetParam(\UnitTester $I)
     {
         $factory = new TemplatingClosureFactory(
@@ -99,18 +82,15 @@ class TemplatingClosureCest
         $I->assertEquals('/en/products/abc', $closure('products', ['slug' => 'abc']));
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function imageClosure(\UnitTester $I)
     {
         $stub = Stub::make(ImageFactory::class, [
-            'getImage' => Stub::once(function ($a) {
+            'getImage' => Expected::once(function ($a) {
                 if ($a === 'image') {
                     return new Image();
                 }
             }),
-            'setAssetDir' => Stub::once(function ($a) use ($I) {
+            'setAssetDir' => Expected::once(function ($a) use ($I) {
                 $I->assertEquals('web', $a);
             }),
         ]);

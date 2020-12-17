@@ -10,9 +10,6 @@ use Zend\Diactoros\ServerRequest;
 
 class HttpauthMiddlewareCest
 {
-    /**
-     * @param \UnitTester $I
-     */
     public function promptsIfNoAuthHeader(\UnitTester $I)
     {
         $mw = $this->getMw();
@@ -22,9 +19,6 @@ class HttpauthMiddlewareCest
         $I->assertEquals(401, $response->getStatusCode());
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function promptsIfWrongCredentials(\UnitTester $I)
     {
         $mw = $this->getMw();
@@ -34,33 +28,24 @@ class HttpauthMiddlewareCest
         $I->assertEquals(401, $response->getStatusCode());
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function allowsPassOnCorrectCredentials(\UnitTester $I)
     {
         $mw = $this->getMw();
-        $response = $mw($this->getRequest('user', 'pass'), new Response(), function () use ($I) {
+        $response = $mw($this->getRequest('user', 'pass'), new Response(), function () {
             return true;
         });
         $I->assertTrue($response);
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function allowsPassOnCorrectIpAddress(\UnitTester $I)
     {
         $mw = $this->getMw(['127.0.0.1']);
-        $response = $mw($this->getRequest(), new Response(), function () use ($I) {
+        $response = $mw($this->getRequest(), new Response(), function () {
             return true;
         });
         $I->assertTrue($response);
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function promptsIfWrongIpAddress(\UnitTester $I)
     {
         $mw = $this->getMw(['127.0.0.254']);
@@ -70,16 +55,13 @@ class HttpauthMiddlewareCest
         $I->assertEquals(401, $response->getStatusCode());
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function noErrorOnConfigMissing(\UnitTester $I)
     {
         $prophet = new Prophet();
         $appStateProph = $prophet->prophesize(AppState::class);
         $appStateProph->getMiddlewareConfig()->willReturn([]);
         $mw = new HttpauthMiddleware($appStateProph->reveal(), 'data');
-        $response = $mw(new ServerRequest(), new Response(), function () use ($I) {
+        $response = $mw(new ServerRequest(), new Response(), function () {
             return true;
         });
         $I->assertTrue($response);

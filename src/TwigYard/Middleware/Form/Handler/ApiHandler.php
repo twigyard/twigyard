@@ -50,8 +50,6 @@ class ApiHandler implements HandlerInterface
 
     /**
      * ApiHandler constructor.
-     * @param array $config
-     * @param HttpRequestSender $httpRequestSender
      * @throws InvalidSiteConfigException
      */
     public function __construct(array $config, HttpRequestSender $httpRequestSender)
@@ -63,9 +61,8 @@ class ApiHandler implements HandlerInterface
     }
 
     /**
-     * @param array $formData
      * @throws \HttpRequestException
-     * @return Response
+     * @return Response|void
      */
     public function handle(array $formData)
     {
@@ -83,14 +80,7 @@ class ApiHandler implements HandlerInterface
                     if (array_key_exists(self::CONFIG_DATA_DEFAULT, $dataValue)) {
                         $sendData[$dataKey] = $dataValue[self::CONFIG_DATA_DEFAULT];
                     } else {
-                        throw new \InvalidArgumentException(
-                            sprintf(
-                                'Form API handler expected to map form field `%s` onto `%s` but `%s` is missing.',
-                                $formValue,
-                                $dataKey,
-                                $formValue
-                            )
-                        );
+                        throw new \InvalidArgumentException(sprintf('Form API handler expected to map form field `%s` onto `%s` but `%s` is missing.', $formValue, $dataKey, $formValue));
                     }
                 }
 
@@ -127,15 +117,7 @@ class ApiHandler implements HandlerInterface
                         $dateTime = \DateTime::createFromFormat($dataFormatIn, $sendData[$dataKey]);
 
                         if ($dateTime === false) {
-                            throw new \InvalidArgumentException(
-                                sprintf(
-                                    'Form API handler is unable to convert form value `%s` of field `%s` from `%s` to `%s`.',
-                                    $sendData[$dataKey],
-                                    $dataKey,
-                                    $dataFormatIn,
-                                    $dataFormatOut
-                                )
-                            );
+                            throw new \InvalidArgumentException(sprintf('Form API handler is unable to convert form value `%s` of field `%s` from `%s` to `%s`.', $sendData[$dataKey], $dataKey, $dataFormatIn, $dataFormatOut));
                         }
 
                         $sendData[$dataKey] = $dateTime->format($dataFormatOut);
@@ -164,9 +146,7 @@ class ApiHandler implements HandlerInterface
             $redirectUrlParam = $this->config[self::CONFIG_RESPONSE][self::CONFIG_RESPONSE_REDIRECT_URL_PARAM];
 
             if (!array_key_exists($redirectUrlParam, $responseBody)) {
-                throw new \Exception(
-                    sprintf('Form API handler request expected to receive parameters `%s`.', $redirectUrlParam)
-                );
+                throw new \Exception(sprintf('Form API handler request expected to receive parameters `%s`.', $redirectUrlParam));
             }
 
             return new RedirectResponse($responseBody[$redirectUrlParam]);
@@ -199,12 +179,7 @@ class ApiHandler implements HandlerInterface
             !array_key_exists(self::CONFIG_URL, $this->config)
             || !is_string($this->config[self::CONFIG_URL])
         ) {
-            throw new InvalidSiteConfigException(
-                sprintf(
-                    'Form API handler option `%s` is not set or is not of type string.',
-                    self::CONFIG_URL
-                )
-            );
+            throw new InvalidSiteConfigException(sprintf('Form API handler option `%s` is not set or is not of type string.', self::CONFIG_URL));
         }
     }
 
@@ -217,12 +192,7 @@ class ApiHandler implements HandlerInterface
             !array_key_exists(self::CONFIG_METHOD, $this->config)
             || !is_string($this->config[self::CONFIG_METHOD])
         ) {
-            throw new InvalidSiteConfigException(
-                sprintf(
-                    'Form API handler option `%s` is not set or is not of type string.',
-                    self::CONFIG_METHOD
-                )
-            );
+            throw new InvalidSiteConfigException(sprintf('Form API handler option `%s` is not set or is not of type string.', self::CONFIG_METHOD));
         }
 
         $supportedMethods = [
@@ -236,14 +206,7 @@ class ApiHandler implements HandlerInterface
             array_key_exists(self::CONFIG_METHOD, $this->config)
             && !in_array($this->config[self::CONFIG_METHOD], $supportedMethods)
         ) {
-            throw new InvalidSiteConfigException(
-                sprintf(
-                    'Form API handler option `%s` is expecting one of [%s], `%s` given.',
-                    self::CONFIG_METHOD,
-                    implode(', ', $supportedMethods),
-                    $this->config[self::CONFIG_METHOD]
-                )
-            );
+            throw new InvalidSiteConfigException(sprintf('Form API handler option `%s` is expecting one of [%s], `%s` given.', self::CONFIG_METHOD, implode(', ', $supportedMethods), $this->config[self::CONFIG_METHOD]));
         }
     }
 
@@ -273,16 +236,7 @@ class ApiHandler implements HandlerInterface
                         && is_string($dataValue[self::CONFIG_DATA_FORMAT])
                         && !in_array($dataValue[self::CONFIG_DATA_FORMAT], $supportedTypes)
                     ) {
-                        throw new InvalidSiteConfigException(
-                            sprintf(
-                                'Form API handler option `%s.%s.%s` is expecting one of [%s], `%s` given.',
-                                self::CONFIG_DATA,
-                                $dataKey,
-                                self::CONFIG_DATA_FORMAT,
-                                implode(', ', $supportedTypes),
-                                $dataValue[self::CONFIG_DATA_FORMAT]
-                            )
-                        );
+                        throw new InvalidSiteConfigException(sprintf('Form API handler option `%s.%s.%s` is expecting one of [%s], `%s` given.', self::CONFIG_DATA, $dataKey, self::CONFIG_DATA_FORMAT, implode(', ', $supportedTypes), $dataValue[self::CONFIG_DATA_FORMAT]));
                     }
 
                     if (
@@ -295,17 +249,7 @@ class ApiHandler implements HandlerInterface
                             array_key_exists(self::CONFIG_DATA_FORMAT_TYPE, $dataFormat)
                             && !in_array($dataFormat[self::CONFIG_DATA_FORMAT_TYPE], $supportedTypesExt)
                         ) {
-                            throw new InvalidSiteConfigException(
-                                sprintf(
-                                    'Form API handler option `%s.%s.%s.%s` is expecting one of [%s], `%s` given.',
-                                    self::CONFIG_DATA,
-                                    $dataKey,
-                                    self::CONFIG_DATA_FORMAT,
-                                    self::CONFIG_DATA_FORMAT_TYPE,
-                                    implode(', ', $supportedTypesExt),
-                                    $dataFormat[self::CONFIG_DATA_FORMAT_TYPE]
-                                )
-                            );
+                            throw new InvalidSiteConfigException(sprintf('Form API handler option `%s.%s.%s.%s` is expecting one of [%s], `%s` given.', self::CONFIG_DATA, $dataKey, self::CONFIG_DATA_FORMAT, self::CONFIG_DATA_FORMAT_TYPE, implode(', ', $supportedTypesExt), $dataFormat[self::CONFIG_DATA_FORMAT_TYPE]));
                         }
 
                         if (
@@ -316,15 +260,7 @@ class ApiHandler implements HandlerInterface
                                 || !is_string($dataFormat[self::CONFIG_DATA_FORMAT_IN])
                             )
                         ) {
-                            throw new InvalidSiteConfigException(
-                                sprintf(
-                                    'Form API handler option `%s.%s.%s.%s` is not set or is not of types string',
-                                    self::CONFIG_DATA,
-                                    $dataKey,
-                                    self::CONFIG_DATA_FORMAT,
-                                    self::CONFIG_DATA_FORMAT_IN
-                                )
-                            );
+                            throw new InvalidSiteConfigException(sprintf('Form API handler option `%s.%s.%s.%s` is not set or is not of types string', self::CONFIG_DATA, $dataKey, self::CONFIG_DATA_FORMAT, self::CONFIG_DATA_FORMAT_IN));
                         }
 
                         if (
@@ -335,15 +271,7 @@ class ApiHandler implements HandlerInterface
                                 || !is_string($dataFormat[self::CONFIG_DATA_FORMAT_OUT])
                             )
                         ) {
-                            throw new InvalidSiteConfigException(
-                                sprintf(
-                                    'Form API handler option `%s.%s.%s.%s` is not set or is not of types string',
-                                    self::CONFIG_DATA,
-                                    $dataKey,
-                                    self::CONFIG_DATA_FORMAT,
-                                    self::CONFIG_DATA_FORMAT_OUT
-                                )
-                            );
+                            throw new InvalidSiteConfigException(sprintf('Form API handler option `%s.%s.%s.%s` is not set or is not of types string', self::CONFIG_DATA, $dataKey, self::CONFIG_DATA_FORMAT, self::CONFIG_DATA_FORMAT_OUT));
                         }
                     }
 
@@ -360,14 +288,7 @@ class ApiHandler implements HandlerInterface
                         $formValue = $dataValue[self::CONFIG_DATA_FORM_VALUE];
 
                         if (!is_string($formValue) && !is_numeric($formValue)) {
-                            throw new InvalidSiteConfigException(
-                                sprintf(
-                                    'Form API handler option `%s.%s.%s` is not set or is not of types string or int.',
-                                    self::CONFIG_DATA,
-                                    $dataKey,
-                                    self::CONFIG_DATA_FORM_VALUE
-                                )
-                            );
+                            throw new InvalidSiteConfigException(sprintf('Form API handler option `%s.%s.%s` is not set or is not of types string or int.', self::CONFIG_DATA, $dataKey, self::CONFIG_DATA_FORM_VALUE));
                         }
                     } elseif (
                         (
@@ -385,62 +306,28 @@ class ApiHandler implements HandlerInterface
                         $defaultValue = $dataValue[self::CONFIG_DATA_DEFAULT];
 
                         if (!is_string($formValue) && !is_numeric($formValue)) {
-                            throw new InvalidSiteConfigException(
-                                sprintf(
-                                    'Form API handler option `%s.%s.%s` is not set or is not of types string or int.',
-                                    self::CONFIG_DATA,
-                                    $dataKey,
-                                    self::CONFIG_DATA_FORM_VALUE
-                                )
-                            );
+                            throw new InvalidSiteConfigException(sprintf('Form API handler option `%s.%s.%s` is not set or is not of types string or int.', self::CONFIG_DATA, $dataKey, self::CONFIG_DATA_FORM_VALUE));
                         }
 
                         if (!is_string($defaultValue) && !is_numeric($defaultValue)) {
-                            throw new InvalidSiteConfigException(
-                                sprintf(
-                                    'Form API handler option `%s.%s.%s` is not set or is not of types string or int.',
-                                    self::CONFIG_DATA,
-                                    $dataKey,
-                                    self::CONFIG_DATA_DEFAULT
-                                )
-                            );
+                            throw new InvalidSiteConfigException(sprintf('Form API handler option `%s.%s.%s` is not set or is not of types string or int.', self::CONFIG_DATA, $dataKey, self::CONFIG_DATA_DEFAULT));
                         }
                     } else {
-                        throw new InvalidSiteConfigException(
-                            sprintf(
-                                'Form API handler option `%s.%s` supports only `%s` or `%s` with `%s` options.',
-                                self::CONFIG_DATA,
-                                $dataKey,
-                                self::CONFIG_DATA_FORM_VALUE,
-                                self::CONFIG_DATA_FORM_VALUE,
-                                self::CONFIG_DATA_DEFAULT
-                            )
-                        );
+                        throw new InvalidSiteConfigException(sprintf('Form API handler option `%s.%s` supports only `%s` or `%s` with `%s` options.', self::CONFIG_DATA, $dataKey, self::CONFIG_DATA_FORM_VALUE, self::CONFIG_DATA_FORM_VALUE, self::CONFIG_DATA_DEFAULT));
                     }
                 } elseif (!is_string($dataValue) && !is_numeric($dataValue)) {
-                    throw new InvalidSiteConfigException(
-                        sprintf(
-                            'Form API handler option `%s.%s` is not set or is not of type string or int.',
-                            self::CONFIG_DATA,
-                            $dataKey
-                        )
-                    );
+                    throw new InvalidSiteConfigException(sprintf('Form API handler option `%s.%s` is not set or is not of type string or int.', self::CONFIG_DATA, $dataKey));
                 }
             }
         } else {
-            throw new InvalidSiteConfigException(
-                sprintf(
-                    'Form API handler option `%s` is not set or is not of type array.',
-                    self::CONFIG_DATA
-                )
-            );
+            throw new InvalidSiteConfigException(sprintf('Form API handler option `%s` is not set or is not of type array.', self::CONFIG_DATA));
         }
     }
 
     /**
      * @throws InvalidSiteConfigException
      */
-    private function validateConfigHeaders()
+    private function validateConfigHeaders(): void
     {
         if (array_key_exists(self::CONFIG_HEADERS, $this->config)) {
             $configHeaders = $this->config[self::CONFIG_HEADERS];
@@ -448,22 +335,11 @@ class ApiHandler implements HandlerInterface
             if (is_array($configHeaders)) {
                 foreach ($configHeaders as $headerKey => $headerValue) {
                     if (!is_string($headerValue) && !is_numeric($headerValue)) {
-                        throw new InvalidSiteConfigException(
-                            sprintf(
-                                'Form API handler option `%s.%s` is not set or is not of types string or int.',
-                                self::CONFIG_HEADERS,
-                                $headerKey
-                            )
-                        );
+                        throw new InvalidSiteConfigException(sprintf('Form API handler option `%s.%s` is not set or is not of types string or int.', self::CONFIG_HEADERS, $headerKey));
                     }
                 }
             } else {
-                throw new InvalidSiteConfigException(
-                    sprintf(
-                        'Form API handler option `%s` is not set or is not of type array.',
-                        self::CONFIG_HEADERS
-                    )
-                );
+                throw new InvalidSiteConfigException(sprintf('Form API handler option `%s` is not set or is not of type array.', self::CONFIG_HEADERS));
             }
         }
     }
@@ -484,30 +360,13 @@ class ApiHandler implements HandlerInterface
                     $redirectUrlParam = $configResponse[self::CONFIG_RESPONSE_REDIRECT_URL_PARAM];
 
                     if (!is_string($redirectUrlParam) && !is_numeric($redirectUrlParam)) {
-                        throw new InvalidSiteConfigException(
-                            sprintf(
-                                'Form API handler option `%s.%s` is not set or is not of type string or integer.',
-                                self::CONFIG_RESPONSE,
-                                self::CONFIG_RESPONSE_REDIRECT_URL_PARAM
-                            )
-                        );
+                        throw new InvalidSiteConfigException(sprintf('Form API handler option `%s.%s` is not set or is not of type string or integer.', self::CONFIG_RESPONSE, self::CONFIG_RESPONSE_REDIRECT_URL_PARAM));
                     }
                 } else {
-                    throw new InvalidSiteConfigException(
-                        sprintf(
-                            'Form API handler option `%s` supports only `%s` option.',
-                            self::CONFIG_RESPONSE,
-                            self::CONFIG_RESPONSE_REDIRECT_URL_PARAM
-                        )
-                    );
+                    throw new InvalidSiteConfigException(sprintf('Form API handler option `%s` supports only `%s` option.', self::CONFIG_RESPONSE, self::CONFIG_RESPONSE_REDIRECT_URL_PARAM));
                 }
             } else {
-                throw new InvalidSiteConfigException(
-                    sprintf(
-                        'Form API handler option `%s` is not set or is not of type array.',
-                        self::CONFIG_RESPONSE
-                    )
-                );
+                throw new InvalidSiteConfigException(sprintf('Form API handler option `%s` is not set or is not of type array.', self::CONFIG_RESPONSE));
             }
         }
     }

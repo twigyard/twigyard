@@ -39,9 +39,6 @@ class DataMiddleware implements MiddlewareInterface
 
     /**
      * DataMiddleware constructor.
-     * @param AppState $appState
-     * @param string $dataDir
-     * @param CurlDownloader $curlDownloader
      */
     public function __construct(AppState $appState, string $dataDir, CurlDownloader $curlDownloader)
     {
@@ -51,9 +48,6 @@ class DataMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @param callable $next
      * @throws CannotAccessRemoteSourceException
      * @throws InvalidDataFormatException
      * @throws InvalidDataTypeException
@@ -73,6 +67,7 @@ class DataMiddleware implements MiddlewareInterface
                         'resource' => $source,
                     ];
                 }
+
                 if ($source['type'] === self::TYPE_LOCAL) {
                     $dataFile = $this->appState->getSiteDir() . '/' . $this->dataDir . '/' . $source['resource'];
                     if (!is_file($dataFile)) {
@@ -85,30 +80,23 @@ class DataMiddleware implements MiddlewareInterface
                     throw new InvalidDataTypeException(sprintf('Data type [%s] is not supported.', $source['type']));
                 }
 
+                if (!$content) {
+                    throw new InvalidDataFormatException(sprintf('Content of file %s could not be laoded', $source['resource']));
+                }
+
                 if ($source['format'] === self::FORMAT_YAML) {
                     try {
                         $data[$var] = Yaml::parse($content);
                     } catch (ParseException $e) {
-                        throw new InvalidDataFormatException(sprintf(
-                            'Invalid content of yml file %s with message %s',
-                            $source['resource'],
-                            $e->getMessage()
-                        ));
+                        throw new InvalidDataFormatException(sprintf('Invalid content of yml file %s with message %s', $source['resource'], $e->getMessage()));
                     }
                 } elseif ($source['format'] === self::FORMAT_JSON) {
                     $data[$var] = \json_decode($content, true);
                     if (JSON_ERROR_NONE !== ($error = \json_last_error())) {
-                        throw new InvalidDataFormatException(sprintf(
-                            'Invalid content received from url %s with message %s',
-                            $source['resource'],
-                            json_last_error_msg()
-                        ));
+                        throw new InvalidDataFormatException(sprintf('Invalid content received from url %s with message %s', $source['resource'], json_last_error_msg()));
                     }
                 } else {
-                    throw new InvalidDataFormatException(sprintf(
-                        'Data format [%s] is not supported.',
-                        $source['format']
-                    ));
+                    throw new InvalidDataFormatException(sprintf('Data format [%s] is not supported.', $source['format']));
                 }
             }
             $this->appState->setData($data);

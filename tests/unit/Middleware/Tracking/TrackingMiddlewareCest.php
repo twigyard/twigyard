@@ -37,7 +37,7 @@ class TrackingMiddlewareCest
         $callBackCalled = $mw(
             new ServerRequest(),
             new Response(),
-            function () use ($prophet, $I) {
+            function () use ($prophet) {
                 $prophet->checkPredictions();
 
                 return true;
@@ -53,7 +53,7 @@ class TrackingMiddlewareCest
         $callBackCalled = $mw(
             new ServerRequest(),
             new Response(),
-            function () use ($prophet, $I) {
+            function () use ($prophet) {
                 $prophet->checkPredictions();
 
                 return true;
@@ -64,7 +64,6 @@ class TrackingMiddlewareCest
 
     /**
      * @param Prophet $prophet
-     * @return TrackingMiddleware
      */
     private function getMw(Prophet $prophet = null, $trackingEnabled = true): TrackingMiddleware
     {

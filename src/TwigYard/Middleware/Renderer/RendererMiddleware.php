@@ -23,8 +23,6 @@ class RendererMiddleware implements MiddlewareInterface
 
     /**
      * RendererMiddleware constructor.
-     * @param AppState $appState
-     * @param TemplatingFactoryInterface $templatingFactory
      */
     public function __construct(AppState $appState, TemplatingFactoryInterface $templatingFactory)
     {
@@ -33,9 +31,6 @@ class RendererMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @param callable $next
      * @throws MissingAppStateAttributeException
      * @throws \Twig_Error_Loader
      * @return ResponseInterface

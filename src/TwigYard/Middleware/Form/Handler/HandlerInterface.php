@@ -7,8 +7,7 @@ use Zend\Diactoros\Response;
 interface HandlerInterface
 {
     /**
-     * @param array $formData
-     * @return Response|null
+     * @return Response|void|null
      */
     public function handle(array $formData);
 }

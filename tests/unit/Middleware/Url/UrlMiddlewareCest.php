@@ -10,9 +10,6 @@ use Zend\Diactoros\ServerRequest;
 
 class UrlMiddlewareCest
 {
-    /**
-     * @param \UnitTester $I
-     */
     public function redirectOnNonCanonicalUrl(\UnitTester $I)
     {
         $mw = $this->getMw(false, true, 'example.com');
@@ -25,9 +22,6 @@ class UrlMiddlewareCest
         $I->assertEquals(301, $response->getStatusCode());
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function redirectToHttps(\UnitTester $I)
     {
         $mw = $this->getMw(true, true);
@@ -40,9 +34,6 @@ class UrlMiddlewareCest
         $I->assertEquals(301, $response->getStatusCode());
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function redirectOnNonCanonicalUrlWithParentDomain(\UnitTester $I)
     {
         $mw = $this->getMw(false, true, 'example.com', 'localhost');
@@ -55,9 +46,6 @@ class UrlMiddlewareCest
         $I->assertEquals(301, $response->getStatusCode());
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function redirectToHttpsWithParentDomain(\UnitTester $I)
     {
         $mw = $this->getMw(true, true, 'www.example.com', 'localhost');
@@ -70,9 +58,6 @@ class UrlMiddlewareCest
         $I->assertEquals(301, $response->getStatusCode());
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function doNotRedirectToHttpsIfDisabledGlobally(\UnitTester $I)
     {
         $mw = $this->getMw(true, false);
@@ -82,9 +67,6 @@ class UrlMiddlewareCest
         $I->assertTrue($response);
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function doNotRedirectToHttpsIfDisabledInSite(\UnitTester $I)
     {
         $mw = $this->getMw(false, true);
@@ -94,9 +76,6 @@ class UrlMiddlewareCest
         $I->assertTrue($response);
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function doNotRedirectToHttpsIfAlreadyHttps(\UnitTester $I)
     {
         $mw = $this->getMw(true, true);
@@ -106,10 +85,6 @@ class UrlMiddlewareCest
         $I->assertTrue($response);
     }
 
-    /**
-     * @param string $host
-     * @return ServerRequest
-     */
     private function getRequest(string $scheme, string $host, string $path = null): ServerRequest
     {
         $uri = (new \Zend\Diactoros\Uri())
@@ -124,11 +99,8 @@ class UrlMiddlewareCest
     }
 
     /**
-     * @param bool $ssl
-     * @param bool $sslAllowed
      * @param string $host
      * @param string $parentDomain
-     * @return \TwigYard\Middleware\Url\UrlMiddleware
      */
     private function getMw(
         bool $ssl = false,

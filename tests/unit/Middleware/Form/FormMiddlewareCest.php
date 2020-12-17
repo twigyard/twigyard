@@ -25,9 +25,6 @@ use Zend\Diactoros\Uri;
 
 class FormMiddlewareCest
 {
-    /**
-     * @param \UnitTester $I
-     */
     public function testNotWritableLogDir(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -40,15 +37,12 @@ class FormMiddlewareCest
         $appState->getSiteDir()->willReturn($fs->path('/sites/www.example.com'));
         $mw = $this->getMw($appState, $prophet);
 
-        $I->expectException(LogDirectoryNotWritableException::class, function () use ($mw) {
+        $I->expectThrowable(LogDirectoryNotWritableException::class, function () use ($mw) {
             $mw(new ServerRequest(), new Response(), function () {
             });
         });
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function testInvalidFormName(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -76,16 +70,13 @@ class FormMiddlewareCest
             'var/log'
         );
 
-        $I->expectException(InvalidFormNameException::class, function () use ($mw) {
+        $I->expectThrowable(InvalidFormNameException::class, function () use ($mw) {
             $mw(new ServerRequest(), new Response(), function () {
                 return new Response();
             });
         });
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function testValidFormName(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -125,9 +116,6 @@ class FormMiddlewareCest
         }
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function testPassIfConfigNotPresent(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -158,9 +146,6 @@ class FormMiddlewareCest
         $I->assertTrue(true);
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function testPassIfFieldsMapNotPresent(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -209,9 +194,6 @@ class FormMiddlewareCest
         $I->assertTrue(true);
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function setCookieAndCsrfOnGetRequest(\UnitTester $I, $scheme = 'http', $secure = false)
     {
         $prophet = new Prophet();
@@ -244,33 +226,21 @@ class FormMiddlewareCest
         $I->assertEquals($secure, $flashMessageTypeCookie->getSecure());
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function setCookieAndCsrfOnHttpsGetRequest(\UnitTester $I)
     {
         $this->setCookieAndCsrfOnGetRequest($I, 'https', true);
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function validatePostRequestValidData(\UnitTester $I)
     {
         $this->validateWithValidData($I);
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function validatePostRequestValidDataAnchorAndFlashSuccessMultilang(\UnitTester $I)
     {
         $this->validateWithValidData($I, 'anchor-name', 'custom success flash message', true);
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function validatePostRequestInvalidData(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -308,9 +278,6 @@ class FormMiddlewareCest
         $I->assertEquals('token', $csrfToken);
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function refreshCsrfToken(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -399,7 +366,6 @@ class FormMiddlewareCest
     }
 
     /**
-     * @param \Prophecy\Prophet $prophet
      * @param string $token
      * @return \Prophecy\Prophecy\ObjectProphecy
      */
@@ -419,7 +385,6 @@ class FormMiddlewareCest
     }
 
     /**
-     * @param \Prophecy\Prophet $prophet
      * @return \Prophecy\Prophecy\ObjectProphecy
      */
     private function getAppState(Prophet $prophet)
@@ -442,7 +407,6 @@ class FormMiddlewareCest
     }
 
     /**
-     * @param \UnitTester $I
      * @param string $anchor
      * @param string $successFlashMessage
      * @param null $isMultiLang

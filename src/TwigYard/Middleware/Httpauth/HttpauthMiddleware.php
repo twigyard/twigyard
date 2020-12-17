@@ -15,18 +15,12 @@ class HttpauthMiddleware implements MiddlewareInterface
      */
     private $appState;
 
-    /**
-     * @param AppState $appState
-     */
     public function __construct(AppState $appState)
     {
         $this->appState = $appState;
     }
 
     /**
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @param callable $next
      * @return ResponseInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)

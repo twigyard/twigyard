@@ -38,10 +38,6 @@ class ConfigMiddleware implements MiddlewareInterface
 
     /**
      * UrlMiddleware constructor.
-     * @param AppState $appState
-     * @param ConfigCacheInterface $configCache
-     * @param string $sitesDir
-     * @param string $siteConfig
      * @param string $parentDomain
      */
     public function __construct(
@@ -59,9 +55,6 @@ class ConfigMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @param callable $next
      * @throws InvalidSiteConfigException
      * @return ResponseInterface
      */

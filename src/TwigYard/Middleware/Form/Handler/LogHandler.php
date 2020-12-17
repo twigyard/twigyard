@@ -19,8 +19,6 @@ class LogHandler implements HandlerInterface
 
     /**
      * LogHandler constructor.
-     * @param Logger $logger
-     * @param AppState $appState
      */
     public function __construct(
         Logger $logger,
@@ -31,7 +29,7 @@ class LogHandler implements HandlerInterface
     }
 
     /**
-     * @param array $formData
+     * @return void
      */
     public function handle(array $formData)
     {

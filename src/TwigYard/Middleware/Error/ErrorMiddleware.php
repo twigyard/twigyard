@@ -44,12 +44,6 @@ class ErrorMiddleware implements MiddlewareInterface
 
     /**
      * ErrorMiddleware constructor.
-     * @param AppState $appState
-     * @param bool $showErrors
-     * @param LoggerFactory $loggerFactory
-     * @param string $templateDir
-     * @param string $page404
-     * @param string $page500
      */
     public function __construct(
         AppState $appState,
@@ -68,9 +62,6 @@ class ErrorMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @param callable $next
      * @throws \Exception
      * @return ResponseInterface
      */
@@ -132,10 +123,6 @@ class ErrorMiddleware implements MiddlewareInterface
         return $response;
     }
 
-    /**
-     * @param string $pageName
-     * @return Stream
-     */
     private function getErrorPageStream(string $pageName): Stream
     {
         $errPage = '';
@@ -152,7 +139,9 @@ class ErrorMiddleware implements MiddlewareInterface
 
         if (is_file($localeErrPage)) {
             return new Stream($localeErrPage);
-        } elseif (is_file($errPage)) {
+        }
+
+        if (is_file($errPage)) {
             return new Stream($errPage);
         }
 

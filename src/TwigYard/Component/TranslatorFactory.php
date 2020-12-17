@@ -28,8 +28,6 @@ class TranslatorFactory
 
     /**
      * TranslatorFactory constructor.
-     * @param string $appRoot
-     * @param string|null $cacheDir
      */
     public function __construct(string $appRoot, ?string $cacheDir)
     {
@@ -37,10 +35,6 @@ class TranslatorFactory
         $this->cacheDir = $cacheDir;
     }
 
-    /**
-     * @param string $locale
-     * @return Translator
-     */
     public function getTranslator(string $locale): Translator
     {
         $translator = new Translator(

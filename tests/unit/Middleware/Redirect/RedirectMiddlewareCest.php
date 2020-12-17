@@ -12,9 +12,6 @@ use Zend\Diactoros\Uri;
 
 class RedirectMiddlewareCest
 {
-    /**
-     * @param \UnitTester $I
-     */
     public function noErrorOnConfigMissing(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -28,9 +25,6 @@ class RedirectMiddlewareCest
         $I->assertTrue($response);
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function redirectsIfMatch(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -51,9 +45,6 @@ class RedirectMiddlewareCest
         $I->assertEquals(['/url/new'], $response->getHeader('Location'));
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function noActionIfNotMatch(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -77,7 +68,6 @@ class RedirectMiddlewareCest
 
     /**
      * @param \Prophecy\Prophet $prophet
-     * @return RedirectMiddleware
      */
     private function getMw(Prophet $prophet = null): RedirectMiddleware
     {

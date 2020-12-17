@@ -13,9 +13,6 @@ use VirtualFileSystem\FileSystem;
 
 class ConfigCacheCest
 {
-    /**
-     * @param \UnitTester $I
-     */
     public function runTests(\UnitTester $I)
     {
         foreach ($this->getTestData() as $configVersion => $versionData) {
@@ -46,9 +43,7 @@ class ConfigCacheCest
     }
 
     /**
-     * @param \VirtualFileSystem\FileSystem $fs
      * @param string|null $dirName
-     * @param string|null $config
      */
     private function createExample(FileSystem $fs, string $dirName, ?string $config): void
     {
@@ -62,7 +57,6 @@ class ConfigCacheCest
     }
 
     /**
-     * @param \Prophecy\Prophet $prophet
      * @return \Prophecy\Prophecy\ObjectProphecy
      */
     private function getLoggerFactory(Prophet $prophet)
@@ -74,9 +68,6 @@ class ConfigCacheCest
         return $loggerFactory;
     }
 
-    /**
-     * @return array
-     */
     public function getTestData(): array
     {
         return [

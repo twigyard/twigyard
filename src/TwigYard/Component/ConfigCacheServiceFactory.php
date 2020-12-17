@@ -8,16 +8,6 @@ use Nette\Caching\Storages\FileStorage;
 
 class ConfigCacheServiceFactory
 {
-    /**
-     * @param LoggerFactory $loggerFactory
-     * @param string $appRoot
-     * @param string $cacheDir
-     * @param string $cacheNamespace
-     * @param bool $cacheEnabled
-     * @param string $sitesDir
-     * @param string $siteConfig
-     * @return ConfigCache
-     */
     public static function createConfigCache(
         LoggerFactory $loggerFactory,
         string $appRoot,

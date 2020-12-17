@@ -23,8 +23,6 @@ class ImageFactory
 
     /**
      * ImageFactory constructor.
-     * @param string $basePath
-     * @param string $cacheDir
      */
     public function __construct(string $basePath, string $cacheDir)
     {
@@ -32,10 +30,6 @@ class ImageFactory
         $this->cacheDir = $cacheDir;
     }
 
-    /**
-     * @param string $image
-     * @return Image
-     */
     public function getImage(string $image): Image
     {
         $image = new Image($this->assetDir . '/' . $image);
@@ -46,9 +40,6 @@ class ImageFactory
         return $image;
     }
 
-    /**
-     * @param string $assetDir
-     */
     public function setAssetDir(string $assetDir): void
     {
         $this->assetDir = $assetDir;

@@ -9,21 +9,13 @@ git:
 matrix:
   include:
     - language: php
-      php: 7.1
+      php: 8.0
       before_install: .travis/php/before_install.sh
       install: .travis/php/install.sh
       before_script: .travis/php/before_script.sh
       script: .travis/php/script.sh
-
     - language: php
-      php: 7.2
-      before_install: .travis/php/before_install.sh
-      install: .travis/php/install.sh
-      before_script: .travis/php/before_script.sh
-      script: .travis/php/script.sh
-
-    - language: php
-      php: 7.3
+      php: 7.4
       before_install: .travis/php/before_install.sh
       install: .travis/php/install.sh
       before_script: .travis/php/before_script.sh
@@ -35,11 +27,6 @@ matrix:
       install: .travis/php/install.sh
       before_script: .travis/php/before_script.sh
       script: .travis/php/script.sh
-
-    - language: python
-      python: 2.7
-      install: .travis/python/install.sh
-      script: .travis/python/script.sh
 
     - language: python
       python: 3.6

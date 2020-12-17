@@ -24,9 +24,6 @@ class TemplatingClosureFactory
 
     /**
      * TemplatingClosureFactory constructor.
-     * @param string $basePath
-     * @param ImageFactory $imageFactory
-     * @param AssetCacheManagerFactory $cacheManagerFactory
      */
     public function __construct(string $basePath, ImageFactory $imageFactory, AssetCacheManagerFactory $cacheManagerFactory)
     {
@@ -35,11 +32,6 @@ class TemplatingClosureFactory
         $this->assetCacheManagerFactory = $cacheManagerFactory;
     }
 
-    /**
-     * @param array $routeMap
-     * @param string $locale
-     * @return \Closure
-     */
     public function getPathClosure(array $routeMap, string $locale): \Closure
     {
         return function ($pageName, array $query = [], $localeForce = null) use ($routeMap, $locale) {
@@ -68,11 +60,6 @@ class TemplatingClosureFactory
         };
     }
 
-    /**
-     * @param string $assetDir
-     * @param string|null $cacheDir
-     * @return \Closure
-     */
     public function getAssetClosure(string $assetDir, ?string $cacheDir): \Closure
     {
         $basePath = $this->basePath;
@@ -91,9 +78,6 @@ class TemplatingClosureFactory
         };
     }
 
-    /**
-     * @return \Closure
-     */
     public function getDumpClosure(): \Closure
     {
         return function ($var) {
@@ -101,10 +85,6 @@ class TemplatingClosureFactory
         };
     }
 
-    /**
-     * @param string $assetDir
-     * @return \Closure
-     */
     public function getImageClosure(string $assetDir): \Closure
     {
         $imageFactory = $this->imageFactory;

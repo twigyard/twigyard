@@ -17,7 +17,6 @@ class SiteLoggerFactory
 
     /**
      * FormLoggerFactory constructor.
-     * @param string $logDir
      */
     public function __construct(string $logDir)
     {
@@ -25,10 +24,7 @@ class SiteLoggerFactory
     }
 
     /**
-     * @param string $siteDir
-     * @param string $logFile
      * @throws \Exception
-     * @return \Monolog\Logger
      */
     public function getFormLogger(string $siteDir, string $logFile): Logger
     {

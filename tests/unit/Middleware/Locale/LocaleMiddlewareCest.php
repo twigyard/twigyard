@@ -13,9 +13,6 @@ use Zend\Diactoros\Uri;
 
 class LocaleMiddlewareCest
 {
-    /**
-     * @param \UnitTester $I
-     */
     public function setLocaleIfSingleLang(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -28,9 +25,6 @@ class LocaleMiddlewareCest
         $I->assertTrue($callBackCalled);
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function exceptionOnInvalidSingleLangLocale(\UnitTester $I)
     {
         $I->seeExceptionThrown(InvalidSiteConfigException::class, function () {
@@ -40,9 +34,6 @@ class LocaleMiddlewareCest
         });
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function setLocaleAndPathIfMultiLang(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -57,9 +48,6 @@ class LocaleMiddlewareCest
         $I->assertTrue($callBackCalled);
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function exceptionOnInvalidMultiLangLocale(\UnitTester $I)
     {
         $I->seeExceptionThrown(InvalidSiteConfigException::class, function () {
@@ -74,9 +62,6 @@ class LocaleMiddlewareCest
         });
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function redirectToDefaultLocale(\UnitTester $I)
     {
         $mw = $this->getMw($this->getMultiLangLocale());
@@ -86,9 +71,6 @@ class LocaleMiddlewareCest
         $I->assertEquals($response->getStatusCode(), 302);
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function noErrorOnConfigMissing(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -126,7 +108,6 @@ class LocaleMiddlewareCest
 
     /**
      * @param $config
-     * @param \Prophecy\Prophet|null $prophet
      * @return \TwigYard\Middleware\Locale\LocaleMiddleware
      */
     private function getMw($config, Prophet $prophet = null, $localeMap = null, $isMultiLang = null)

@@ -27,9 +27,6 @@ class UrlMiddleware implements MiddlewareInterface
 
     /**
      * UrlMiddleware constructor.
-     * @param AppState $appState
-     * @param bool $sslAllowed
-     * @param string|null $parentDomain
      */
     public function __construct(
         AppState $appState,
@@ -42,9 +39,6 @@ class UrlMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @param callable $next
      * @return ResponseInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)

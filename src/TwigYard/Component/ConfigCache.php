@@ -3,7 +3,7 @@
 namespace TwigYard\Component;
 
 use Nette\Caching\Cache;
-use Symfony\Component\Config\Exception\FileLoaderLoadException;
+use Symfony\Component\Config\Exception\LoaderLoadException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
@@ -36,10 +36,6 @@ class ConfigCache implements ConfigCacheInterface
 
     /**
      * ConfigCache constructor.
-     * @param Cache $cache
-     * @param LoggerFactory $loggerFactory
-     * @param string $sitesDir
-     * @param string $siteConfig
      */
     public function __construct(Cache $cache, LoggerFactory $loggerFactory, string $sitesDir, string $siteConfig)
     {
@@ -51,21 +47,24 @@ class ConfigCache implements ConfigCacheInterface
 
     /**
      * @throws \Exception
-     * @return array
      */
     public function getConfig(): array
     {
         $logger = $this->loggerFactory->getLogger(self::LOGGER_CHANNEL);
 
         return $this->cache->load($this->sitesDir, function () use ($logger) {
-            $siteDirs = scandir($this->sitesDir);
             $configs = [];
+            $siteDirs = scandir($this->sitesDir);
+            if (!$siteDirs) {
+                return $configs;
+            }
+
             foreach ($siteDirs as $dirName) {
                 $dirPath = $this->sitesDir . '/' . $dirName;
                 if (is_dir($dirPath) && $dirName !== '.' && $dirName !== '..') {
                     try {
                         $config = (new YamlConfigFileLoader(new FileLocator($dirPath)))->load($this->siteConfig);
-                    } catch (FileLoaderLoadException $e) {
+                    } catch (LoaderLoadException $e) {
                         $logger->error($e->getMessage());
                         continue;
                     } catch (ParseException $e) {

@@ -42,10 +42,6 @@ class Application
      */
     private $container;
 
-    /**
-     * @param string $appRoot
-     * @param ApplicationConfig $config
-     */
     public function __construct(string $appRoot, ApplicationConfig $config)
     {
         $this->appRoot = $appRoot;
@@ -70,7 +66,6 @@ class Application
 
     /**
      * @throws \Exception
-     * @return array
      */
     private function getQueue(): array
     {

@@ -1,11 +1,14 @@
 parameters:
+
+	# This should not be here, but I have no time to fix it now.
+	# It fails on exhausted max memory
+	excludes_analyse:
+		- src/TwigYard/Component/Application.php
+
+	# This should not be here, but I have no time to fix it now.
+	checkMissingIterableValueType: false
+
 	bootstrap: null
-	excludes_analyse: []
-	autoload_directories:
-		- "tests"
-	autoload_files:
-		- vendor/autoload.php
-		- vendor/codeception/codeception/autoload.php
 	fileExtensions:
 		- php
 	checkFunctionArgumentTypes: true

@@ -32,7 +32,6 @@ class HeaderMiddleware implements MiddlewareInterface
 
     /**
      * HeaderMiddleware constructor.
-     * @param AppState $appState
      */
     public function __construct(AppState $appState)
     {
@@ -40,9 +39,6 @@ class HeaderMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @param callable $next
      * @return ResponseInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
@@ -73,11 +69,6 @@ class HeaderMiddleware implements MiddlewareInterface
         return $next($request, $response);
     }
 
-    /**
-     * @param array $headers
-     * @param array $headerConfig
-     * @return array
-     */
     private function setContentSecurityPolicyHeader(array $headers, array $headerConfig): array
     {
         if (array_key_exists(self::HEADER_CONTENT_SECURITY_POLICY, $headerConfig)) {
@@ -109,11 +100,6 @@ class HeaderMiddleware implements MiddlewareInterface
         return $headers;
     }
 
-    /**
-     * @param array $headers
-     * @param array $headerConfig
-     * @return array
-     */
     private function setRefererPolicyHeader(array $headers, array $headerConfig): array
     {
         if (array_key_exists(self::HEADER_REFERRER_POLICY, $headerConfig)) {
@@ -123,11 +109,6 @@ class HeaderMiddleware implements MiddlewareInterface
         return $headers;
     }
 
-    /**
-     * @param array $headers
-     * @param array $headerConfig
-     * @return array
-     */
     private function setXContentTypeOptionsHeader(array $headers, array $headerConfig): array
     {
         if (array_key_exists(self::HEADER_X_CONTENT_TYPE_OPTIONS, $headerConfig)) {
@@ -137,10 +118,6 @@ class HeaderMiddleware implements MiddlewareInterface
         return $headers;
     }
 
-    /**
-     * @param array $headers
-     * @return array
-     */
     private function resetHeaders(array $headers): array
     {
         foreach ($headers as $name => $value) {

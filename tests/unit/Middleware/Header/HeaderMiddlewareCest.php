@@ -10,9 +10,6 @@ use Zend\Diactoros\Response;
 
 class HeaderMiddlewareCest
 {
-    /**
-     * @param \UnitTester $I
-     */
     public function injectDefaultHeaders(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -37,9 +34,6 @@ class HeaderMiddlewareCest
         );
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function injectDefaultSecureHeaders(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -64,9 +58,6 @@ class HeaderMiddlewareCest
         );
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function doNotInjectGloballyDisabledHeaders(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -87,9 +78,6 @@ class HeaderMiddlewareCest
         );
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function doNotInjectIndividuallyDisabledHeaders(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -116,9 +104,6 @@ class HeaderMiddlewareCest
         );
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function injectAllHeaders(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -153,7 +138,6 @@ class HeaderMiddlewareCest
     }
 
     /**
-     * @param Prophet $prophet
      * @param $config
      * @param string $scheme
      * @return HeaderMiddleware

@@ -14,9 +14,6 @@ use Zend\Diactoros\ServerRequest;
 
 class RendererMiddlewareCest
 {
-    /**
-     * @param \UnitTester $I
-     */
     public function noErrorOnConfigMissing(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -33,9 +30,6 @@ class RendererMiddlewareCest
         $I->assertTrue($response);
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function rendersUniversalTemplateMultilang(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -53,9 +47,6 @@ class RendererMiddlewareCest
         $I->assertTrue($callBackCalled);
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function rendersNoUniversalTemplateMultilang(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -73,9 +64,6 @@ class RendererMiddlewareCest
         $I->assertTrue($callBackCalled);
     }
 
-    /**
-     * @param \UnitTester $I
-     */
     public function rendersTemplateSinglelang(\UnitTester $I)
     {
         $prophet = new Prophet();
@@ -95,8 +83,6 @@ class RendererMiddlewareCest
 
     /**
      * @param \Prophecy\Prophet $prophet
-     * @param TemplatingFactoryInterface|null $templatingFactory
-     * @return RendererMiddleware
      */
     private function getMwMultilang(
         Prophet $prophet = null,
@@ -121,7 +107,6 @@ class RendererMiddlewareCest
 
     /**
      * @param \Prophecy\Prophet $prophet
-     * @return RendererMiddleware
      */
     private function getMwSinglelang(Prophet $prophet = null): RendererMiddleware
     {

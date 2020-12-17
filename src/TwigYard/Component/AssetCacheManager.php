@@ -18,8 +18,6 @@ class AssetCacheManager
 
     /**
      * AssetCacheManager constructor.
-     * @param Cache $cache
-     * @param string $assetsDirOnFileSystem
      */
     public function __construct(Cache $cache, string $assetsDirOnFileSystem)
     {
@@ -27,18 +25,15 @@ class AssetCacheManager
         $this->assetsDirOnFileSystem = $assetsDirOnFileSystem;
     }
 
-    /**
-     * @param string $file
-     * @return int
-     */
     public function getCrc32(string $file): int
     {
         return $this->cache->load($file, function () use ($file) {
             if (!file_exists($this->assetsDirOnFileSystem . $file)) {
                 return 0;
             }
+            $fileContent = file_get_contents($this->assetsDirOnFileSystem . $file);
 
-            return crc32(file_get_contents($this->assetsDirOnFileSystem . $file));
+            return $fileContent ? crc32($fileContent) : 0;
         });
     }
 

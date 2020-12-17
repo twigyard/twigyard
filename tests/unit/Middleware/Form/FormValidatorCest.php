@@ -13,9 +13,6 @@ use TwigYard\Middleware\Form\FormValidator;
 
 class FormValidatorCest
 {
-    /**
-     * @param \UnitTester $I
-     */
     public function testErrorsIsArrayOfStrings(\UnitTester $I)
     {
         $prophet = new Prophet();
