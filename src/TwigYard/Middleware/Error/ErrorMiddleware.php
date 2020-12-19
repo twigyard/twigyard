@@ -76,7 +76,7 @@ class ErrorMiddleware implements MiddlewareInterface
 
         if ($this->showErrors !== true) {
             set_error_handler(function ($errNo, $errStr) use ($request, $url) {
-                if (!ini_get('error_reporting')) {
+                if (!error_reporting()) {
                     return;
                 }
 
