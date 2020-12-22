@@ -123,7 +123,7 @@ class FormMiddleware
                 isset($request->getCookieParams()[self::FLASH_MESSAGE_TYPE_COOKIE_NAME])
             ) {
                 $appFormData[$formName]['flash_message'] =
-                    $request->getCookieParams()[self::FLASH_MESSAGE_COOKIE_NAME];
+                    urldecode($request->getCookieParams()[self::FLASH_MESSAGE_COOKIE_NAME]);
                 $appFormData[$formName]['flash_message_type'] =
                     $request->getCookieParams()[self::FLASH_MESSAGE_TYPE_COOKIE_NAME];
             }
