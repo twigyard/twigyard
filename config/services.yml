@@ -11,7 +11,7 @@ services:
     TwigYard\Component\CurlDownloader: ~
 
     TwigYard\Component\ConfigCache:
-        factory: 'TwigYard\Component\ConfigCacheServiceFactory:createConfigCache'
+        factory: ['TwigYard\Component\ConfigCacheServiceFactory', 'createConfigCache']
         arguments:
             $appRoot: '@=parameter("app.root")'
             $cacheDir: '@=parameter("app.config").getConfigCacheDir()'
