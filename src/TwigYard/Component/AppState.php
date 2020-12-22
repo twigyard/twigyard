@@ -202,9 +202,13 @@ class AppState
         return $this;
     }
 
-    public function getUrl(): string
+    public function getUrl(): ?string
     {
-        return $this->middlewareConfig['url']['canonical'];
+        if ($this->middlewareConfig) {
+            return $this->middlewareConfig['url']['canonical'];
+        }
+
+        return null;
     }
 
     /**
