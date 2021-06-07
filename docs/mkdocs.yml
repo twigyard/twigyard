@@ -10,7 +10,7 @@ repo_name: 'twigyard/twigyard'
 edit_uri: ''
 
 # Copyright
-copyright: 'Copyright &copy; 2016 - 2018 VisionApps, s.r.o.'
+copyright: 'Copyright &copy; 2016 - 2021 VisionApps, s.r.o.'
 
 # Configuration
 theme:
@@ -24,16 +24,18 @@ theme:
     primary: 'cyan'
     accent: 'cyan'
 
+dev_addr: '0.0.0.0:8000'
+
 # Customization
 extra:
   social:
-    - type: 'github'
+    - icon: 'fontawesome/brands/github'
       link: 'https://github.com/twigyard'
-    - type: 'twitter'
+    - icon: 'fontawesome/brands/twitter'
       link: 'https://twitter.com/visionappscz'
-    - type: 'linkedin'
+    - icon: 'fontawesome/brands/linkedin'
       link: 'https://www.linkedin.com/company/visionapps-s-r-o-/'
-    - type: 'facebook'
+    - icon: 'fontawesome/brands/facebook'
       link: 'https://www.facebook.com/VisionAppsCZ'
 
 # Google Analytics
