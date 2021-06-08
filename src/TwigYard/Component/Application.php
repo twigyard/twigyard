@@ -101,7 +101,7 @@ class Application
             throw new \Exception('Error while receiving instances from containers.');
         }
 
-        $formValidator = new FormValidator($validatorBuilderFactory);
+        $formValidator = new FormValidator($validatorBuilderFactory, $httpRequestSender);
         $formHandlerFactory = new FormHandlerFactory(
             $appState,
             $mailerFactory,

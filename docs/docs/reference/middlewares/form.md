@@ -15,6 +15,7 @@ option                  | type         | required | description
 fields                  | map          | ❌        | A map of the fields in the given form. Each field is a map where the validator options are defined. See Fields for details.
 handlers                | list of maps | ✓        | A list of maps where each map specifies a handler to process the submitted data. Every map must define the type option that specifies which handler to use. Other options depend on the given handler type. Handlers are processed sequentially in the order defined. See Handlers for details.
 anchor                  | string       | ❌        | Name of an anchor to which the form scrolls after submission.
+recaptcha               | map          | ❌        | A map with the two keys containing the credentials: `site_key` and `secret_key`
 success_flash_message   | string       | ❌        | The message that is displayed after the form is successfully submitted. If the site is multi language and translation is set, it will be translated automatically.
 
 ### Fields
@@ -229,3 +230,4 @@ data               | map    | The user submitted data. Must be manually rendered
 errors             | map    | A map of lists where each map key is a field name and each element in the list is one error message. There is one error message for each failed validator constraint.
 flash_message      | string | The message informing the user of the result of the action he or she took. For example it informs the user weather the form was submitted successfully or if there are any invalid fields.
 flash_message_type | enum   | The type indicating whether a flash message is of type `success`, `error-validation` or  `error-expired-token`.
+recaptcha          | map    | Map with the `site_key` element if recaptcha is configured
