@@ -4,6 +4,7 @@ namespace TwigYard\Middleware\Form;
 
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Validator\Mapping\Loader\AbstractLoader;
+use TwigYard\Component\HttpRequestSender;
 use TwigYard\Component\ValidatorBuilderFactory;
 use TwigYard\Middleware\Form\Exception\ConstraintNotFoundException;
 
@@ -11,12 +12,15 @@ class FormValidator
 {
     const FLASH_MESSAGE_CSRF_ERROR = 'The form validity has expired. Give it one more try.';
     const FLASH_MESSAGE_VALIDATION_ERROR = 'The form cannot be saved, please check marked values.';
+    const FLASH_MESSAGE_RECAPTCHA_ERROR = 'There was an error in recaptcha validation. Please send us an email instead.';
 
     const FLASH_MESSAGE_TYPE_SUCCESS = 'success';
     const FLASH_MESSAGE_TYPE_ERROR_VALIDATION = 'error-validation';
     const FLASH_MESSAGE_TYPE_ERROR_EXPIRED_TOKEN = 'error-expired-token';
 
     const CONSTRAINTS_NAMESPACES = [AbstractLoader::DEFAULT_NAMESPACE];
+
+    const RECAPTCHA_VERIFY_URL = 'https://www.google.com/recaptcha/api/siteverify';
 
     /**
      * @var array
@@ -34,6 +38,11 @@ class FormValidator
     private $flashMessageType;
 
     /**
+     * @var HttpRequestSender
+     */
+    private $httpRequestSender;
+
+    /**
      * @var ValidatorBuilderFactory
      */
     private $validatorFactory;
@@ -41,8 +50,11 @@ class FormValidator
     /**
      * FormValidator constructor.
      */
-    public function __construct(ValidatorBuilderFactory $validatorFactory)
-    {
+    public function __construct(
+        ValidatorBuilderFactory $validatorFactory,
+        HttpRequestSender $httpRequestSender
+    ) {
+        $this->httpRequestSender = $httpRequestSender;
         $this->validatorFactory = $validatorFactory;
         $this->errors = [];
     }
@@ -50,13 +62,36 @@ class FormValidator
     /**
      * @throws ConstraintNotFoundException
      */
-    public function validate(array $formFields, array $formData, string $csrfValue, Translator $translator): bool
-    {
+    public function validate(
+        array $formFields,
+        array $recaptcha,
+        array $formData,
+        string $csrfValue,
+        Translator $translator,
+        ?string $recaptchaResponse = null
+    ): bool {
         if ($formData[FormMiddleware::CSRF_FIELD_NAME] !== $csrfValue) {
             $this->flashMessage = $translator->trans(self::FLASH_MESSAGE_CSRF_ERROR);
             $this->flashMessageType = self::FLASH_MESSAGE_TYPE_ERROR_EXPIRED_TOKEN;
 
             return false;
+        }
+
+        if (!empty($recaptcha['secret_key'])) {
+            $response = $this->httpRequestSender->sendUrlencodedRequest(
+                self::RECAPTCHA_VERIFY_URL,
+                [
+                    'secret' => $recaptcha['secret_key'],
+                    'response' => $recaptchaResponse,
+                ],
+            );
+            $responseBody = json_decode($response->getBody(), true);
+            if (!$responseBody['success']) {
+                $this->flashMessage = $translator->trans(self::FLASH_MESSAGE_RECAPTCHA_ERROR);
+                $this->flashMessageType = self::FLASH_MESSAGE_TYPE_ERROR_VALIDATION;
+
+                return false;
+            }
         }
 
         $validator = $this->validatorFactory->createValidator($translator);

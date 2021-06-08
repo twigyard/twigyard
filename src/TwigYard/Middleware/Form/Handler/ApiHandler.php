@@ -126,7 +126,7 @@ class ApiHandler implements HandlerInterface
             }
         }
 
-        $response = $this->httpRequestSender->sendRequest(
+        $response = $this->httpRequestSender->sendJsonRequest(
             $this->config[self::CONFIG_METHOD],
             $this->config[self::CONFIG_URL],
             $sendData,

@@ -248,7 +248,7 @@ class ApiHandlerCest
         $response->getBody()->willReturn(\GuzzleHttp\json_encode($responseData));
 
         $httpRequestSender = $prophet->prophesize(HttpRequestSender::class);
-        $httpRequestSender->sendRequest(
+        $httpRequestSender->sendJsonRequest(
             Argument::type('string'),
             Argument::type('string'),
             Argument::type('array'),

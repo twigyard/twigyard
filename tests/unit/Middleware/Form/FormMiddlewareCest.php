@@ -167,7 +167,7 @@ class FormMiddlewareCest
         $csrfTokenGenerator->generateToken()->willReturn('token');
         $formValidator = $prophet->prophesize(FormValidator::class);
         $formValidator
-            ->validate([], new TypeToken('array'), new TypeToken('string'), new TypeToken(Translator::class))
+            ->validate([], [], new TypeToken('array'), new TypeToken('string'), new TypeToken(Translator::class), null)
             ->shouldBeCalled();
         $formValidator->getFlashMessage()->willReturn('flash_message')->shouldBeCalled();
         $formValidator->getFlashMessageType()->willReturn('success')->shouldBeCalled();
@@ -260,9 +260,11 @@ class FormMiddlewareCest
         $formValidator
             ->validate(
                 [],
+                [],
                 ['csrf_token' => 'token', 'field1' => 'value1'],
                 'invalid',
-                Argument::type(Translator::class)
+                Argument::type(Translator::class),
+                null
             )
             ->willReturn(false);
         $formValidator->getErrors()->willReturn([]);
@@ -296,9 +298,11 @@ class FormMiddlewareCest
         $formValidator
             ->validate(
                 [],
+                [],
                 ['csrf_token' => 'old_token', 'field1' => 'value1'],
                 'old_token',
-                Argument::type(Translator::class)
+                Argument::type(Translator::class),
+                null
             )
             ->willReturn(true);
 
@@ -438,7 +442,7 @@ class FormMiddlewareCest
 
         $formValidator = $prophet->prophesize(FormValidator::class);
         $formValidator
-            ->validate([], ['csrf_token' => 'token', 'field1' => 'value1'], 'token', Argument::type(Translator::class))
+            ->validate([], [], ['csrf_token' => 'token', 'field1' => 'value1'], 'token', Argument::type(Translator::class), null)
             ->willReturn(true);
 
         $config = [];

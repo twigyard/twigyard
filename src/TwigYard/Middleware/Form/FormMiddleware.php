@@ -119,6 +119,9 @@ class FormMiddleware
             if (isset($formConf['anchor'])) {
                 $appFormData[$formName]['anchor'] = $formConf['anchor'];
             }
+            if (isset($formConf['recaptcha'])) {
+                $appFormData[$formName]['recaptcha'] = ['site_key' => $formConf['recaptcha']['site_key']];
+            }
             if (isset($request->getCookieParams()[self::FLASH_MESSAGE_COOKIE_NAME]) &&
                 isset($request->getCookieParams()[self::FLASH_MESSAGE_TYPE_COOKIE_NAME])
             ) {
@@ -142,12 +145,13 @@ class FormMiddleware
                     }
 
                     $translator = $this->translatorFactory->getTranslator($this->appState->getLocale());
-
                     if ($this->formValidator->validate(
                         isset($formConf['fields']) && is_array($formConf['fields']) ? $formConf['fields'] : [],
+                        $formConf['recaptcha'] ?? [],
                         $formData,
                         $csrfCookieValue,
-                        $translator
+                        $translator,
+                        $request->getParsedBody()['g-recaptcha-response'] ?? null,
                     )) {
                         $this->appState->setForm($appFormData);
                         foreach ($formConf['handlers'] as $handlerConf) {
